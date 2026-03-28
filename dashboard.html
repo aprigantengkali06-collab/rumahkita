@@ -7,416 +7,389 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { padding-bottom: 80px; }
+    @media (min-width: 768px) { body { padding-bottom: 0; } }
+    .dash-nav-link { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: #374151; transition: all 0.15s; cursor: pointer; text-decoration: none; border: none; background: none; font-family: inherit; width: 100%; text-align: left; }
+    .dash-nav-link:hover { background: #eff6ff; color: #2563eb; }
+    .dash-nav-link.active { background: #eff6ff; color: #2563eb; font-weight: 700; }
+    .dash-nav-link i { width: 20px; text-align: center; font-size: 15px; }
+    .prop-row { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 12px; background: white; border: 1px solid #f3f4f6; transition: box-shadow 0.15s; }
+    .prop-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .prop-row-img { width: 80px; height: 72px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  </style>
 </head>
 <body class="bg-gray-50">
 
 <!-- NAVBAR -->
-<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <a href="index.html" class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
-        <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
-      </a>
-      <div class="flex items-center gap-3">
-        <a href="tambah-properti.html" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
-          <i class="fas fa-plus"></i><span class="hidden sm:inline">Pasang Iklan</span>
-        </a>
-        <div class="relative">
-          <button id="userMenuBtn" onclick="document.getElementById('userDD').classList.toggle('open')" class="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100">
-            <div id="userAvatar" class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">?</div>
-            <i class="fas fa-chevron-down text-xs text-gray-500 hidden sm:block"></i>
-          </button>
-          <div id="userDD" class="dropdown-menu">
-            <a href="dashboard.html" class="block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-lg"><i class="fas fa-th-large mr-2 text-blue-600"></i>Dashboard</a>
-            <a href="profil.html" class="block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-lg"><i class="fas fa-user mr-2 text-gray-500"></i>Profil</a>
-            <hr class="my-1 border-gray-100">
-            <button onclick="logout()" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg"><i class="fas fa-sign-out-alt mr-2"></i>Keluar</button>
-          </div>
-        </div>
-      </div>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon"><i class="fas fa-home"></i></div>
+      <div class="navbar-logo-text">Rumah<span>Kita</span></div>
+    </a>
+    <div class="navbar-actions" id="navAuthDesktop">
+      <a href="tambah-properti.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i>Pasang Iklan</a>
     </div>
+    <button class="nav-hamburger" id="navHamburger"><i class="fas fa-bars"></i></button>
   </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- Welcome Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-    <div>
-      <h1 class="text-2xl font-extrabold text-gray-900">Selamat datang, <span id="welcomeName">...</span>! 👋</h1>
-      <p class="text-gray-500 text-sm mt-1">Kelola properti dan pantau performa iklan Anda</p>
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+  <div class="mobile-menu-drawer">
+    <div class="mobile-menu-header">
+      <div class="navbar-logo"><div class="navbar-logo-icon"><i class="fas fa-home"></i></div><div class="navbar-logo-text">Rumah<span>Kita</span></div></div>
+      <button class="mobile-menu-close" id="mobileMenuClose"><i class="fas fa-times"></i></button>
     </div>
-    <div class="text-sm text-gray-500"><i class="fas fa-calendar mr-1"></i><span id="currentDate"></span></div>
-  </div>
-
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-      <div class="flex items-center justify-between mb-3">
-        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center"><i class="fas fa-home text-blue-600"></i></div>
-        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">+2 baru</span>
-      </div>
-      <div class="text-2xl font-extrabold text-gray-900" id="statTotal">3</div>
-      <div class="text-sm text-gray-500 mt-0.5">Total Properti</div>
-    </div>
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-      <div class="flex items-center justify-between mb-3">
-        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-eye text-green-600"></i></div>
-        <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">↑ 12%</span>
-      </div>
-      <div class="text-2xl font-extrabold text-gray-900" id="statViews">1,240</div>
-      <div class="text-sm text-gray-500 mt-0.5">Total Dilihat</div>
-    </div>
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-      <div class="flex items-center justify-between mb-3">
-        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center"><i class="fas fa-heart text-red-500"></i></div>
-        <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">minggu ini</span>
-      </div>
-      <div class="text-2xl font-extrabold text-gray-900" id="statFavs">28</div>
-      <div class="text-sm text-gray-500 mt-0.5">Difavoritkan</div>
-    </div>
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-      <div class="flex items-center justify-between mb-3">
-        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-check-circle text-purple-600"></i></div>
-        <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">aktif</span>
-      </div>
-      <div class="text-2xl font-extrabold text-gray-900" id="statActive">2</div>
-      <div class="text-sm text-gray-500 mt-0.5">Properti Aktif</div>
+    <div class="mobile-menu-nav">
+      <a href="index.html"><i class="fas fa-home" style="color:#2563eb;"></i>Beranda</a>
+      <a href="properti.html"><i class="fas fa-search" style="color:#2563eb;"></i>Cari Properti</a>
+      <a href="tambah-properti.html"><i class="fas fa-plus-circle" style="color:#16a34a;"></i>Pasang Iklan</a>
+      <a href="profil.html"><i class="fas fa-user" style="color:#6b7280;"></i>Profil</a>
+      <button onclick="Auth.logout()" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;font-size:15px;font-weight:500;color:#dc2626;background:none;border:none;cursor:pointer;width:100%;font-family:inherit;">
+        <i class="fas fa-sign-out-alt" style="width:20px;text-align:center;"></i>Keluar
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- Tabs -->
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="border-b border-gray-100">
-      <div class="flex overflow-x-auto">
-        <button onclick="switchTab('properti')" id="tab-properti" class="px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 border-blue-600 text-blue-600">
-          <i class="fas fa-home mr-2"></i>Properti Saya
-        </button>
-        <button onclick="switchTab('pesan')" id="tab-pesan" class="px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700 relative">
-          <i class="fas fa-envelope mr-2"></i>Pesan Masuk
-          <span class="absolute top-3 right-3 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-        </button>
-        <button onclick="switchTab('favorit')" id="tab-favorit" class="px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-          <i class="fas fa-heart mr-2"></i>Favorit Saya
-        </button>
+<div class="container" style="padding-top:28px;padding-bottom:40px;">
+  <div style="display:grid;grid-template-columns:1fr;gap:24px;" id="dashLayout">
+
+    <!-- SIDEBAR -->
+    <div style="display:none;" id="dashSidebar">
+      <div class="card card-body" style="position:sticky;top:88px;">
+        <!-- Profile Mini -->
+        <div style="display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid #f3f4f6;margin-bottom:12px;">
+          <div class="user-avatar" style="width:52px;height:52px;font-size:20px;" id="sidebarAvatar">?</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:#111827;" id="sidebarName">...</div>
+            <div style="font-size:12px;color:#6b7280;" id="sidebarEmail">...</div>
+          </div>
+        </div>
+        <nav style="display:flex;flex-direction:column;gap:2px;">
+          <a href="dashboard.html" class="dash-nav-link active"><i class="fas fa-th-large" style="color:#2563eb;"></i>Dashboard</a>
+          <a href="dashboard.html#properties" class="dash-nav-link" onclick="showTab('properties',this)"><i class="fas fa-home" style="color:#374151;"></i>Properti Saya</a>
+          <a href="profil.html?tab=favorit" class="dash-nav-link"><i class="fas fa-heart" style="color:#ef4444;"></i>Favorit</a>
+          <a href="profil.html" class="dash-nav-link"><i class="fas fa-user" style="color:#6b7280;"></i>Profil & Pengaturan</a>
+          <div class="divider"></div>
+          <button onclick="Auth.logout()" class="dash-nav-link" style="color:#dc2626;"><i class="fas fa-sign-out-alt"></i>Keluar</button>
+        </nav>
       </div>
     </div>
 
-    <!-- TAB CONTENT: PROPERTI SAYA -->
-    <div id="content-properti" class="p-6">
-      <!-- Filter Bar -->
-      <div class="flex flex-col sm:flex-row gap-3 mb-5">
-        <input type="text" id="searchMyProp" placeholder="Cari properti Anda..." oninput="filterMyProperties()" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1">
-        <div class="flex gap-2 overflow-x-auto">
-          ${['Semua','Aktif','Nonaktif','Terjual','Tersewa'].map((s,i) =>
-            `<button onclick="filterByStatus('${s.toLowerCase()}')" class="status-filter-btn whitespace-nowrap px-3 py-2 rounded-xl text-sm font-medium border ${i===0?'bg-blue-600 text-white border-blue-600':'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}">${s}</button>`
-          ).join('')}
+    <!-- MAIN -->
+    <div id="dashMain">
+      <!-- Welcome -->
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;" class="welcome-row">
+        <div>
+          <h1 style="font-size:clamp(1.2rem,3vw,1.5rem);font-weight:800;color:#111827;">Selamat datang, <span id="welcomeName">...</span>! 👋</h1>
+          <p style="font-size:13px;color:#6b7280;margin-top:4px;">Kelola properti dan pantau performa iklan Anda</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="tambah-properti.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i>Pasang Iklan Baru</a>
+          <a href="profil.html" class="btn btn-gray btn-sm"><i class="fas fa-cog"></i>Pengaturan</a>
         </div>
       </div>
 
-      <!-- Property List -->
-      <div id="myPropertyList" class="space-y-4"></div>
-      
-      <!-- Empty -->
-      <div id="myPropEmpty" class="hidden text-center py-16">
-        <div class="text-5xl mb-4">🏠</div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">Belum ada properti</h3>
-        <p class="text-gray-500 mb-4">Mulai pasang iklan properti Anda sekarang</p>
-        <a href="tambah-properti.html" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">
-          <i class="fas fa-plus"></i>Pasang Iklan Pertama
-        </a>
+      <!-- Stats -->
+      <div class="dashboard-stats" style="margin-bottom:24px;">
+        <div class="stat-widget">
+          <div class="stat-widget-icon" style="background:#dbeafe;"><i class="fas fa-home" style="color:#2563eb;"></i></div>
+          <div class="stat-widget-value" id="statTotal">0</div>
+          <div class="stat-widget-label">Total Properti</div>
+          <div style="margin-top:4px;font-size:11px;color:#16a34a;font-weight:600;">+2 bulan ini</div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon" style="background:#dcfce7;"><i class="fas fa-eye" style="color:#16a34a;"></i></div>
+          <div class="stat-widget-value" id="statViews">0</div>
+          <div class="stat-widget-label">Total Dilihat</div>
+          <div style="margin-top:4px;font-size:11px;color:#16a34a;font-weight:600;">↑ 12% bulan ini</div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon" style="background:#fee2e2;"><i class="fas fa-heart" style="color:#ef4444;"></i></div>
+          <div class="stat-widget-value" id="statFavs">0</div>
+          <div class="stat-widget-label">Difavoritkan</div>
+          <div style="margin-top:4px;font-size:11px;color:#6b7280;font-weight:600;">minggu ini</div>
+        </div>
+        <div class="stat-widget">
+          <div class="stat-widget-icon" style="background:#fef3c7;"><i class="fas fa-envelope" style="color:#f59e0b;"></i></div>
+          <div class="stat-widget-value" id="statMsg">5</div>
+          <div class="stat-widget-label">Pesan Masuk</div>
+          <div style="margin-top:4px;font-size:11px;color:#f59e0b;font-weight:600;">2 belum dibaca</div>
+        </div>
       </div>
-    </div>
 
-    <!-- TAB CONTENT: PESAN -->
-    <div id="content-pesan" class="hidden p-6">
-      <div id="messageList" class="space-y-3"></div>
-    </div>
+      <!-- Tabs -->
+      <div class="tabs" style="margin-bottom:20px;">
+        <button class="tab-btn active" onclick="showTab('overview',this)">Overview</button>
+        <button class="tab-btn" onclick="showTab('properties',this)">Properti Saya</button>
+        <button class="tab-btn" onclick="showTab('messages',this)">Pesan</button>
+        <button class="tab-btn" onclick="showTab('favorites',this)">Favorit</button>
+      </div>
 
-    <!-- TAB CONTENT: FAVORIT -->
-    <div id="content-favorit" class="hidden p-6">
-      <div id="favoritList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-      <div id="favoritEmpty" class="hidden text-center py-16">
-        <div class="text-5xl mb-4">❤️</div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">Belum ada properti favorit</h3>
-        <p class="text-gray-500 mb-4">Tambahkan properti ke favorit saat menjelajahi</p>
-        <a href="properti.html" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">
-          <i class="fas fa-search"></i>Jelajahi Properti
-        </a>
+      <!-- TAB: Overview -->
+      <div id="tab-overview" class="tab-content">
+        <div style="display:grid;gap:16px;">
+          <!-- Quick actions -->
+          <div class="card card-body">
+            <div style="font-size:14px;font-weight:700;margin-bottom:14px;color:#111827;">Aksi Cepat</div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;" id="quickActionsGrid">
+              <a href="tambah-properti.html" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px;background:#eff6ff;border-radius:14px;text-align:center;border:1.5px dashed #bfdbfe;transition:all 0.15s;" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#bfdbfe'">
+                <div style="width:44px;height:44px;background:#2563eb;border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-plus text-white" style="color:white;font-size:18px;"></i></div>
+                <span style="font-size:13px;font-weight:600;color:#1d4ed8;">Pasang Iklan Baru</span>
+              </a>
+              <a href="properti.html" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px;background:#f0fdf4;border-radius:14px;text-align:center;border:1.5px dashed #bbf7d0;transition:all 0.15s;" onmouseover="this.style.borderColor='#16a34a'" onmouseout="this.style.borderColor='#bbf7d0'">
+                <div style="width:44px;height:44px;background:#16a34a;border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-search" style="color:white;font-size:18px;"></i></div>
+                <span style="font-size:13px;font-weight:600;color:#15803d;">Cari Properti</span>
+              </a>
+              <a href="kpr.html" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px;background:#f5f3ff;border-radius:14px;text-align:center;border:1.5px dashed #ddd6fe;transition:all 0.15s;" onmouseover="this.style.borderColor='#7c3aed'" onmouseout="this.style.borderColor='#ddd6fe'">
+                <div style="width:44px;height:44px;background:#7c3aed;border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-calculator" style="color:white;font-size:18px;"></i></div>
+                <span style="font-size:13px;font-weight:600;color:#6d28d9;">Simulasi KPR</span>
+              </a>
+              <a href="profil.html" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px;background:#fff7ed;border-radius:14px;text-align:center;border:1.5px dashed #fed7aa;transition:all 0.15s;" onmouseover="this.style.borderColor='#ea580c'" onmouseout="this.style.borderColor='#fed7aa'">
+                <div style="width:44px;height:44px;background:#ea580c;border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-user" style="color:white;font-size:18px;"></i></div>
+                <span style="font-size:13px;font-weight:600;color:#c2410c;">Edit Profil</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Recent properties -->
+          <div class="card">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Properti Terbaru</span>
+              <button onclick="showTab('properties',document.querySelector('.tab-btn:nth-child(2)'))" style="font-size:12px;color:#2563eb;background:none;border:none;cursor:pointer;font-weight:600;">Lihat Semua</button>
+            </div>
+            <div id="recentPropsList" style="padding:12px;display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Properties -->
+      <div id="tab-properties" class="tab-content hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+          <span style="font-size:14px;font-weight:600;color:#111827;" id="propTabTitle">Properti Saya</span>
+          <a href="tambah-properti.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i>Pasang Iklan</a>
+        </div>
+        <div id="myPropertiesList" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </div>
+
+      <!-- TAB: Messages -->
+      <div id="tab-messages" class="tab-content hidden">
+        <div style="display:flex;flex-direction:column;gap:12px;" id="messagesList"></div>
+      </div>
+
+      <!-- TAB: Favorites -->
+      <div id="tab-favorites" class="tab-content hidden">
+        <div class="properties-grid" id="favoritesGrid"></div>
+        <div id="favEmpty" class="empty-state hidden">
+          <div class="empty-state-icon">❤️</div>
+          <div class="empty-state-title">Belum ada favorit</div>
+          <div class="empty-state-desc">Simpan properti favorit Anda untuk mudah menemukannya kembali</div>
+          <a href="properti.html" class="btn btn-primary">Cari Properti</a>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
-<div id="deleteModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
-    <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-trash-alt text-red-500 text-xl"></i></div>
-    <h3 class="font-bold text-gray-900 text-lg mb-2">Hapus Properti?</h3>
-    <p class="text-gray-500 text-sm mb-5">Tindakan ini tidak dapat dibatalkan. Properti akan dihapus permanen.</p>
-    <div class="flex gap-3">
-      <button onclick="document.getElementById('deleteModal').classList.add('hidden')" class="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl font-semibold text-sm">Batal</button>
-      <button onclick="confirmDelete()" class="flex-1 py-2.5 bg-red-500 text-white rounded-xl font-semibold text-sm hover:bg-red-600">Hapus</button>
-    </div>
-  </div>
-</div>
-
-<!-- Mobile Bottom Nav -->
-<div class="mobile-bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 px-2 py-2">
-  <div class="flex justify-around items-center">
-    <a href="index.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-home text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Beranda</span></a>
-    <a href="properti.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-search text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Cari</span></a>
-    <a href="tambah-properti.html" class="flex flex-col items-center gap-1 -mt-5"><div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-plus text-white text-lg"></i></div><span class="text-xs text-gray-400 mt-1">Pasang</span></a>
-    <button onclick="switchTab('favorit')" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-heart text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Favorit</span></button>
-    <a href="profil.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-user text-blue-600 text-xl"></i><span class="text-xs text-blue-600 font-medium">Akun</span></a>
-  </div>
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav">
+  <a href="index.html"><i class="fas fa-home"></i>Beranda</a>
+  <a href="properti.html"><i class="fas fa-search"></i>Cari</a>
+  <a href="tambah-properti.html" class="nav-add"><i class="fas fa-plus"></i>Pasang</a>
+  <a href="kpr.html"><i class="fas fa-calculator"></i>KPR</a>
+  <a href="dashboard.html" class="active"><i class="fas fa-user"></i>Akun</a>
 </div>
 
 <script src="js/data.js"></script>
+<script src="js/app.js"></script>
 <script>
-let user = null;
-let myProperties = [];
-let propToDelete = null;
-let activeStatusFilter = 'semua';
-
-// Mock user properties (with status)
-function getUserProperties(userId) {
-  const props = RUMAHKITA_PROPERTIES.slice(0,5).map((p,i) => ({
-    ...p,
-    status: ['aktif','aktif','nonaktif','terjual','tersewa'][i] || 'aktif'
-  }));
-  return props;
-}
+// Require auth
+const user = Auth.getUser();
+if (!user) { window.location.href = 'login.html'; }
 
 // Mock messages
 const MESSAGES = [
-  { id:'msg1', sender:'Rian Kusuma', avatar:'https://picsum.photos/seed/msg1/60/60', property:'Rumah Mewah Modern di Kemang', message:'Halo, saya tertarik dengan properti ini. Apakah masih tersedia? Bisa survey kapan ya?', time:'2 jam yang lalu', read:false, phone:'0812345678' },
-  { id:'msg2', sender:'Nina Putri', avatar:'https://picsum.photos/seed/msg2/60/60', property:'Apartemen Premium View Laut', message:'Selamat pagi, apakah harga bisa nego? Saya ingin beli cash.', time:'1 hari yang lalu', read:false, phone:'0878901234' },
-  { id:'msg3', sender:'Dodi Hartono', avatar:'https://picsum.photos/seed/msg3/60/60', property:'Rumah Cluster BSD City', message:'Apakah properti ini sudah ada sertifikat SHM? Mohon infonya.', time:'3 hari yang lalu', read:false, phone:'0856789012' },
-  { id:'msg4', sender:'Linda Sari', avatar:'https://picsum.photos/seed/msg4/60/60', property:'Rumah Mewah Modern di Kemang', message:'Saya ingin melakukan survey besok pagi. Bisa diatur ya pak?', time:'5 hari yang lalu', read:true, phone:'0821234567' },
+  { id:'m1', from:'Budi Santoso', avatar:'B', subject:'Tentang Rumah di Kemang', preview:'Halo, apakah properti masih tersedia? Saya ingin survei...', time:'2 jam lalu', read:false },
+  { id:'m2', from:'Sari Dewi', avatar:'S', subject:'Harga nego apartemen', preview:'Permisi, apakah harga bisa nego? Saya sangat tertarik...', time:'5 jam lalu', read:false },
+  { id:'m3', from:'Ahmad Fauzi', avatar:'A', subject:'Jadwal kunjungan', preview:'Kapan bisa survei propertinya? Saya tersedia akhir pekan...', time:'1 hari lalu', read:true },
+  { id:'m4', from:'Linda Wati', avatar:'L', subject:'Informasi KPR', preview:'Apakah bisa menggunakan KPR Bank BCA? Mohon info...', time:'2 hari lalu', read:true },
+  { id:'m5', from:'Rudi Hartono', avatar:'R', subject:'Tawaran harga tanah', preview:'Saya ingin menawar harga tanah tersebut, apakah bisa...', time:'3 hari lalu', read:true },
 ];
 
-// ============================
-// INIT
-// ============================
-document.addEventListener('DOMContentLoaded', () => {
-  user = JSON.parse(localStorage.getItem('rumahkita_user') || 'null');
-  if (!user) { window.location.href = 'login.html'; return; }
-  
+// User's mock properties (use first 3 from data)
+function getMyProperties() {
+  if (typeof RUMAHKITA_PROPERTIES === 'undefined') return [];
+  return RUMAHKITA_PROPERTIES.slice(0, 3).map((p, i) => ({
+    ...p,
+    status: i === 0 ? 'aktif' : i === 1 ? 'aktif' : 'pending',
+    user_id: user?.id
+  }));
+}
+
+function initDashboard() {
+  if (!user) return;
+
+  // Set user info
   document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
-  document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
-  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  
-  myProperties = getUserProperties(user.id);
-  renderMyProperties();
+  document.getElementById('sidebarName').textContent = user.name;
+  document.getElementById('sidebarEmail').textContent = user.email || 'user@rumahkita.com';
+  document.getElementById('sidebarAvatar').textContent = Fmt.initials(user.name);
+
+  // Stats
+  const myProps = getMyProperties();
+  document.getElementById('statTotal').textContent = myProps.length;
+  const totalViews = myProps.reduce((sum, p) => sum + (p.views || 0), 0);
+  document.getElementById('statViews').textContent = Fmt.number(totalViews);
+  document.getElementById('statFavs').textContent = Favorites.getAll().length + 28;
+
+  // Render all tabs
+  renderRecentProps(myProps);
+  renderMyProperties(myProps);
   renderMessages();
   renderFavorites();
-  
-  // Check hash for tab
-  if (window.location.hash === '#favorit') switchTab('favorit');
-  if (window.location.hash === '#pesan') switchTab('pesan');
-});
 
-// ============================
-// TABS
-// ============================
-function switchTab(tab) {
-  ['properti','pesan','favorit'].forEach(t => {
-    document.getElementById('content-' + t).classList.toggle('hidden', t !== tab);
-    const btn = document.getElementById('tab-' + t);
-    if (btn) btn.className = `px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 relative ${t === tab ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`;
-  });
-  history.pushState({}, '', '#' + tab);
+  // Layout
+  checkLayout();
 }
 
-// ============================
-// MY PROPERTIES
-// ============================
-function renderMyProperties() {
-  let list = [...myProperties];
-  const search = document.getElementById('searchMyProp').value.toLowerCase();
-  if (search) list = list.filter(p => p.title.toLowerCase().includes(search));
-  if (activeStatusFilter !== 'semua') list = list.filter(p => p.status === activeStatusFilter);
-  
-  const container = document.getElementById('myPropertyList');
-  const empty = document.getElementById('myPropEmpty');
-  
-  if (!list.length) {
-    container.innerHTML = '';
-    empty.classList.remove('hidden');
+function checkLayout() {
+  const isDesktop = window.innerWidth >= 900;
+  const sidebar = document.getElementById('dashSidebar');
+  const layout = document.getElementById('dashLayout');
+  if (isDesktop) {
+    sidebar.style.display = 'block';
+    layout.style.gridTemplateColumns = '240px 1fr';
+  } else {
+    sidebar.style.display = 'none';
+    layout.style.gridTemplateColumns = '1fr';
+  }
+}
+
+window.addEventListener('resize', checkLayout);
+
+// Tabs
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+  document.getElementById('tab-' + name)?.classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function renderRecentProps(myProps) {
+  const container = document.getElementById('recentPropsList');
+  if (!container || !myProps.length) { container.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:24px;font-size:14px;">Belum ada properti</p>'; return; }
+  container.innerHTML = myProps.slice(0, 3).map(p => `
+    <div class="prop-row">
+      <img class="prop-row-img" src="${p.images?.[0]||'https://picsum.photos/seed/'+p.id+'/200/200'}" alt="${p.title}" onerror="this.src='https://picsum.photos/seed/${p.id}/200/200'">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:13px;color:#111827;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${p.title}</div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px;">${Fmt.price(p.price)}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <div class="status-dot" style="background:${p.status==='aktif'?'#16a34a':'#f59e0b'};"></div>
+          <span style="font-size:11px;font-weight:600;color:${p.status==='aktif'?'#16a34a':'#f59e0b'};">${p.status==='aktif'?'Aktif':'Menunggu'}</span>
+          <span style="font-size:11px;color:#9ca3af;">· ${Fmt.number(p.views)} dilihat</span>
+        </div>
+      </div>
+      <a href="detail-properti.html?id=${p.id}" style="font-size:12px;color:#2563eb;font-weight:600;white-space:nowrap;flex-shrink:0;"><i class="fas fa-external-link-alt"></i></a>
+    </div>`).join('');
+}
+
+function renderMyProperties(myProps) {
+  const container = document.getElementById('myPropertiesList');
+  if (!container) return;
+  if (!myProps.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏠</div><div class="empty-state-title">Belum ada properti</div><div class="empty-state-desc">Mulai pasang iklan properti pertama Anda</div><a href="tambah-properti.html" class="btn btn-primary">Pasang Iklan</a></div>`;
     return;
   }
-  empty.classList.add('hidden');
-  
-  const statusConfig = {
-    aktif: { label:'Aktif', bg:'bg-green-100', text:'text-green-700' },
-    nonaktif: { label:'Nonaktif', bg:'bg-gray-100', text:'text-gray-600' },
-    terjual: { label:'Terjual', bg:'bg-red-100', text:'text-red-700' },
-    tersewa: { label:'Tersewa', bg:'bg-orange-100', text:'text-orange-700' },
-    draft: { label:'Draft', bg:'bg-yellow-100', text:'text-yellow-700' },
-  };
-  
-  container.innerHTML = list.map(p => {
-    const sc = statusConfig[p.status] || statusConfig.aktif;
-    return `<div class="flex flex-col sm:flex-row gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-blue-200 transition">
-      <img src="${p.images[0]}" alt="${p.title}" class="w-full sm:w-32 h-24 object-cover rounded-xl flex-shrink-0 cursor-pointer" onclick="location.href='detail-properti.html?id=${p.id}'">
-      <div class="flex-1 min-w-0">
-        <div class="flex flex-wrap items-center gap-2 mb-1">
-          <span class="${sc.bg} ${sc.text} text-xs px-2 py-0.5 rounded-full font-semibold">${sc.label}</span>
-          <span class="${p.listing==='dijual'?'bg-blue-100 text-blue-700':'bg-green-100 text-green-700'} text-xs px-2 py-0.5 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span>
+  document.getElementById('propTabTitle').textContent = `Properti Saya (${myProps.length})`;
+  container.innerHTML = myProps.map(p => `
+    <div class="card" style="overflow:hidden;">
+      <div style="display:flex;gap:0;">
+        <div style="width:120px;min-width:120px;flex-shrink:0;overflow:hidden;">
+          <img src="${p.images?.[0]||'https://picsum.photos/seed/'+p.id+'/300/200'}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;min-height:100px;" onerror="this.src='https://picsum.photos/seed/${p.id}/300/200'">
         </div>
-        <h3 class="font-bold text-gray-900 line-clamp-1 mb-1">${p.title}</h3>
-        <p class="text-blue-600 font-bold">${formatRupiah(p.price)}${p.price_type==='per_bulan'?'/bulan':''}</p>
-        <div class="flex items-center gap-4 text-xs text-gray-400 mt-1">
-          <span><i class="fas fa-eye mr-1"></i>${p.views.toLocaleString('id-ID')}</span>
-          <span><i class="fas fa-map-marker-alt mr-1"></i>${p.city}</span>
-          <span><i class="fas fa-calendar mr-1"></i>${relativeTime(p.created_at)}</span>
-        </div>
-      </div>
-      <div class="flex flex-row sm:flex-col gap-2 flex-shrink-0">
-        <a href="detail-properti.html?id=${p.id}" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition"><i class="fas fa-eye text-blue-600"></i>Lihat</a>
-        <a href="tambah-properti.html?edit=${p.id}" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition"><i class="fas fa-edit text-green-600"></i>Edit</a>
-        <button onclick="toggleStatus('${p.id}')" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition"><i class="fas fa-toggle-${p.status==='aktif'?'on text-blue-600':'off text-gray-400'}"></i>${p.status==='aktif'?'Nonaktifkan':'Aktifkan'}</button>
-        <button onclick="openDeleteModal('${p.id}')" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-red-200 rounded-lg font-medium text-red-600 hover:bg-red-50 transition"><i class="fas fa-trash-alt"></i>Hapus</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function filterMyProperties() { renderMyProperties(); }
-function filterByStatus(status) {
-  activeStatusFilter = status;
-  document.querySelectorAll('.status-filter-btn').forEach(btn => {
-    btn.className = btn.className.replace('bg-blue-600 text-white border-blue-600','bg-white text-gray-600 border-gray-200 hover:border-blue-300');
-  });
-  event.target.className = event.target.className.replace('bg-white text-gray-600 border-gray-200 hover:border-blue-300','bg-blue-600 text-white border-blue-600');
-  renderMyProperties();
-}
-
-function toggleStatus(id) {
-  const p = myProperties.find(x => x.id === id);
-  if (p) {
-    p.status = p.status === 'aktif' ? 'nonaktif' : 'aktif';
-    renderMyProperties();
-    showDashboardToast(`Properti ${p.status === 'aktif' ? 'diaktifkan' : 'dinonaktifkan'}`, 'success');
-  }
-}
-
-function openDeleteModal(id) {
-  propToDelete = id;
-  document.getElementById('deleteModal').classList.remove('hidden');
-}
-function confirmDelete() {
-  myProperties = myProperties.filter(p => p.id !== propToDelete);
-  document.getElementById('deleteModal').classList.add('hidden');
-  renderMyProperties();
-  showDashboardToast('Properti berhasil dihapus', 'info');
-  document.getElementById('statTotal').textContent = myProperties.length;
-  document.getElementById('statActive').textContent = myProperties.filter(p => p.status === 'aktif').length;
-}
-
-// ============================
-// MESSAGES
-// ============================
-function renderMessages() {
-  document.getElementById('messageList').innerHTML = MESSAGES.map(m => `
-    <div class="flex gap-4 p-4 rounded-xl ${m.read ? 'bg-gray-50' : 'bg-blue-50 border border-blue-100'} hover:bg-gray-100 transition cursor-pointer" onclick="markRead('${m.id}')">
-      <img src="${m.avatar}" alt="${m.sender}" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
-      <div class="flex-1 min-w-0">
-        <div class="flex items-start justify-between gap-2">
-          <div>
-            <span class="font-semibold text-gray-900">${m.sender}</span>
-            ${!m.read ? '<span class="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full ml-1">Baru</span>' : ''}
+        <div style="padding:14px 16px;flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:700;color:#111827;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${p.title}</div>
+              <div style="font-size:14px;font-weight:800;color:#2563eb;margin-top:2px;">${Fmt.price(p.price)}</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap;">
+                <div class="status-dot" style="background:${p.status==='aktif'?'#16a34a':'#f59e0b'};"></div>
+                <span style="font-size:11px;font-weight:700;color:${p.status==='aktif'?'#16a34a':'#d97706'};">${p.status==='aktif'?'Aktif':'Menunggu Review'}</span>
+                <span style="font-size:11px;color:#9ca3af;">· ${Fmt.number(p.views)} dilihat</span>
+              </div>
+            </div>
           </div>
-          <span class="text-xs text-gray-400 shrink-0">${m.time}</span>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+            <a href="detail-properti.html?id=${p.id}" class="btn btn-gray btn-sm"><i class="fas fa-eye"></i>Lihat</a>
+            <a href="tambah-properti.html?edit=${p.id}" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i>Edit</a>
+            <button onclick="deleteProperty('${p.id}',this)" class="btn btn-danger btn-sm" style="background:#fff0f0;color:#dc2626;border:1.5px solid #fecaca;"><i class="fas fa-trash"></i>Hapus</button>
+          </div>
         </div>
-        <p class="text-xs text-blue-600 font-medium mb-1">Re: ${m.property}</p>
-        <p class="text-sm text-gray-600 line-clamp-2">${m.message}</p>
       </div>
-      <div class="shrink-0">
-        <a href="https://wa.me/${m.phone.replace(/^0/,'62')}" target="_blank" class="flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-semibold hover:bg-green-600 transition">
-          <i class="fab fa-whatsapp"></i>Balas
-        </a>
-      </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function markRead(id) {
-  const msg = MESSAGES.find(m => m.id === id);
-  if (msg) msg.read = true;
-  renderMessages();
+function renderMessages() {
+  const container = document.getElementById('messagesList');
+  if (!container) return;
+  container.innerHTML = MESSAGES.map(m => `
+    <div class="card card-body" style="${!m.read?'border-left:3px solid #2563eb;':''}" onclick="markRead('${m.id}',this)" style="cursor:pointer;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div class="user-avatar" style="width:42px;height:42px;font-size:15px;flex-shrink:0;">${m.avatar}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-weight:700;font-size:14px;color:#111827;">${m.from}</span>
+            <span style="font-size:11px;color:#9ca3af;">${m.time}</span>
+          </div>
+          <div style="font-size:13px;font-weight:${m.read?'500':'700'};color:#374151;margin-top:2px;">${m.subject}</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${m.preview}</div>
+        </div>
+        ${!m.read ? '<div style="width:8px;height:8px;border-radius:50%;background:#2563eb;margin-top:6px;flex-shrink:0;"></div>' : ''}
+      </div>
+    </div>`).join('');
 }
 
-// ============================
-// FAVORITES
-// ============================
 function renderFavorites() {
-  const favIds = RUMAHKITA_PROPERTIES.map(p => p.id).filter(id => localStorage.getItem('fav_'+id) === '1');
-  const favProps = RUMAHKITA_PROPERTIES.filter(p => favIds.includes(p.id));
-  
-  const container = document.getElementById('favoritList');
-  const empty = document.getElementById('favoritEmpty');
-  
-  if (!favProps.length) { container.innerHTML = ''; empty.classList.remove('hidden'); return; }
-  empty.classList.add('hidden');
-  
-  container.innerHTML = favProps.map(p => `
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition" onclick="location.href='detail-properti.html?id=${p.id}'">
-      <div class="relative" style="padding-top:60%;">
-        <img src="${p.images[0]}" alt="${p.title}" class="absolute inset-0 w-full h-full object-cover">
-        <button onclick="event.stopPropagation(); removeFav('${p.id}', this.closest('.bg-white'))" class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full shadow flex items-center justify-center hover:scale-110 transition">
-          <i class="fas fa-heart text-red-500 text-sm"></i>
-        </button>
-      </div>
-      <div class="p-3">
-        <div class="text-blue-600 font-bold text-sm">${formatRupiah(p.price)}${p.price_type==='per_bulan'?'/bln':''}</div>
-        <div class="text-gray-800 font-medium text-xs line-clamp-2 mt-1">${p.title}</div>
-        <div class="text-gray-400 text-xs mt-1">📍 ${p.city}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function removeFav(id, card) {
-  localStorage.removeItem('fav_' + id);
-  card.style.opacity = '0';
-  card.style.transform = 'scale(0.9)';
-  card.style.transition = 'all 0.3s';
-  setTimeout(() => { card.remove(); renderFavorites(); }, 300);
-  showDashboardToast('Dihapus dari favorit', 'info');
-}
-
-// ============================
-// UTILS
-// ============================
-function formatRupiah(angka) { return 'Rp ' + parseInt(angka).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
-function relativeTime(dateStr) {
-  const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
-  if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
-  if (diff < 604800) return Math.floor(diff/86400) + ' hari lalu';
-  return new Date(dateStr).toLocaleDateString('id-ID', { day:'numeric', month:'short' });
-}
-function showDashboardToast(msg, type='info') {
-  const el = document.createElement('div');
-  el.style.cssText = `position:fixed;bottom:80px;right:24px;z-index:99999;background:${type==='success'?'#16a34a':type==='error'?'#dc2626':'#374151'};color:white;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.2);transform:translateY(20px);opacity:0;transition:all 0.3s;`;
-  el.textContent = msg;
-  document.body.appendChild(el);
-  requestAnimationFrame(() => { el.style.transform = 'translateY(0)'; el.style.opacity = '1'; });
-  setTimeout(() => { el.style.transform = 'translateY(20px)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
-}
-function logout() {
-  localStorage.removeItem('rumahkita_user');
-  window.location.href = 'login.html';
-}
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('#userDD') && !e.target.closest('#userMenuBtn')) {
-    document.getElementById('userDD').classList.remove('open');
+  const favIds = Favorites.getAll();
+  const favEmpty = document.getElementById('favEmpty');
+  const favGrid = document.getElementById('favoritesGrid');
+  if (!favIds.length) {
+    favGrid.innerHTML = '';
+    favEmpty?.classList.remove('hidden');
+    return;
   }
+  favEmpty?.classList.add('hidden');
+  if (typeof RUMAHKITA_PROPERTIES === 'undefined') return;
+  const favProps = RUMAHKITA_PROPERTIES.filter(p => favIds.includes(p.id));
+  favGrid.innerHTML = favProps.map(p => renderPropertyCard(p)).join('');
+}
+
+function deleteProperty(id, btn) {
+  if (!confirm('Hapus iklan ini?')) return;
+  btn.closest('.card').style.opacity = '0.4';
+  setTimeout(() => {
+    btn.closest('.card').remove();
+    Toast.success('Iklan berhasil dihapus');
+  }, 500);
+}
+
+function markRead(id, el) {
+  el.style.borderLeft = '';
+  const dot = el.querySelector('[style*="border-radius:50%;background:#2563eb"]');
+  if (dot) dot.remove();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(initDashboard, 100);
 });
 </script>
 </body>

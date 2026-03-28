@@ -4,405 +4,229 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Artikel - RumahKita</title>
+  <meta name="description" content="Baca artikel properti terbaru di RumahKita">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <link rel="stylesheet" href="css/style.css">
   <style>
-    .article-content h2 { font-size: 1.5rem; font-weight: 800; color: #111827; margin: 2rem 0 1rem; }
-    .article-content h3 { font-size: 1.25rem; font-weight: 700; color: #111827; margin: 1.5rem 0 0.75rem; }
-    .article-content p { color: #374151; line-height: 1.8; margin-bottom: 1.25rem; }
-    .article-content ul, .article-content ol { color: #374151; margin-left: 1.5rem; margin-bottom: 1.25rem; }
-    .article-content li { margin-bottom: 0.5rem; line-height: 1.7; }
-    .article-content ul { list-style-type: disc; }
-    .article-content ol { list-style-type: decimal; }
-    .article-content strong { color: #111827; font-weight: 700; }
-    .article-content blockquote { border-left: 4px solid #2563eb; padding: 12px 20px; background: #eff6ff; border-radius: 0 12px 12px 0; margin: 1.5rem 0; color: #1d4ed8; font-style: italic; }
-    .article-content .tip-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 16px 20px; margin: 1.5rem 0; }
-    .article-content .warning-box { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px 20px; margin: 1.5rem 0; }
+    body { padding-bottom: 80px; }
+    @media (min-width: 768px) { body { padding-bottom: 0; } }
+    .article-layout { display: grid; grid-template-columns: 1fr; gap: 32px; }
+    @media (min-width: 900px) { .article-layout { grid-template-columns: 1fr 300px; } }
+    .article-body h2 { font-size: 1.4rem; font-weight: 800; color: #111827; margin: 28px 0 12px; }
+    .article-body h3 { font-size: 1.1rem; font-weight: 700; color: #111827; margin: 20px 0 10px; }
+    .article-body p { font-size: 15px; color: #374151; line-height: 1.8; margin-bottom: 16px; }
+    .article-body ul, .article-body ol { padding-left: 20px; margin-bottom: 16px; }
+    .article-body li { font-size: 15px; color: #374151; line-height: 1.7; margin-bottom: 6px; }
+    .article-body blockquote { border-left: 4px solid #2563eb; padding: 12px 20px; background: #eff6ff; border-radius: 0 10px 10px 0; margin: 20px 0; font-style: italic; color: #1d4ed8; font-weight: 600; }
+    .article-body .tip-box { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 16px; margin: 20px 0; }
+    .article-body .tip-box strong { color: #15803d; font-size: 14px; }
+    .share-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .share-social { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: opacity 0.15s; }
+    .share-social:hover { opacity: 0.85; }
   </style>
 </head>
-<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+<body class="bg-gray-50">
 
-<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <a href="index.html" class="flex items-center gap-2">
-      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
-      <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon"><i class="fas fa-home"></i></div>
+      <div class="navbar-logo-text">Rumah<span>Kita</span></div>
     </a>
-    <a href="artikel.html" class="text-sm text-gray-600 hover:text-blue-600"><i class="fas fa-arrow-left mr-1"></i>Semua Artikel</a>
+    <div class="navbar-links">
+      <a href="properti.html?listing=dijual">Dijual</a>
+      <a href="properti.html?listing=disewa">Disewa</a>
+      <a href="kpr.html">KPR</a>
+      <a href="artikel.html" class="active" style="background:#eff6ff;color:#2563eb;">Artikel</a>
+    </div>
+    <div class="navbar-actions" id="navAuthDesktop"></div>
+    <button class="nav-hamburger" id="navHamburger"><i class="fas fa-bars"></i></button>
   </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="flex flex-col lg:flex-row gap-8">
-    <!-- Main Article -->
-    <main class="flex-1 min-w-0" id="articleMain">
-      <div class="text-gray-500 text-sm mb-4">Memuat artikel...</div>
-    </main>
-
-    <!-- Sidebar -->
-    <aside class="lg:w-72 flex-shrink-0">
-      <div class="sticky top-24 space-y-5">
-        <!-- Other Articles -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-bold text-gray-900 mb-4">Artikel Lainnya</h3>
-          <div class="space-y-4">
-            ${[
-              {slug:'tips-membeli-rumah-pertama',title:'Tips Membeli Rumah Pertama',img:'https://picsum.photos/seed/artikel1/120/80'},
-              {slug:'panduan-investasi-properti',title:'Panduan Investasi Properti',img:'https://picsum.photos/seed/artikel2/120/80'},
-              {slug:'cara-mengajukan-kpr',title:'Cara Mengajukan KPR',img:'https://picsum.photos/seed/artikel3/120/80'},
-              {slug:'perbedaan-shm-hgb-strata-title',title:'Perbedaan SHM, HGB & Strata Title',img:'https://picsum.photos/seed/artikel4/120/80'},
-            ].map(a => `
-              <a href="artikel-detail.html?slug=${a.slug}" class="flex gap-3 hover:opacity-80 transition">
-                <img src="${a.img}" alt="${a.title}" class="w-16 h-12 object-cover rounded-lg flex-shrink-0">
-                <span class="text-sm font-medium text-gray-700 line-clamp-2">${a.title}</span>
-              </a>
-            `).join('')}
-          </div>
-        </div>
-
-        <!-- CTA KPR -->
-        <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-5 text-white">
-          <h3 class="font-bold mb-2">Simulasi KPR</h3>
-          <p class="text-blue-200 text-sm mb-3">Hitung estimasi cicilan rumah impian Anda</p>
-          <a href="kpr.html" class="block text-center bg-white text-blue-600 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-50 transition">Coba Sekarang →</a>
-        </div>
-
-        <!-- Tags -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-bold text-gray-900 mb-3">Tag Populer</h3>
-          <div class="flex flex-wrap gap-2">
-            ${['KPR','Investasi','Rumah Pertama','Sewa','SHM','Tips','Jakarta','Bandung'].map(t =>
-              `<a href="artikel.html" class="text-xs px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full hover:bg-blue-50 hover:text-blue-700 transition">${t}</a>`
-            ).join('')}
-          </div>
-        </div>
-      </div>
-    </aside>
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+  <div class="mobile-menu-drawer">
+    <div class="mobile-menu-header">
+      <div class="navbar-logo"><div class="navbar-logo-icon"><i class="fas fa-home"></i></div><div class="navbar-logo-text">Rumah<span>Kita</span></div></div>
+      <button class="mobile-menu-close" id="mobileMenuClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mobile-menu-nav">
+      <a href="index.html"><i class="fas fa-home" style="color:#2563eb;"></i>Beranda</a>
+      <a href="artikel.html"><i class="fas fa-newspaper" style="color:#ea580c;"></i>Semua Artikel</a>
+    </div>
+    <div class="mobile-menu-footer" id="navAuthMobileFooter"></div>
   </div>
 </div>
 
+<div class="container" style="padding-top:24px;padding-bottom:48px;">
+  <!-- Loading -->
+  <div id="loadingState">
+    <div class="skeleton" style="height:16px;width:300px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:28px;width:80%;margin-bottom:8px;"></div>
+    <div class="skeleton" style="height:360px;border-radius:16px;margin:20px 0;"></div>
+  </div>
+
+  <!-- Content -->
+  <div id="articleContent" class="hidden fade-in"></div>
+
+  <!-- Not Found -->
+  <div id="notFoundState" class="hidden empty-state">
+    <div class="empty-state-icon">📰</div>
+    <div class="empty-state-title">Artikel Tidak Ditemukan</div>
+    <a href="artikel.html" class="btn btn-primary">Lihat Semua Artikel</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div><div class="footer-logo-text"><span>Rumah</span>Kita</div><p class="footer-desc">Platform properti terpercaya Indonesia.</p></div>
+    <div class="footer-col"><div class="footer-col-title">Properti</div><a href="properti.html?listing=dijual">Dijual</a><a href="properti.html?listing=disewa">Disewa</a></div>
+    <div class="footer-col"><div class="footer-col-title">Layanan</div><a href="tambah-properti.html">Pasang Iklan</a><a href="kpr.html">Simulasi KPR</a></div>
+    <div class="footer-col"><div class="footer-col-title">Info</div><a href="tentang.html">Tentang Kami</a><a href="kontak.html">Kontak</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 RumahKita</span></div>
+</footer>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav">
+  <a href="index.html"><i class="fas fa-home"></i>Beranda</a>
+  <a href="properti.html"><i class="fas fa-search"></i>Cari</a>
+  <a href="tambah-properti.html" class="nav-add"><i class="fas fa-plus"></i>Pasang</a>
+  <a href="kpr.html"><i class="fas fa-calculator"></i>KPR</a>
+  <a href="dashboard.html"><i class="fas fa-user"></i>Akun</a>
+</div>
+
+<script src="js/app.js"></script>
 <script>
-const ARTICLE_CONTENTS = {
-  'tips-membeli-rumah-pertama': {
-    title: 'Tips Membeli Rumah Pertama untuk Pemula',
-    category: 'Tips & Trik',
-    date: '10 Januari 2026',
-    readTime: '5 menit baca',
-    image: 'https://picsum.photos/seed/artikel1/1200/600',
-    content: `
-      <h2>1. Tentukan Budget dan Kemampuan Finansial</h2>
-      <p>Langkah pertama dan terpenting dalam membeli rumah adalah menentukan berapa budget yang Anda miliki dan mampu. Ini mencakup tidak hanya harga rumah, tetapi juga biaya-biaya tambahan seperti uang muka, biaya notaris, pajak, dan biaya KPR.</p>
-      <div class="tip-box">💡 <strong>Tips:</strong> Idealnya cicilan KPR tidak melebihi 30% dari penghasilan bulanan Anda untuk menjaga kesehatan finansial keluarga.</div>
-      <h2>2. Pilih Lokasi yang Tepat</h2>
-      <p>Lokasi adalah faktor krusial yang sangat mempengaruhi nilai properti dan kenyamanan hidup Anda. Pertimbangkan hal-hal berikut:</p>
-      <ul>
-        <li>Jarak ke tempat kerja dan sekolah anak</li>
-        <li>Akses ke fasilitas umum: rumah sakit, supermarket, masjid/gereja</li>
-        <li>Keamanan lingkungan sekitar</li>
-        <li>Potensi kenaikan nilai properti di masa depan</li>
-        <li>Kondisi infrastruktur: jalan, drainase, listrik, air</li>
-      </ul>
-      <h2>3. Pahami Jenis Sertifikat</h2>
-      <p>Sertifikat adalah dokumen kepemilikan yang sangat penting. Pastikan Anda memahami perbedaannya:</p>
-      <ul>
-        <li><strong>SHM (Sertifikat Hak Milik)</strong>: Sertifikat terkuat, kepemilikan penuh tidak terbatas waktu</li>
-        <li><strong>HGB (Hak Guna Bangunan)</strong>: Hak penggunaan selama 30 tahun, bisa diperpanjang</li>
-        <li><strong>Strata Title</strong>: Untuk apartemen/kondominium</li>
-      </ul>
-      <blockquote>Selalu prioritaskan properti dengan SHM karena memberikan kepastian hukum terkuat bagi pemilik.</blockquote>
-      <h2>4. Persiapkan Dokumen KPR</h2>
-      <p>Jika Anda berencana menggunakan KPR, siapkan dokumen-dokumen berikut:</p>
-      <ol>
-        <li>KTP dan Kartu Keluarga</li>
-        <li>NPWP (Nomor Pokok Wajib Pajak)</li>
-        <li>Slip gaji 3 bulan terakhir atau SPT Pajak Tahunan</li>
-        <li>Rekening koran 3-6 bulan terakhir</li>
-        <li>Surat keterangan kerja / akta pendirian usaha</li>
-        <li>Foto selfie dan dokumen properti</li>
-      </ol>
-      <h2>5. Survei Properti dengan Teliti</h2>
-      <p>Jangan terburu-buru membeli tanpa survei yang menyeluruh. Periksa kondisi fisik bangunan secara detail, termasuk kondisi atap, tembok, lantai, dan instalasi listrik dan air.</p>
-      <div class="warning-box">⚠️ <strong>Perhatian:</strong> Jangan ragu untuk mengajak ahli bangunan atau inspektor properti profesional saat melakukan survei, terutama untuk rumah bekas.</div>
-      <h2>6. Negosiasi Harga</h2>
-      <p>Sebagian besar harga properti masih bisa dinegosiasikan, terutama jika Anda membeli tunai atau dengan KPR dengan DP besar. Lakukan riset harga pasar properti di area tersebut sebagai dasar negosiasi.</p>
-      <h2>7. Proses Legal dan Akad</h2>
-      <p>Pastikan semua proses legal dilakukan dengan benar melalui notaris/PPAT yang terpercaya. Proses ini meliputi pengecekan sertifikat, penandatanganan PPJB, dan terakhir AJB (Akta Jual Beli).</p>
-    `
-  },
-  'panduan-investasi-properti': {
-    title: 'Panduan Investasi Properti yang Menguntungkan',
-    category: 'Investasi',
-    date: '15 Januari 2026',
-    readTime: '7 menit baca',
-    image: 'https://picsum.photos/seed/artikel2/1200/600',
-    content: `
-      <h2>Mengapa Properti Menjadi Pilihan Investasi Terbaik?</h2>
-      <p>Investasi properti di Indonesia telah terbukti memberikan return yang konsisten dari tahun ke tahun. Berbeda dengan saham yang volatil, properti cenderung lebih stabil dan memberikan passive income melalui sewa.</p>
-      <h2>1. Strategi Beli dan Sewa (Buy and Rent)</h2>
-      <p>Ini adalah strategi paling populer: beli properti di lokasi strategis, kemudian sewakan untuk mendapatkan pendapatan pasif bulanan.</p>
-      <div class="tip-box">💡 Yield sewa properti yang baik adalah 4-8% per tahun dari harga properti. Misalnya rumah Rp 1 miliar seharusnya bisa disewakan Rp 3-7 juta/bulan.</div>
-      <h2>2. Strategi Beli, Renovasi, Jual (Flip)</h2>
-      <p>Beli properti dengan harga di bawah pasar (biasanya properti tua atau yang butuh renovasi), renovasi untuk meningkatkan nilainya, lalu jual dengan profit.</p>
-      <ul>
-        <li>Cari properti foreclosure atau lelang bank</li>
-        <li>Properti warisan yang dijual cepat</li>
-        <li>Properti dengan masalah kosmetik (bukan struktural)</li>
-      </ul>
-      <h2>3. Investasi di Properti Baru</h2>
-      <p>Membeli properti baru dari developer, terutama saat pre-launch atau inden, biasanya memberikan harga terbaik dengan cicilan ringan.</p>
-      <blockquote>Developer terpercaya biasanya memberikan kenaikan harga 5-15% setiap tahun selama periode konstruksi berlangsung.</blockquote>
-      <h2>4. Lokasi yang Direkomendasikan untuk Investasi</h2>
-      <ol>
-        <li><strong>Kawasan perkotaan dengan infrastruktur berkembang</strong>: Area dekat stasiun MRT/LRT baru, jalan tol baru</li>
-        <li><strong>Kawasan wisata</strong>: Bali, Lombok, Labuan Bajo - potensi sewa harian tinggi</li>
-        <li><strong>Kota pendidikan</strong>: Yogyakarta, Malang - permintaan kos-kosan stabil</li>
-        <li><strong>Kawasan industri baru</strong>: Karawang, Cikarang, Kendal</li>
-      </ol>
-      <h2>5. Risiko dan Cara Mitigasinya</h2>
-      <ul>
-        <li><strong>Risiko tenant buruk</strong>: Lakukan seleksi tenant yang ketat, minta deposit</li>
-        <li><strong>Risiko developer nakal</strong>: Pilih developer terpercaya dengan track record baik</li>
-        <li><strong>Risiko likuiditas rendah</strong>: Diversifikasi portofolio, jangan investasi semua di properti</li>
-      </ul>
-    `
-  },
-  'cara-mengajukan-kpr': {
-    title: 'Cara Mengajukan KPR: Syarat dan Prosesnya',
-    category: 'KPR',
-    date: '20 Januari 2026',
-    readTime: '8 menit baca',
-    image: 'https://picsum.photos/seed/artikel3/1200/600',
-    content: `
-      <h2>Apa itu KPR?</h2>
-      <p>KPR (Kredit Pemilikan Rumah) adalah fasilitas kredit dari bank untuk membantu Anda memiliki rumah dengan cara mencicil dalam jangka waktu tertentu, biasanya 5-30 tahun.</p>
-      <h2>Syarat Umum Pengajuan KPR</h2>
-      <h3>Syarat Pemohon:</h3>
-      <ul>
-        <li>Warga Negara Indonesia (WNI)</li>
-        <li>Usia minimal 21 tahun atau sudah menikah</li>
-        <li>Usia tidak lebih dari 55-60 tahun saat kredit lunas</li>
-        <li>Memiliki penghasilan tetap (karyawan) atau tidak tetap (wirausaha)</li>
-        <li>Tidak memiliki catatan kredit macet (NPL)</li>
-      </ul>
-      <h3>Dokumen yang Dibutuhkan:</h3>
-      <ol>
-        <li>KTP suami dan istri (jika sudah menikah)</li>
-        <li>Kartu Keluarga</li>
-        <li>Akta nikah / cerai / kematian</li>
-        <li>NPWP</li>
-        <li>Slip gaji 3 bulan terakhir (karyawan) atau SPT Pajak (wirausaha)</li>
-        <li>Rekening koran / tabungan 3-6 bulan terakhir</li>
-        <li>Surat keterangan kerja</li>
-      </ol>
-      <h2>Proses Pengajuan KPR Step by Step</h2>
-      <ol>
-        <li><strong>Pilih properti dan bank</strong>: Bandingkan suku bunga, plafon, dan syarat dari beberapa bank</li>
-        <li><strong>Ajukan aplikasi</strong>: Lengkapi formulir dan dokumen yang diminta</li>
-        <li><strong>BI Checking / SLIK OJK</strong>: Bank akan mengecek riwayat kredit Anda</li>
-        <li><strong>Analisis kredit</strong>: Bank menganalisis kemampuan bayar dan nilai properti</li>
-        <li><strong>Survei properti</strong>: Appraisal bank akan menilai properti yang akan dibeli</li>
-        <li><strong>Persetujuan</strong>: Bank menerbitkan Surat Persetujuan Kredit (SPK)</li>
-        <li><strong>Akad kredit</strong>: Penandatanganan perjanjian kredit di depan notaris</li>
-        <li><strong>Pencairan dana</strong>: Bank mentransfer langsung ke penjual/developer</li>
-      </ol>
-      <div class="tip-box">💡 Proses KPR umumnya memakan waktu 2-4 minggu. Siapkan semua dokumen dari awal untuk mempercepat prosesnya.</div>
-      <h2>Tips Agar KPR Lebih Mudah Disetujui</h2>
-      <ul>
-        <li>Pastikan rasio cicilan tidak melebihi 30-40% penghasilan</li>
-        <li>Jaga catatan kredit tetap bersih selama minimal 1 tahun</li>
-        <li>Siapkan DP yang lebih besar untuk memperkuat pengajuan</li>
-        <li>Pilih bank yang sudah bekerja sama dengan developer</li>
-      </ul>
-    `
-  },
-  'perbedaan-shm-hgb-strata-title': {
-    title: 'Perbedaan SHM, HGB, dan Strata Title',
-    category: 'Hukum Properti',
-    date: '25 Januari 2026',
-    readTime: '6 menit baca',
-    image: 'https://picsum.photos/seed/artikel4/1200/600',
-    content: `
-      <h2>Mengapa Sertifikat Penting?</h2>
-      <p>Sertifikat properti adalah bukti legalitas kepemilikan tanah dan/atau bangunan yang diakui secara hukum di Indonesia. Memahami jenis sertifikat sangat penting sebelum Anda membeli properti.</p>
-      <h2>1. SHM (Sertifikat Hak Milik)</h2>
-      <p>SHM adalah bentuk sertifikat properti terkuat di Indonesia. Dengan SHM, Anda memiliki hak penuh atas tanah tersebut tanpa batasan waktu.</p>
-      <ul>
-        <li><strong>Kepemilikan</strong>: Permanen, tidak terbatas waktu</li>
-        <li><strong>Bisa dijual, diwariskan, atau dijaminkan</strong> ke bank</li>
-        <li><strong>Hanya untuk WNI</strong> - WNA tidak bisa memiliki SHM</li>
-        <li><strong>Nilai jual tertinggi</strong> dibanding sertifikat lain</li>
-      </ul>
-      <h2>2. HGB (Hak Guna Bangunan)</h2>
-      <p>HGB memberikan hak untuk mendirikan dan memiliki bangunan di atas tanah milik negara atau orang lain.</p>
-      <ul>
-        <li><strong>Masa berlaku</strong>: 30 tahun, dapat diperpanjang 20 tahun</li>
-        <li><strong>Bisa dimiliki</strong> WNI maupun badan hukum Indonesia</li>
-        <li>Umum untuk properti di kawasan industri, komersial, dan perumahan developer</li>
-        <li>Bisa ditingkatkan menjadi SHM dengan persyaratan tertentu</li>
-      </ul>
-      <blockquote>HGB yang hampir habis masa berlakunya bisa menjadi risiko investasi. Selalu cek masa berlaku sebelum membeli.</blockquote>
-      <h2>3. Strata Title</h2>
-      <p>Strata Title digunakan khusus untuk unit dalam bangunan bertingkat seperti apartemen, kondominium, atau townhouse.</p>
-      <ul>
-        <li><strong>Kepemilikan individual</strong> atas unit tertentu</li>
-        <li>Termasuk hak bersama atas fasilitas umum (kolam renang, gym, lobby)</li>
-        <li>Mengikuti masa berlaku HGB gedung induk</li>
-        <li>Cocok untuk investasi apartemen di pusat kota</li>
-      </ul>
-      <h2>4. AJB (Akta Jual Beli)</h2>
-      <p>AJB bukan sertifikat, melainkan akta yang membuktikan telah terjadi transaksi jual beli. AJB dibuat oleh notaris/PPAT sebagai tahap sebelum penerbitan sertifikat.</p>
-      <h2>5. Girik</h2>
-      <p>Girik adalah bukti pembayaran pajak tanah zaman dahulu, bukan merupakan sertifikat resmi. Properti dengan girik sebaiknya segera diurus ke BPN untuk mendapatkan sertifikat resmi.</p>
-      <div class="warning-box">⚠️ Hindari membeli properti dengan hanya berbekal girik tanpa proses pengurusan sertifikat, karena berisiko tinggi dari sisi hukum.</div>
-    `
-  },
-  'tips-menyewakan-properti-cepat': {
-    title: 'Tips Menyewakan Properti agar Cepat Laku',
-    category: 'Panduan Sewa',
-    date: '1 Februari 2026',
-    readTime: '5 menit baca',
-    image: 'https://picsum.photos/seed/artikel5/1200/600',
-    content: `
-      <h2>Mengapa Properti Susah Tersewa?</h2>
-      <p>Banyak pemilik properti yang mengeluh propertinya susah disewakan padahal sudah dipasang iklan. Biasanya masalahnya bukan pada propertinya, melainkan cara memasarkannya.</p>
-      <h2>1. Tentukan Harga Sewa yang Tepat</h2>
-      <p>Riset harga sewa properti serupa di sekitar lokasi Anda. Harga terlalu tinggi akan membuat properti lama tersewa, sementara terlalu rendah merugikan Anda.</p>
-      <h2>2. Foto yang Menarik dan Profesional</h2>
-      <p>Foto adalah hal pertama yang dilihat calon penyewa. Tips foto properti:</p>
-      <ul>
-        <li>Foto saat kondisi pencahayaan bagus (pagi/siang)</li>
-        <li>Bersihkan dan rapikan properti sebelum difoto</li>
-        <li>Ambil dari sudut yang memperlihatkan ruangan seluas mungkin</li>
-        <li>Minimal 8-10 foto untuk setiap area rumah</li>
-      </ul>
-      <h2>3. Tulis Deskripsi yang Menarik</h2>
-      <p>Deskripsi yang baik mencakup: lokasi strategis, fasilitas unggulan, spesifikasi lengkap, dan kondisi terkini. Hindari typo dan gunakan bahasa yang profesional.</p>
-      <h2>4. Pasang Iklan di Platform yang Tepat</h2>
-      <ul>
-        <li>Portal properti online seperti RumahKita</li>
-        <li>Media sosial: Instagram, Facebook Marketplace</li>
-        <li>Grup WhatsApp komunitas setempat</li>
-        <li>Papan iklan fisik di depan properti</li>
-      </ul>
-      <div class="tip-box">💡 Pasang iklan di RumahKita gratis dan jangkau ribuan calon penyewa aktif setiap harinya!</div>
-      <h2>5. Seleksi Tenant yang Baik</h2>
-      <p>Sempatkan untuk mengenal calon penyewa: tanyakan pekerjaan, jumlah penghuni, dan kebiasaan. Minta KTP dan referensi dari tempat sewa sebelumnya.</p>
-      <h2>6. Buat Perjanjian Sewa yang Jelas</h2>
-      <p>Perjanjian sewa harus mencakup: durasi sewa, harga dan cara pembayaran, deposit, larangan dan ketentuan, serta prosedur jika ada kerusakan.</p>
-    `
-  },
-  'checklist-sebelum-membeli-rumah-bekas': {
-    title: 'Checklist Sebelum Membeli Rumah Bekas',
-    category: 'Checklist',
-    date: '5 Februari 2026',
-    readTime: '9 menit baca',
-    image: 'https://picsum.photos/seed/artikel6/1200/600',
-    content: `
-      <h2>Mengapa Membeli Rumah Bekas Lebih Berisiko?</h2>
-      <p>Rumah bekas memiliki banyak keunggulan seperti harga lebih murah, lokasi strategis, dan bisa langsung ditempati. Namun ada risiko tersembunyi yang perlu diperiksa secara teliti.</p>
-      <h2>✅ Checklist Dokumen Legal</h2>
-      <ul>
-        <li>Sertifikat tanah: Cek keaslian, masa berlaku (jika HGB), dan sengketa</li>
-        <li>IMB (Izin Mendirikan Bangunan) sesuai kondisi bangunan</li>
-        <li>PBB (Pajak Bumi dan Bangunan) sudah lunas</li>
-        <li>Tagihan listrik, air, telepon tidak menunggak</li>
-        <li>Tidak ada sita/sengketa hukum di pengadilan</li>
-      </ul>
-      <h2>✅ Checklist Kondisi Struktur</h2>
-      <ul>
-        <li>Fondasi: periksa retak pada tembok (diagonal = serius)</li>
-        <li>Atap: kebocoran, genteng retak, atau kayu lapuk</li>
-        <li>Kolom dan balok: retak struktural</li>
-        <li>Lantai: keramik terangkat, tidak rata</li>
-        <li>Dinding: lembab, berjamur, plester mengelupas</li>
-      </ul>
-      <h2>✅ Checklist Instalasi</h2>
-      <ul>
-        <li>Instalasi listrik: kapasitas daya cukup, kondisi kabel aman</li>
-        <li>Instalasi air: tekanan air baik, tidak bocor</li>
-        <li>Saluran pembuangan: tidak buntu, tidak ada genangan</li>
-        <li>Septic tank: posisi, kondisi, dan kapasitas</li>
-      </ul>
-      <h2>✅ Checklist Lingkungan</h2>
-      <ul>
-        <li>Bebas banjir saat hujan deras</li>
-        <li>Akses jalan baik</li>
-        <li>Keamanan lingkungan</li>
-        <li>Tetangga yang ramah</li>
-        <li>Dekat fasilitas umum</li>
-      </ul>
-      <div class="warning-box">⚠️ Jika menemukan retak diagonal pada dinding, segera konsultasikan dengan insinyur struktural sebelum memutuskan membeli.</div>
-      <h2>Tips Negosiasi Harga Rumah Bekas</h2>
-      <p>Hasil inspeksi yang menemukan berbagai kekurangan bisa dijadikan bahan negosiasi harga. Estimasikan biaya perbaikan dan kurangi dari harga penawaran penjual.</p>
-    `
-  },
-};
+const ALL_ARTICLES = [
+  { id:'a1', title:'10 Tips Membeli Rumah Pertama untuk Milenial', category:'Tips Beli', date:'2026-03-20', readTime:'5 min', image:'https://picsum.photos/seed/art001/1200/600', author:'Dina Pratiwi', views:3240,
+    content:`<h2>Mengapa Membeli Rumah adalah Keputusan Besar</h2><p>Membeli rumah pertama adalah salah satu keputusan finansial terbesar dalam hidup Anda. Bagi generasi milenial, tantangan ini semakin kompleks dengan harga properti yang terus naik dan kondisi ekonomi yang dinamis.</p><blockquote>Rumah bukan hanya investasi finansial, tapi investasi untuk kualitas hidup Anda dan keluarga.</blockquote><h2>10 Tips yang Wajib Anda Ketahui</h2><h3>1. Tentukan Budget Secara Realistis</h3><p>Sebelum mulai mencari, hitung kemampuan finansial Anda dengan jujur. Cicilan KPR idealnya tidak melebihi 30% pendapatan bulanan. Jangan lupa biaya tambahan seperti PPN, BPHTB, dan biaya notaris.</p><h3>2. Siapkan Dana DP Sejak Dini</h3><p>Down payment minimal 10-30% dari harga properti. Mulai menabung secara konsisten dan pertimbangkan instrumen investasi yang sesuai untuk mengembangkan dana DP Anda.</p><div class="tip-box"><strong>💡 Tips:</strong> Manfaatkan program tabungan berencana di bank atau reksa dana pasar uang untuk menyimpan dana DP dengan lebih efisien.</div><h3>3. Pilih Lokasi yang Strategis</h3><p>Lokasi adalah faktor paling penting dalam investasi properti. Pertimbangkan akses transportasi, fasilitas umum, sekolah, dan potensi perkembangan kawasan di masa depan.</p><h3>4. Cek Legalitas Properti</h3><p>Pastikan sertifikat tanah asli (SHM lebih baik daripada HGB), perizinan bangunan (IMB/PBG), dan tidak ada sengketa kepemilikan. Konsultasikan dengan notaris terpercaya.</p><h3>5. Survey Fisik Bangunan</h3><p>Kunjungi properti minimal 2-3 kali pada waktu berbeda. Periksa kondisi struktur, instalasi listrik, saluran air, dan potensi masalah yang tersembunyi.</p><h3>6. Negosiasi Harga</h3><p>Harga yang tercantum bukan harga final. Pelajari harga pasaran kawasan tersebut dan ajukan penawaran yang reasonable. Seller yang termotivasi biasanya bersedia nego 5-15%.</p><h3>7. Manfaatkan KPR Subsidi</h3><p>Jika memenuhi syarat, KPR FLPP/subsidi bisa menjadi pilihan dengan bunga lebih rendah dan cicilan lebih ringan. Cek eligibilitas Anda di bank penyalur.</p><h3>8. Persiapkan Dokumen Lengkap</h3><p>KTP, NPWP, slip gaji 3 bulan terakhir, rekening koran, dan dokumen pendukung lainnya. Kelengkapan dokumen mempercepat proses KPR.</p><h3>9. Pilih Developer Terpercaya</h3><p>Riset reputasi developer, cek proyek sebelumnya, dan baca review dari penghuni. Developer terpercaya memiliki track record yang baik dan tidak memiliki masalah hukum.</p><h3>10. Jangan Terburu-Buru</h3><p>Beli properti adalah komitmen jangka panjang. Luangkan waktu untuk riset, pertimbangkan dengan matang, dan jangan terpengaruh pressure dari agen atau developer.</p>` },
+  { id:'a2', title:'Panduan Lengkap KPR: Syarat, Proses, dan Kalkulasi', category:'KPR', date:'2026-03-18', readTime:'8 min', image:'https://picsum.photos/seed/art002/1200/600', author:'Rizky Pratama', views:5120,
+    content:`<h2>Apa itu KPR?</h2><p>KPR (Kredit Pemilikan Rumah) adalah fasilitas kredit yang diberikan oleh bank atau lembaga keuangan untuk membantu Anda membeli properti dengan cara mencicil dalam jangka waktu tertentu.</p><h2>Syarat Pengajuan KPR</h2><h3>Persyaratan Umum</h3><ul><li>WNI berusia 21-55 tahun (saat lunas max 65 tahun)</li><li>Karyawan tetap minimal 2 tahun</li><li>Penghasilan tetap yang dapat diverifikasi</li><li>Tidak memiliki kredit bermasalah (BI Checking bersih)</li></ul><h3>Dokumen yang Diperlukan</h3><ul><li>KTP dan KK</li><li>NPWP</li><li>Slip gaji 3 bulan terakhir</li><li>Rekening koran 3 bulan terakhir</li><li>Surat keterangan kerja</li><li>Dokumen properti dari developer/penjual</li></ul><h2>Cara Menghitung Cicilan KPR</h2><p>Rumus cicilan KPR menggunakan sistem anuitas:</p><blockquote>Cicilan = P × [r(1+r)ⁿ] / [(1+r)ⁿ-1]<br>P = Pokok pinjaman, r = Bunga bulanan, n = Jumlah bulan</blockquote><div class="tip-box"><strong>💡 Contoh:</strong> Pinjaman Rp 700 juta, bunga 9%/tahun, tenor 20 tahun → Cicilan ≈ Rp 6,3 juta/bulan</div><h2>Tips Mendapatkan KPR Terbaik</h2><ul><li>Bandingkan penawaran minimal 3-5 bank</li><li>Perhatikan perbedaan bunga fixed vs floating</li><li>Hitung total biaya termasuk provisi, asuransi, dan administrasi</li><li>Negosiasikan tenure dan suku bunga</li></ul>` },
+  { id:'a3', title:'Investasi Properti di Era Digital: Peluang & Tantangan', category:'Investasi', date:'2026-03-15', readTime:'6 min', image:'https://picsum.photos/seed/art003/1200/600', author:'Budi Santoso', views:2890,
+    content:`<h2>Revolusi Digital di Dunia Properti</h2><p>Era digital telah mengubah cara kita berinvestasi di properti. Dari platform proptech hingga crowdfunding, peluang baru terus bermunculan bagi investor modern.</p><h2>Peluang Investasi Properti Digital</h2><h3>1. Proptech Platforms</h3><p>Platform seperti RumahKita memungkinkan Anda mencari, menganalisis, dan bertransaksi properti secara online dengan lebih efisien dan transparan.</p><h3>2. Properti Crowdfunding</h3><p>Berinvestasi properti dengan modal kecil bersama banyak investor. Potensi return yang menarik dengan risiko yang tersebar.</p><h3>3. REIT (Real Estate Investment Trust)</h3><p>Investasi properti melalui pasar modal dengan likuiditas lebih tinggi. Cocok untuk investor yang ingin diversifikasi portofolio.</p><h2>Tantangan yang Perlu Diwaspadai</h2><ul><li>Regulasi yang terus berkembang</li><li>Risiko platform yang belum terbukti</li><li>Volatilitas harga di beberapa segmen</li><li>Kurangnya transparansi data</li></ul><blockquote>Diversifikasi adalah kunci investasi properti yang bijak di era digital.</blockquote>` },
+  { id:'a4', title:'SHM vs HGB: Perbedaan dan Mana yang Lebih Baik?', category:'Hukum', date:'2026-03-12', readTime:'4 min', image:'https://picsum.photos/seed/art004/1200/600', author:'Sari Hukum', views:1750,
+    content:`<h2>Jenis-Jenis Sertifikat Properti di Indonesia</h2><p>Memahami jenis sertifikat properti sangat penting sebelum melakukan transaksi jual beli atau KPR. Dua yang paling umum adalah SHM dan HGB.</p><h2>SHM (Sertifikat Hak Milik)</h2><p>SHM adalah status kepemilikan tanah tertinggi di Indonesia. Pemilik memiliki hak penuh atas tanah tanpa batas waktu.</p><div class="tip-box"><strong>Kelebihan SHM:</strong> Hak kepemilikan penuh, tidak ada batas waktu, mudah dijaminkan ke bank, nilai jual lebih tinggi.</div><h2>HGB (Hak Guna Bangunan)</h2><p>HGB memberikan hak untuk mendirikan dan menggunakan bangunan di atas tanah selama jangka waktu tertentu (max 30 tahun, dapat diperpanjang).</p><h3>Kapan HGB Digunakan?</h3><ul><li>Properti di kawasan perumahan tertentu</li><li>Apartemen dan kondotel</li><li>Properti di kawasan khusus atau reklamasi</li><li>Properti yang dimiliki badan hukum</li></ul><h2>Kesimpulan</h2><p>Untuk properti residensial jangka panjang, SHM lebih disarankan. HGB masih aman selama Anda memperhatikan masa berlakunya dan proses perpanjangan.` },
+  { id:'a5', title:'Desain Rumah Minimalis Modern 2026: Tren & Inspirasi', category:'Desain', date:'2026-03-10', readTime:'5 min', image:'https://picsum.photos/seed/art005/1200/600', author:'Lina Desain', views:4230,
+    content:`<h2>Tren Desain Rumah 2026</h2><p>Desain rumah terus berevolusi mengikuti gaya hidup modern yang dinamis. Tahun 2026, beberapa tren desain minimalis mendominasi pasar properti Indonesia.</p><h2>Prinsip Desain Minimalis Modern</h2><ul><li>Less is more — fokus pada fungsionalitas</li><li>Ruang terbuka dan pencahayaan alami maksimal</li><li>Material natural: kayu, batu, beton ekspos</li><li>Palet warna netral dengan aksen berani</li><li>Integrasi teknologi smart home</li></ul><h2>Tren 2026 yang Populer</h2><h3>Biophilic Design</h3><p>Mengintegrasikan elemen alam ke dalam interior — tanaman indoor, dinding hijau, dan material organik. Menciptakan suasana segar dan menenangkan.</p><h3>Multifunctional Spaces</h3><p>Ruang yang dapat difungsikan ganda sangat relevan untuk rumah di kota besar. Ruang keluarga yang bisa jadi home office, atau ruang tidur yang bisa jadi ruang kerja.</p><blockquote>Desain terbaik adalah yang membuat penghuninya merasa nyaman dan produktif setiap hari.</blockquote>` },
+  { id:'a9', title:'KPR Subsidi FLPP 2026: Siapa yang Berhak?', category:'KPR', date:'2026-02-28', readTime:'5 min', image:'https://picsum.photos/seed/art009/1200/600', author:'Budi Santoso', views:6200,
+    content:`<h2>Apa itu KPR FLPP?</h2><p>Fasilitas Likuiditas Pembiayaan Perumahan (FLPP) adalah program pemerintah untuk memberikan kemudahan KPR bagi Masyarakat Berpenghasilan Rendah (MBR) dengan bunga subsidi dan cicilan terjangkau.</p><h2>Siapa yang Berhak?</h2><ul><li>WNI berusia min. 21 tahun atau sudah menikah</li><li>Belum pernah menerima KPR subsidi sebelumnya</li><li>Belum memiliki rumah atau hunian sendiri</li><li>Penghasilan maksimal Rp 8 juta/bulan</li><li>Bekerja minimal 1 tahun</li></ul><div class="tip-box"><strong>🏠 Plafon KPR FLPP 2026:</strong> Harga rumah max Rp 200-300 juta (tergantung zona), bunga 5%/tahun flat, tenor max 20 tahun.</div><h2>Cara Daftar KPR FLPP</h2><ol><li>Siapkan dokumen persyaratan</li><li>Pilih rumah subsidi dari developer terdaftar</li><li>Ajukan ke bank penyalur (BTN, BRI, Mandiri, dll)</li><li>Proses verifikasi oleh Pusat Pengelolaan Dana Pembiayaan Perumahan (PPDPP)</li><li>Penandatanganan akad kredit</li></ol>` },
+];
 
 function loadArticle() {
-  const slug = new URLSearchParams(window.location.search).get('slug') || 'tips-membeli-rumah-pertama';
-  const article = ARTICLE_CONTENTS[slug];
-  
-  if (!article) {
-    document.getElementById('articleMain').innerHTML = '<p class="text-gray-500">Artikel tidak ditemukan.</p>';
-    return;
-  }
-  
+  const id = new URLSearchParams(window.location.search).get('id') || 'a1';
+  const article = ALL_ARTICLES.find(a => a.id === id);
+  document.getElementById('loadingState').style.display = 'none';
+  if (!article) { document.getElementById('notFoundState').classList.remove('hidden'); return; }
   document.title = article.title + ' - RumahKita';
-  
-  document.getElementById('articleMain').innerHTML = `
-    <nav class="text-sm text-gray-500 mb-4">
-      <a href="index.html" class="hover:text-blue-600">Beranda</a>
-      <span class="mx-2">›</span>
-      <a href="artikel.html" class="hover:text-blue-600">Artikel</a>
-      <span class="mx-2">›</span>
-      <span class="text-gray-900 font-medium">${article.title}</span>
-    </nav>
-    
-    <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <img src="${article.image}" alt="${article.title}" class="w-full object-cover" style="height:400px;">
-      <div class="p-6 sm:p-8">
-        <span class="text-xs font-semibold px-3 py-1 bg-blue-50 text-blue-700 rounded-full">${article.category}</span>
-        <h1 class="text-3xl font-extrabold text-gray-900 mt-4 mb-4 leading-tight">${article.title}</h1>
-        <div class="flex items-center gap-4 text-sm text-gray-400 mb-6 pb-6 border-b border-gray-100">
-          <div class="flex items-center gap-2"><div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center"><i class="fas fa-user text-white text-xs"></i></div><span class="font-medium text-gray-600">Tim RumahKita</span></div>
-          <span><i class="fas fa-calendar mr-1"></i>${article.date}</span>
-          <span><i class="fas fa-clock mr-1"></i>${article.readTime}</span>
-        </div>
-        <div class="article-content">${article.content}</div>
-        
-        <!-- Share -->
-        <div class="mt-8 pt-6 border-t border-gray-100">
-          <p class="font-semibold text-gray-900 mb-3">Bagikan artikel ini:</p>
-          <div class="flex gap-3">
-            <button onclick="shareToWA()" class="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 transition"><i class="fab fa-whatsapp"></i>WhatsApp</button>
-            <button onclick="copyLink()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-200 transition"><i class="fas fa-link"></i>Salin Link</button>
-          </div>
+  document.querySelector('meta[name="description"]').content = article.title;
+
+  // Related articles
+  const related = ALL_ARTICLES.filter(a => a.id !== id && (a.category === article.category || Math.random() > 0.5)).slice(0, 3);
+
+  document.getElementById('articleContent').innerHTML = `
+  <!-- Breadcrumb -->
+  <nav style="font-size:13px;color:#6b7280;margin-bottom:20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+    <a href="index.html" style="color:#6b7280;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#6b7280'">Beranda</a>
+    <i class="fas fa-chevron-right" style="font-size:10px;"></i>
+    <a href="artikel.html" style="color:#6b7280;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#6b7280'">Artikel</a>
+    <i class="fas fa-chevron-right" style="font-size:10px;"></i>
+    <span style="color:#111827;">${article.category}</span>
+  </nav>
+
+  <div class="article-layout">
+    <!-- MAIN -->
+    <article>
+      <!-- Category -->
+      <div style="margin-bottom:14px;">
+        <span style="font-size:12px;font-weight:700;color:#2563eb;background:#eff6ff;padding:4px 12px;border-radius:20px;">${article.category}</span>
+      </div>
+      <!-- Title -->
+      <h1 style="font-size:clamp(1.4rem,4vw,2rem);font-weight:800;color:#111827;line-height:1.35;margin-bottom:14px;">${article.title}</h1>
+      <!-- Meta -->
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13px;color:#6b7280;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #f3f4f6;">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <div class="user-avatar" style="width:28px;height:28px;font-size:11px;">${Fmt.initials(article.author)}</div>
+          ${article.author}
+        </span>
+        <span><i class="fas fa-calendar-alt" style="margin-right:4px;"></i>${Fmt.date(article.date)}</span>
+        <span><i class="fas fa-clock" style="margin-right:4px;"></i>${article.readTime} baca</span>
+        <span><i class="fas fa-eye" style="margin-right:4px;"></i>${Fmt.number(article.views)} dibaca</span>
+      </div>
+      <!-- Hero Image -->
+      <div style="border-radius:16px;overflow:hidden;margin-bottom:28px;height:340px;">
+        <img src="${article.image}" alt="${article.title}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+      </div>
+      <!-- Body -->
+      <div class="article-body">${article.content}</div>
+      <!-- Share -->
+      <div style="margin-top:32px;padding-top:24px;border-top:1px solid #f3f4f6;">
+        <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:12px;">Bagikan artikel ini:</div>
+        <div class="share-row">
+          <button class="share-social" style="background:#1877f2;color:white;" onclick="shareArticle('facebook')"><i class="fab fa-facebook-f"></i>Facebook</button>
+          <button class="share-social" style="background:#25D366;color:white;" onclick="shareArticle('whatsapp')"><i class="fab fa-whatsapp"></i>WhatsApp</button>
+          <button class="share-social" style="background:#1DA1F2;color:white;" onclick="shareArticle('twitter')"><i class="fab fa-twitter"></i>Twitter</button>
+          <button class="share-social" style="background:#f3f4f6;color:#374151;" onclick="copyLink()"><i class="fas fa-link"></i>Salin Link</button>
         </div>
       </div>
     </article>
-    
-    <!-- Navigation -->
-    <div class="flex justify-between mt-6">
-      <a href="artikel.html" class="flex items-center gap-2 text-blue-600 font-semibold text-sm hover:underline"><i class="fas fa-arrow-left"></i>Semua Artikel</a>
-      <a href="properti.html" class="flex items-center gap-2 text-blue-600 font-semibold text-sm hover:underline">Lihat Properti <i class="fas fa-arrow-right"></i></a>
-    </div>
-  `;
+
+    <!-- SIDEBAR -->
+    <aside>
+      <!-- Related -->
+      <div class="card" style="position:sticky;top:88px;">
+        <div class="card-header">Artikel Terkait</div>
+        <div style="padding:12px;display:flex;flex-direction:column;gap:12px;">
+          ${related.map(r => `
+          <a href="artikel-detail.html?id=${r.id}" style="display:flex;gap:12px;align-items:flex-start;">
+            <img src="${r.image}" alt="${r.title}" style="width:72px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0;" loading="lazy">
+            <div>
+              <div style="font-size:11px;color:#2563eb;font-weight:600;margin-bottom:3px;">${r.category}</div>
+              <div style="font-size:13px;font-weight:600;color:#111827;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${r.title}</div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:3px;">${r.readTime} baca</div>
+            </div>
+          </a>`).join('')}
+        </div>
+      </div>
+
+      <!-- KPR CTA -->
+      <div style="margin-top:16px;background:linear-gradient(135deg,#1e3a8a,#2563eb);border-radius:16px;padding:20px;color:white;text-align:center;">
+        <i class="fas fa-calculator" style="font-size:28px;margin-bottom:10px;opacity:0.9;display:block;"></i>
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Hitung KPR Anda</div>
+        <div style="font-size:12px;color:#bfdbfe;margin-bottom:14px;">Estimasi cicilan instan</div>
+        <a href="kpr.html" class="btn" style="background:white;color:#1d4ed8;width:100%;font-weight:700;"><i class="fas fa-calculator"></i>Hitung Sekarang</a>
+      </div>
+    </aside>
+  </div>`;
+
+  document.getElementById('articleContent').classList.remove('hidden');
 }
 
-function shareToWA() {
-  window.open('https://wa.me/?text=' + encodeURIComponent(document.title + ' - ' + window.location.href));
+function shareArticle(platform) {
+  const url = encodeURIComponent(window.location.href);
+  const title = encodeURIComponent(document.title);
+  const urls = {
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    whatsapp: `https://wa.me/?text=${title}%20${url}`,
+    twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`
+  };
+  window.open(urls[platform], '_blank', 'width=600,height=400');
 }
+
 function copyLink() {
-  navigator.clipboard.writeText(window.location.href);
-  const btn = event.target.closest('button');
-  btn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
-  setTimeout(() => btn.innerHTML = '<i class="fas fa-link"></i> Salin Link', 2000);
+  navigator.clipboard?.writeText(window.location.href);
+  Toast.success('Link berhasil disalin!');
 }
 
-loadArticle();
+document.addEventListener('DOMContentLoaded', loadArticle);
 </script>
 </body>
 </html>

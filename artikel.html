@@ -3,214 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Artikel & Panduan Properti - RumahKita</title>
-  <meta name="description" content="Tips, panduan, dan informasi terkini seputar jual beli dan sewa properti di Indonesia.">
+  <title>Artikel & Tips Properti - RumahKita</title>
+  <meta name="description" content="Baca artikel dan tips properti terbaru. Panduan KPR, investasi, dan cara cerdas membeli rumah pertama.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <link rel="stylesheet" href="css/style.css">
   <style>
-    .article-card { transition: transform 0.2s, box-shadow 0.2s; }
-    .article-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+    body { padding-bottom: 80px; }
+    @media (min-width: 768px) { body { padding-bottom: 0; } }
   </style>
 </head>
-<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+<body class="bg-gray-50">
 
 <!-- NAVBAR -->
-<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <a href="index.html" class="flex items-center gap-2">
-      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
-      <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon"><i class="fas fa-home"></i></div>
+      <div class="navbar-logo-text">Rumah<span>Kita</span></div>
     </a>
-    <div class="hidden md:flex items-center gap-1">
-      <a href="properti.html?listing=dijual" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Dijual</a>
-      <a href="properti.html?listing=disewa" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Disewa</a>
-      <a href="kpr.html" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">KPR</a>
-      <a href="artikel.html" class="px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">Artikel</a>
+    <div class="navbar-links">
+      <a href="properti.html?listing=dijual">Dijual</a>
+      <a href="properti.html?listing=disewa">Disewa</a>
+      <a href="kpr.html">KPR</a>
+      <a href="artikel.html" class="active" style="background:#eff6ff;color:#2563eb;">Artikel</a>
     </div>
-    <div class="flex gap-2">
-      <a href="login.html" class="text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">Masuk</a>
-      <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">Daftar</a>
-    </div>
+    <div class="navbar-actions" id="navAuthDesktop"></div>
+    <button class="nav-hamburger" id="navHamburger"><i class="fas fa-bars"></i></button>
   </div>
 </nav>
 
-<!-- Hero -->
-<div class="bg-gradient-to-br from-gray-900 to-gray-700 text-white py-14">
-  <div class="max-w-4xl mx-auto px-4 text-center">
-    <h1 class="text-4xl font-extrabold mb-3">Panduan Properti</h1>
-    <p class="text-gray-300 text-lg mb-6">Tips, panduan, dan informasi terkini seputar properti Indonesia</p>
-    <div class="max-w-md mx-auto relative">
-      <i class="fas fa-search absolute left-4 top-3.5 text-gray-400"></i>
-      <input type="text" id="searchArtikel" placeholder="Cari artikel..." oninput="filterArticles(this.value)" class="w-full pl-10 pr-4 py-3 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+  <div class="mobile-menu-drawer">
+    <div class="mobile-menu-header">
+      <div class="navbar-logo"><div class="navbar-logo-icon"><i class="fas fa-home"></i></div><div class="navbar-logo-text">Rumah<span>Kita</span></div></div>
+      <button class="mobile-menu-close" id="mobileMenuClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mobile-menu-nav">
+      <a href="index.html"><i class="fas fa-home" style="color:#2563eb;"></i>Beranda</a>
+      <a href="properti.html"><i class="fas fa-search" style="color:#2563eb;"></i>Cari Properti</a>
+      <a href="kpr.html"><i class="fas fa-calculator" style="color:#7c3aed;"></i>Simulasi KPR</a>
+      <a href="artikel.html"><i class="fas fa-newspaper" style="color:#ea580c;"></i>Artikel</a>
+    </div>
+    <div class="mobile-menu-footer" id="navAuthMobileFooter"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div style="background:linear-gradient(135deg,#1e3a8a,#2563eb);padding:48px 16px;text-align:center;">
+  <div style="max-width:640px;margin:0 auto;">
+    <h1 style="font-size:clamp(1.4rem,4vw,2rem);font-weight:800;color:white;margin-bottom:10px;">Artikel & Tips Properti</h1>
+    <p style="color:#bfdbfe;margin-bottom:24px;font-size:15px;">Panduan lengkap untuk investasi properti yang cerdas</p>
+    <div style="position:relative;max-width:480px;margin:0 auto;">
+      <i class="fas fa-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:14px;"></i>
+      <input type="text" id="searchArticle" placeholder="Cari artikel..." oninput="filterArticles(this.value)"
+        style="width:100%;padding:13px 16px 13px 44px;border-radius:12px;border:none;font-size:14px;outline:none;font-family:inherit;">
     </div>
   </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="container" style="padding-top:32px;padding-bottom:48px;">
   <!-- Categories -->
-  <div class="flex flex-wrap gap-2 mb-8 justify-center">
-    ${['Semua','Tips & Trik','Investasi','KPR','Hukum Properti','Panduan Sewa','Checklist'].map((c,i) =>
-      `<button onclick="filterByCategory('${c}',this)" class="cat-filter-btn px-4 py-2 rounded-full text-sm font-medium border transition ${i===0?'bg-blue-600 text-white border-blue-600':'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}">${c}</button>`
-    ).join('')}
+  <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:28px;">
+    <button class="chip active" onclick="setCategory(this,'')" data-cat="">Semua</button>
+    <button class="chip" onclick="setCategory(this,'Tips Beli')" data-cat="Tips Beli">Tips Beli</button>
+    <button class="chip" onclick="setCategory(this,'KPR')" data-cat="KPR">KPR</button>
+    <button class="chip" onclick="setCategory(this,'Investasi')" data-cat="Investasi">Investasi</button>
+    <button class="chip" onclick="setCategory(this,'Hukum')" data-cat="Hukum">Hukum</button>
+    <button class="chip" onclick="setCategory(this,'Desain')" data-cat="Desain">Desain</button>
+    <button class="chip" onclick="setCategory(this,'Sewa')" data-cat="Sewa">Sewa</button>
   </div>
 
-  <!-- Articles Grid -->
-  <div id="articlesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  </div>
+  <!-- Featured Article -->
+  <div id="featuredArticle" style="margin-bottom:32px;"></div>
 
-  <!-- Empty State -->
-  <div id="artikelEmpty" class="hidden text-center py-16">
-    <div class="text-5xl mb-4">📰</div>
-    <h3 class="text-lg font-bold text-gray-900 mb-2">Artikel tidak ditemukan</h3>
-    <p class="text-gray-500">Coba kata kunci lain</p>
-  </div>
-</div>
+  <!-- Article Grid -->
+  <div class="article-grid" id="articleGrid"></div>
 
-<!-- Mobile Bottom Nav -->
-<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 px-2 py-2">
-  <div class="flex justify-around items-center">
-    <a href="index.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-home text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Beranda</span></a>
-    <a href="properti.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-search text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Cari</span></a>
-    <a href="tambah-properti.html" class="flex flex-col items-center gap-1 -mt-5"><div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-plus text-white text-lg"></i></div><span class="text-xs text-gray-400 mt-1">Pasang</span></a>
-    <a href="login.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-user text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Akun</span></a>
+  <!-- Empty -->
+  <div id="articleEmpty" class="empty-state hidden">
+    <div class="empty-state-icon">📰</div>
+    <div class="empty-state-title">Artikel tidak ditemukan</div>
+    <div class="empty-state-desc">Coba kategori atau kata kunci lain</div>
+    <button onclick="setCategory(document.querySelector('[data-cat=\\'\\']'),'')" class="btn btn-primary">Lihat Semua</button>
   </div>
 </div>
 
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div><div class="footer-logo-text"><span>Rumah</span>Kita</div><p class="footer-desc">Platform properti terpercaya Indonesia.</p></div>
+    <div class="footer-col"><div class="footer-col-title">Properti</div><a href="properti.html?listing=dijual">Dijual</a><a href="properti.html?listing=disewa">Disewa</a></div>
+    <div class="footer-col"><div class="footer-col-title">Layanan</div><a href="tambah-properti.html">Pasang Iklan</a><a href="kpr.html">Simulasi KPR</a></div>
+    <div class="footer-col"><div class="footer-col-title">Info</div><a href="tentang.html">Tentang Kami</a><a href="kontak.html">Kontak</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 RumahKita</span></div>
+</footer>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav">
+  <a href="index.html"><i class="fas fa-home"></i>Beranda</a>
+  <a href="properti.html"><i class="fas fa-search"></i>Cari</a>
+  <a href="tambah-properti.html" class="nav-add"><i class="fas fa-plus"></i>Pasang</a>
+  <a href="kpr.html"><i class="fas fa-calculator"></i>KPR</a>
+  <a href="dashboard.html"><i class="fas fa-user"></i>Akun</a>
+</div>
+
+<script src="js/app.js"></script>
 <script>
-const ARTICLES = [
-  {
-    slug: 'tips-membeli-rumah-pertama',
-    title: 'Tips Membeli Rumah Pertama untuk Pemula',
-    category: 'Tips & Trik',
-    excerpt: 'Panduan lengkap bagi Anda yang baru pertama kali membeli rumah. Dari persiapan dana, KPR, hingga proses akad kredit.',
-    image: 'https://picsum.photos/seed/artikel1/600/400',
-    author: 'Tim RumahKita',
-    date: '10 Januari 2026',
-    readTime: '5 menit',
-    tags: ['rumah pertama','tips','KPR']
-  },
-  {
-    slug: 'panduan-investasi-properti',
-    title: 'Panduan Investasi Properti yang Menguntungkan',
-    category: 'Investasi',
-    excerpt: 'Pelajari strategi investasi properti yang tepat untuk jangka pendek maupun jangka panjang. Mulai dari modal terjangkau hingga properti premium.',
-    image: 'https://picsum.photos/seed/artikel2/600/400',
-    author: 'Tim RumahKita',
-    date: '15 Januari 2026',
-    readTime: '7 menit',
-    tags: ['investasi','properti','return']
-  },
-  {
-    slug: 'cara-mengajukan-kpr',
-    title: 'Cara Mengajukan KPR: Syarat dan Prosesnya',
-    category: 'KPR',
-    excerpt: 'Panduan step-by-step pengajuan KPR dari persiapan dokumen, survei bank, hingga persetujuan dan proses akad kredit.',
-    image: 'https://picsum.photos/seed/artikel3/600/400',
-    author: 'Tim RumahKita',
-    date: '20 Januari 2026',
-    readTime: '8 menit',
-    tags: ['KPR','kredit','bank']
-  },
-  {
-    slug: 'perbedaan-shm-hgb-strata-title',
-    title: 'Perbedaan SHM, HGB, dan Strata Title',
-    category: 'Hukum Properti',
-    excerpt: 'Pahami perbedaan jenis sertifikat properti di Indonesia: SHM, HGB, Strata Title, AJB, dan Girik. Mana yang terbaik untuk Anda?',
-    image: 'https://picsum.photos/seed/artikel4/600/400',
-    author: 'Tim RumahKita',
-    date: '25 Januari 2026',
-    readTime: '6 menit',
-    tags: ['SHM','HGB','sertifikat','hukum']
-  },
-  {
-    slug: 'tips-menyewakan-properti-cepat',
-    title: 'Tips Menyewakan Properti agar Cepat Laku',
-    category: 'Panduan Sewa',
-    excerpt: 'Strategi efektif untuk menyewakan properti Anda dengan cepat, harga optimal, dan tenant yang berkualitas baik.',
-    image: 'https://picsum.photos/seed/artikel5/600/400',
-    author: 'Tim RumahKita',
-    date: '1 Februari 2026',
-    readTime: '5 menit',
-    tags: ['sewa','pemilik','tips','iklan']
-  },
-  {
-    slug: 'checklist-sebelum-membeli-rumah-bekas',
-    title: 'Checklist Sebelum Membeli Rumah Bekas',
-    category: 'Checklist',
-    excerpt: 'Daftar lengkap hal-hal yang harus diperiksa sebelum memutuskan membeli rumah bekas agar tidak menyesal kemudian.',
-    image: 'https://picsum.photos/seed/artikel6/600/400',
-    author: 'Tim RumahKita',
-    date: '5 Februari 2026',
-    readTime: '9 menit',
-    tags: ['checklist','rumah bekas','tips']
-  },
+const ARTICLES_DATA = [
+  { id:'a1', title:'10 Tips Membeli Rumah Pertama untuk Milenial', category:'Tips Beli', date:'2026-03-20', readTime:'5 min', image:'https://picsum.photos/seed/art001/800/500', excerpt:'Membeli rumah pertama adalah momen penting. Dari menyiapkan dana DP hingga memilih lokasi strategis, berikut panduan lengkap yang perlu Anda ketahui sebelum membeli properti pertama.', author:'Dina Pratiwi', views:3240 },
+  { id:'a2', title:'Panduan Lengkap KPR: Syarat, Proses, dan Kalkulasi', category:'KPR', date:'2026-03-18', readTime:'8 min', image:'https://picsum.photos/seed/art002/800/500', excerpt:'KPR adalah solusi populer untuk memiliki rumah impian. Pelajari persyaratan dokumen, proses pengajuan, dan cara menghitung cicilan bulanan agar tidak terbebani.', author:'Rizky Pratama', views:5120 },
+  { id:'a3', title:'Investasi Properti di Era Digital: Peluang & Tantangan', category:'Investasi', date:'2026-03-15', readTime:'6 min', image:'https://picsum.photos/seed/art003/800/500', excerpt:'Era digital membuka peluang baru. Dari proptech hingga crowdfunding properti, pelajari tren investasi properti yang menguntungkan di tahun 2026.', author:'Budi Santoso', views:2890 },
+  { id:'a4', title:'SHM vs HGB: Perbedaan dan Mana yang Lebih Baik?', category:'Hukum', date:'2026-03-12', readTime:'4 min', image:'https://picsum.photos/seed/art004/800/500', excerpt:'Memahami jenis sertifikat properti sangat penting. Perbedaan SHM dan HGB, kelebihan dan kekurangan masing-masing, serta panduan memilih yang tepat.', author:'Sari Hukum', views:1750 },
+  { id:'a5', title:'Desain Rumah Minimalis Modern 2026: Tren & Inspirasi', category:'Desain', date:'2026-03-10', readTime:'5 min', image:'https://picsum.photos/seed/art005/800/500', excerpt:'Tren desain rumah terus berkembang. Temukan inspirasi desain minimalis modern yang fungsional, hemat ruang, dan estetik untuk rumah impian Anda di tahun 2026.', author:'Lina Desain', views:4230 },
+  { id:'a6', title:'Cara Sewa Apartemen yang Aman: Panduan Lengkap', category:'Sewa', date:'2026-03-08', readTime:'6 min', image:'https://picsum.photos/seed/art006/800/500', excerpt:'Menyewa apartemen memerlukan kehati-hatian. Dari mengecek kondisi unit, membaca kontrak sewa, hingga hak dan kewajiban penyewa — semua dibahas tuntas di sini.', author:'Ahmad Properti', views:2100 },
+  { id:'a7', title:'ROI Properti: Cara Menghitung Keuntungan Investasi', category:'Investasi', date:'2026-03-05', readTime:'7 min', image:'https://picsum.photos/seed/art007/800/500', excerpt:'Return on Investment (ROI) adalah kunci evaluasi investasi properti. Pelajari rumus ROI, cap rate, dan yield untuk memilih investasi properti yang menguntungkan.', author:'Rizky Pratama', views:3800 },
+  { id:'a8', title:'Tips Nego Harga Properti: Dapatkan Harga Terbaik', category:'Tips Beli', date:'2026-03-02', readTime:'4 min', image:'https://picsum.photos/seed/art008/800/500', excerpt:'Negosiasi harga properti adalah seni. Ketahui kapan dan bagaimana menawar harga, strategi efektif, serta hal-hal yang perlu dihindari saat bernegosiasi.', author:'Dina Pratiwi', views:2900 },
+  { id:'a9', title:'KPR Subsidi FLPP 2026: Siapa yang Berhak?', category:'KPR', date:'2026-02-28', readTime:'5 min', image:'https://picsum.photos/seed/art009/800/500', excerpt:'Program KPR FLPP memberikan kemudahan bagi masyarakat berpenghasilan rendah. Ketahui syarat, cara daftar, dan daftar bank yang menyediakan KPR bersubsidi.', author:'Budi Santoso', views:6200 },
 ];
 
-let activeCategory = 'Semua';
+let activeCategory = '';
 let searchQuery = '';
 
-const catColors = {
-  'Tips & Trik': 'bg-blue-50 text-blue-700',
-  'Investasi': 'bg-green-50 text-green-700',
-  'KPR': 'bg-purple-50 text-purple-700',
-  'Hukum Properti': 'bg-red-50 text-red-700',
-  'Panduan Sewa': 'bg-orange-50 text-orange-700',
-  'Checklist': 'bg-teal-50 text-teal-700',
-};
+function setCategory(btn, cat) {
+  activeCategory = cat;
+  document.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  renderArticles();
+}
+
+function filterArticles(q) {
+  searchQuery = q.toLowerCase();
+  renderArticles();
+}
 
 function renderArticles() {
-  let list = [...ARTICLES];
-  if (activeCategory !== 'Semua') list = list.filter(a => a.category === activeCategory);
-  if (searchQuery) list = list.filter(a => a.title.toLowerCase().includes(searchQuery) || a.excerpt.toLowerCase().includes(searchQuery));
-  
-  const grid = document.getElementById('articlesGrid');
-  const empty = document.getElementById('artikelEmpty');
-  
-  if (!list.length) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  let articles = ARTICLES_DATA;
+  if (activeCategory) articles = articles.filter(a => a.category === activeCategory);
+  if (searchQuery) articles = articles.filter(a => a.title.toLowerCase().includes(searchQuery) || a.excerpt.toLowerCase().includes(searchQuery));
+
+  const grid = document.getElementById('articleGrid');
+  const empty = document.getElementById('articleEmpty');
+  const featured = document.getElementById('featuredArticle');
+
+  if (!articles.length) { grid.innerHTML = ''; featured.innerHTML = ''; empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
-  
-  grid.innerHTML = list.map(a => `
-    <a href="artikel-detail.html?slug=${a.slug}" class="article-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 block">
-      <div class="overflow-hidden" style="height:220px;">
-        <img src="${a.image}" alt="${a.title}" class="w-full h-full object-cover transition hover:scale-105 duration-500" loading="lazy">
+
+  // Featured (first article)
+  const feat = articles[0];
+  featured.innerHTML = `
+  <a href="artikel-detail.html?id=${feat.id}" style="display:grid;grid-template-columns:1fr;gap:0;background:white;border-radius:20px;overflow:hidden;border:1px solid #f3f4f6;box-shadow:0 2px 12px rgba(0,0,0,0.06);" class="featured-art-grid">
+    <div style="overflow:hidden;height:260px;">
+      <img src="${feat.image}" alt="${feat.title}" style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+    </div>
+    <div style="padding:24px;">
+      <span style="font-size:11px;font-weight:700;color:#2563eb;background:#eff6ff;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:12px;">${feat.category}</span>
+      <h2 style="font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:800;color:#111827;line-height:1.4;margin-bottom:10px;">${feat.title}</h2>
+      <p style="font-size:14px;color:#6b7280;line-height:1.7;margin-bottom:16px;">${feat.excerpt}</p>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:#9ca3af;">
+        <span><i class="fas fa-user-circle" style="margin-right:4px;"></i>${feat.author}</span>
+        <span><i class="fas fa-calendar-alt" style="margin-right:4px;"></i>${Fmt.dateShort(feat.date)}</span>
+        <span><i class="fas fa-clock" style="margin-right:4px;"></i>${feat.readTime} baca</span>
+        <span><i class="fas fa-eye" style="margin-right:4px;"></i>${Fmt.number(feat.views)}</span>
       </div>
-      <div class="p-5">
-        <span class="${catColors[a.category]||'bg-gray-50 text-gray-600'} text-xs font-semibold px-2.5 py-1 rounded-full">${a.category}</span>
-        <h3 class="font-bold text-gray-900 text-base mt-3 mb-2 leading-snug" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${a.title}</h3>
-        <p class="text-gray-500 text-sm mb-4 leading-relaxed" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${a.excerpt}</p>
-        <div class="flex items-center justify-between text-xs text-gray-400 pt-3 border-t border-gray-100">
-          <div class="flex items-center gap-2">
-            <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center"><i class="fas fa-user text-white" style="font-size:8px;"></i></div>
-            <span>${a.author}</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span><i class="fas fa-clock mr-1"></i>${a.readTime}</span>
-            <span>${a.date}</span>
-          </div>
+    </div>
+  </a>
+  <style>
+    @media(min-width:768px){.featured-art-grid{grid-template-columns:1.5fr 1fr !important;}
+    .featured-art-grid > div:first-child{height:auto !important;}}
+  </style>`;
+
+  // Rest
+  grid.innerHTML = articles.slice(1).map(a => `
+    <a href="artikel-detail.html?id=${a.id}" class="article-card">
+      <div class="article-card-img">
+        <img src="${a.image}" alt="${a.title}" loading="lazy" onerror="this.src='https://picsum.photos/seed/article/600/400'">
+      </div>
+      <div class="article-card-body">
+        <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:700;color:#2563eb;background:#eff6ff;padding:3px 9px;border-radius:20px;">${a.category}</span></div>
+        <div class="article-card-title">${a.title}</div>
+        <div class="article-card-excerpt">${a.excerpt}</div>
+        <div class="article-card-meta">
+          <span><i class="fas fa-user-circle"></i>${a.author}</span>
+          <span><i class="fas fa-calendar-alt"></i>${Fmt.dateShort(a.date)}</span>
+          <span><i class="fas fa-clock"></i>${a.readTime}</span>
+          <span><i class="fas fa-eye"></i>${Fmt.number(a.views)}</span>
         </div>
       </div>
-    </a>
-  `).join('');
+    </a>`).join('');
 }
 
-function filterByCategory(cat, btn) {
-  activeCategory = cat;
-  document.querySelectorAll('.cat-filter-btn').forEach(b => {
-    b.className = b.className.replace('bg-blue-600 text-white border-blue-600','bg-white text-gray-600 border-gray-200 hover:border-blue-300');
-  });
-  btn.className = btn.className.replace('bg-white text-gray-600 border-gray-200 hover:border-blue-300','bg-blue-600 text-white border-blue-600');
+document.addEventListener('DOMContentLoaded', () => {
+  const p = new URLSearchParams(window.location.search);
+  const cat = p.get('cat') || '';
+  if (cat) { activeCategory = cat; document.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('active', b.dataset.cat === cat)); }
   renderArticles();
-}
-
-function filterArticles(val) {
-  searchQuery = val.toLowerCase();
-  renderArticles();
-}
-
-renderArticles();
+});
 </script>
 </body>
 </html>

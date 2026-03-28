@@ -4,141 +4,208 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Masuk - RumahKita</title>
+  <meta name="description" content="Masuk ke akun RumahKita Anda">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .auth-page { min-height: 100vh; display: flex; }
+    .auth-visual { display: none; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); flex: 1; position: relative; overflow: hidden; }
+    @media (min-width: 900px) { .auth-visual { display: flex; flex-direction: column; justify-content: center; padding: 48px; } }
+    .auth-form-side { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+    @media (min-width: 900px) { .auth-form-side { flex: 0 0 460px; } }
+    .auth-card { width: 100%; max-width: 420px; }
+    .input-wrap { position: relative; }
+    .input-wrap i.left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; pointer-events: none; }
+    .input-wrap input { padding-left: 42px !important; }
+    .input-wrap .toggle-pass { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; color: #9ca3af; font-size: 14px; }
+    .demo-pill { display: inline-flex; align-items: center; gap: 8px; background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #15803d; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .demo-pill:hover { background: #dcfce7; }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center" style="font-family:'Inter',sans-serif;">
-  <div class="w-full max-w-md mx-4">
-    <!-- Logo -->
-    <div class="text-center mb-8">
-      <a href="index.html" class="inline-flex items-center gap-2">
-        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center"><i class="fas fa-home text-white"></i></div>
-        <span class="text-2xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+<body style="background:#f9fafb;">
+
+<div class="auth-page">
+  <!-- Visual Side -->
+  <div class="auth-visual">
+    <div style="position:absolute;inset:0;opacity:0.15;">
+      <img src="https://picsum.photos/seed/auth-bg/800/1200" alt="" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+    <div style="position:relative;z-index:1;">
+      <a href="index.html" style="display:flex;align-items:center;gap:10px;margin-bottom:48px;">
+        <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-home" style="color:white;font-size:18px;"></i></div>
+        <span style="font-size:22px;font-weight:900;color:white;">Rumah<span style="color:#93c5fd;">Kita</span></span>
       </a>
-    </div>
-
-    <!-- Card -->
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-      <h1 class="text-2xl font-extrabold text-gray-900 mb-1 text-center">Masuk ke RumahKita</h1>
-      <p class="text-gray-500 text-sm text-center mb-6">Selamat datang kembali!</p>
-
-      <!-- Alert -->
-      <div id="alertBox" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
-
-      <!-- Google OAuth -->
-      <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 py-3 border-2 border-gray-200 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-300 transition mb-4">
-        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        Masuk dengan Google
-      </button>
-
-      <!-- Divider -->
-      <div class="flex items-center gap-3 mb-4">
-        <div class="flex-1 h-px bg-gray-200"></div>
-        <span class="text-xs text-gray-400 font-medium">atau</span>
-        <div class="flex-1 h-px bg-gray-200"></div>
+      <h2 style="font-size:2rem;font-weight:800;color:white;line-height:1.3;margin-bottom:16px;">Temukan Properti<br>Impian Anda</h2>
+      <p style="color:#bfdbfe;font-size:15px;line-height:1.7;margin-bottom:36px;">Platform properti terpercaya dengan ribuan listing terverifikasi di seluruh Indonesia.</p>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;color:white;font-size:14px;font-weight:500;">✓ 42.500+ Properti Aktif</div>
+        <div style="display:flex;align-items:center;gap:10px;color:white;font-size:14px;font-weight:500;">✓ Agen Terverifikasi</div>
+        <div style="display:flex;align-items:center;gap:10px;color:white;font-size:14px;font-weight:500;">✓ Gratis Pasang Iklan</div>
+        <div style="display:flex;align-items:center;gap:10px;color:white;font-size:14px;font-weight:500;">✓ Transaksi Aman &amp; Terpercaya</div>
       </div>
-
-      <!-- Form -->
-      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
-          <div class="relative">
-            <i class="fas fa-envelope absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
-            <input type="email" id="email" required placeholder="nama@email.com" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-          </div>
-        </div>
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="block text-sm font-semibold text-gray-700">Password</label>
-            <a href="reset-password.html" class="text-xs text-blue-600 hover:underline">Lupa password?</a>
-          </div>
-          <div class="relative">
-            <i class="fas fa-lock absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
-            <input type="password" id="password" required placeholder="••••••••" class="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            <button type="button" onclick="togglePass('password','togglePassIcon')" class="absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600">
-              <i id="togglePassIcon" class="fas fa-eye text-sm"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <input type="checkbox" id="remember" class="w-4 h-4 accent-blue-600">
-          <label for="remember" class="text-sm text-gray-600 cursor-pointer">Ingat saya</label>
-        </div>
-
-        <button type="submit" id="loginBtn" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2">
-          <i class="fas fa-sign-in-alt"></i>Masuk
-        </button>
-      </form>
-
-      <p class="text-center text-sm text-gray-500 mt-5">
-        Belum punya akun? <a href="register.html" class="text-blue-600 font-semibold hover:underline">Daftar di sini</a>
-      </p>
     </div>
-
-    <p class="text-center text-xs text-gray-400 mt-6">
-      © 2026 RumahKita • <a href="privasi.html" class="hover:underline">Privasi</a> • <a href="syarat.html" class="hover:underline">Syarat</a>
-    </p>
   </div>
 
-  <script>
-    function togglePass(inputId, iconId) {
-      const inp = document.getElementById(inputId);
-      const icon = document.getElementById(iconId);
-      if (inp.type === 'password') { inp.type = 'text'; icon.className = 'fas fa-eye-slash text-sm'; }
-      else { inp.type = 'password'; icon.className = 'fas fa-eye text-sm'; }
-    }
+  <!-- Form Side -->
+  <div class="auth-form-side">
+    <div class="auth-card">
+      <!-- Logo (mobile only) -->
+      <div style="text-align:center;margin-bottom:28px;">
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:10px;">
+          <div style="width:40px;height:40px;background:#2563eb;border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-home" style="color:white;"></i></div>
+          <span style="font-size:22px;font-weight:900;color:#2563eb;">Rumah<span style="color:#111827;">Kita</span></span>
+        </a>
+      </div>
 
-    function showAlert(msg, type='error') {
-      const box = document.getElementById('alertBox');
-      box.className = `mb-4 p-3 rounded-xl text-sm font-medium ${type==='success'?'bg-green-50 text-green-700 border border-green-200':'bg-red-50 text-red-700 border border-red-200'}`;
-      box.textContent = msg;
-      box.classList.remove('hidden');
-    }
+      <div style="background:white;border-radius:20px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.07);border:1px solid #f3f4f6;">
+        <h1 style="font-size:22px;font-weight:800;color:#111827;text-align:center;margin-bottom:4px;">Masuk ke RumahKita</h1>
+        <p style="font-size:13px;color:#6b7280;text-align:center;margin-bottom:20px;">Selamat datang kembali!</p>
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const btn = document.getElementById('loginBtn');
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+        <!-- Alert -->
+        <div id="alertBox" class="hidden" style="margin-bottom:16px;padding:12px 14px;border-radius:10px;font-size:13px;font-weight:600;"></div>
 
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...';
+        <!-- Demo accounts -->
+        <div style="background:#f9fafb;border-radius:12px;padding:12px;margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Akun Demo</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="demo-pill" onclick="fillDemo('demo@rumahkita.com','demo123')"><i class="fas fa-user"></i>Demo User</span>
+            <span class="demo-pill" onclick="fillDemo('budi@rumahkita.com','password123')"><i class="fas fa-user-tie"></i>Agen</span>
+          </div>
+        </div>
 
-      // Demo users
-      const demoUsers = [
-        { email: 'budi@rumahkita.com', password: 'password123', name: 'Budi Santoso', id: 'user-001', type: 'agen' },
-        { email: 'sari@rumahkita.com', password: 'password123', name: 'Sari Dewi', id: 'user-002', type: 'agen' },
-        { email: 'ahmad@rumahkita.com', password: 'password123', name: 'Ahmad Fauzi', id: 'user-003', type: 'pemilik' },
-        { email: 'demo@rumahkita.com', password: 'demo123', name: 'Demo User', id: 'user-demo', type: 'pemilik' },
-      ];
+        <!-- Google -->
+        <button onclick="loginWithGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;color:#374151;background:white;cursor:pointer;transition:all 0.15s;font-family:inherit;margin-bottom:16px;" onmouseover="this.style.borderColor='#d1d5db';this.style.background='#f9fafb'" onmouseout="this.style.borderColor='#e5e7eb';this.style.background='white'">
+          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Masuk dengan Google
+        </button>
 
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="flex:1;height:1px;background:#e5e7eb;"></div>
+          <span style="font-size:12px;color:#9ca3af;font-weight:500;">atau email</span>
+          <div style="flex:1;height:1px;background:#e5e7eb;"></div>
+        </div>
+
+        <!-- Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <div class="input-wrap">
+              <i class="fas fa-envelope left"></i>
+              <input type="email" id="email" required placeholder="nama@email.com" class="form-control" autocomplete="email">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <label class="form-label" style="margin-bottom:0;">Password</label>
+              <a href="reset-password.html" style="font-size:12px;color:#2563eb;font-weight:600;">Lupa password?</a>
+            </div>
+            <div class="input-wrap">
+              <i class="fas fa-lock left"></i>
+              <input type="password" id="password" required placeholder="••••••••" class="form-control" style="padding-right:44px;" autocomplete="current-password">
+              <button type="button" class="toggle-pass" onclick="togglePassword('password','toggleIcon')">
+                <i class="fas fa-eye" id="toggleIcon"></i>
+              </button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+            <input type="checkbox" id="remember" style="width:16px;height:16px;accent-color:#2563eb;cursor:pointer;">
+            <label for="remember" style="font-size:13px;color:#374151;cursor:pointer;">Ingat saya</label>
+          </div>
+          <button type="submit" id="loginBtn" class="btn btn-primary btn-full btn-lg" style="font-size:15px;">
+            <i class="fas fa-sign-in-alt"></i>Masuk
+          </button>
+        </form>
+
+        <p style="text-align:center;font-size:13px;color:#6b7280;margin-top:20px;">
+          Belum punya akun? <a href="register.html" style="color:#2563eb;font-weight:700;">Daftar di sini</a>
+        </p>
+      </div>
+
+      <p style="text-align:center;font-size:11px;color:#9ca3af;margin-top:20px;">
+        © 2026 RumahKita •
+        <a href="privasi.html" style="color:#9ca3af;" onmouseover="this.style.color='#6b7280'" onmouseout="this.style.color='#9ca3af'">Privasi</a> •
+        <a href="syarat.html" style="color:#9ca3af;" onmouseover="this.style.color='#6b7280'" onmouseout="this.style.color='#9ca3af'">Syarat</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+// Redirect if logged in
+if (Auth.getUser()) window.location.href = 'dashboard.html';
+
+function fillDemo(email, pass) {
+  document.getElementById('email').value = email;
+  document.getElementById('password').value = pass;
+}
+
+function togglePassword(inputId, iconId) {
+  const inp = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (inp.type === 'password') { inp.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+  else { inp.type = 'password'; icon.className = 'fas fa-eye'; }
+}
+
+function showAlert(msg, type = 'error') {
+  const box = document.getElementById('alertBox');
+  box.className = type === 'success'
+    ? 'bg-green-50 text-green-700 border border-green-200'
+    : 'bg-red-50 text-red-700 border border-red-200';
+  box.style.display = 'block';
+  box.style.padding = '12px 14px';
+  box.style.borderRadius = '10px';
+  box.style.fontSize = '13px';
+  box.style.fontWeight = '600';
+  box.style.marginBottom = '16px';
+  box.style.background = type === 'success' ? '#f0fdf4' : '#fef2f2';
+  box.style.color = type === 'success' ? '#15803d' : '#dc2626';
+  box.style.border = type === 'success' ? '1.5px solid #bbf7d0' : '1.5px solid #fecaca';
+  box.textContent = msg;
+  box.classList.remove('hidden');
+}
+
+const DEMO_USERS = [
+  { email:'budi@rumahkita.com', password:'password123', name:'Budi Santoso', id:'user-001', type:'agen' },
+  { email:'sari@rumahkita.com', password:'password123', name:'Sari Dewi', id:'user-002', type:'agen' },
+  { email:'ahmad@rumahkita.com', password:'password123', name:'Ahmad Fauzi', id:'user-003', type:'pemilik' },
+  { email:'demo@rumahkita.com', password:'demo123', name:'Demo User', id:'user-demo', type:'pemilik' },
+];
+
+function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Memproses...';
+  setTimeout(() => {
+    const user = DEMO_USERS.find(u => u.email === email && u.password === password);
+    if (user) {
+      Auth.setUser(user);
+      showAlert('Login berhasil! Mengalihkan...', 'success');
       setTimeout(() => {
-        const user = demoUsers.find(u => u.email === email && u.password === password);
-        if (user) {
-          localStorage.setItem('rumahkita_user', JSON.stringify(user));
-          showAlert('Login berhasil! Mengalihkan...', 'success');
-          setTimeout(() => window.location.href = 'dashboard.html', 800);
-        } else {
-          showAlert('Email atau password salah. Coba: demo@rumahkita.com / demo123');
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
-        }
+        const redirect = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
+        window.location.href = redirect;
       }, 800);
+    } else {
+      showAlert('Email atau password salah. Gunakan akun demo di atas.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i>Masuk';
     }
+  }, 800);
+}
 
-    function loginWithGoogle() {
-      const user = { email: 'google@rumahkita.com', name: 'Pengguna Google', id: 'user-google', type: 'pemilik' };
-      localStorage.setItem('rumahkita_user', JSON.stringify(user));
-      showAlert('Login Google berhasil! Mengalihkan...', 'success');
-      setTimeout(() => window.location.href = 'dashboard.html', 800);
-    }
-
-    // Check if already logged in
-    if (localStorage.getItem('rumahkita_user')) window.location.href = 'dashboard.html';
-  </script>
+function loginWithGoogle() {
+  const user = { email:'google@example.com', name:'Pengguna Google', id:'user-google', type:'pemilik' };
+  Auth.setUser(user);
+  showAlert('Login Google berhasil!', 'success');
+  setTimeout(() => window.location.href = 'dashboard.html', 800);
+}
+</script>
 </body>
 </html>

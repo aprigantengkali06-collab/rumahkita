@@ -8,581 +8,673 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { padding-bottom: 60px; }
+    @media (min-width: 768px) { body { padding-bottom: 0; } }
+    .layout-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 900px) { .layout-grid { grid-template-columns: 280px 1fr; } }
+    .chip-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+    .chip-scroll::-webkit-scrollbar { display: none; }
+    .range-display { display: flex; justify-content: space-between; font-size: 12px; color: #6b7280; margin-top: 6px; }
+    .filter-label { font-size: 12px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; display: block; }
+    .check-group { display: flex; flex-direction: column; gap: 8px; }
+    .check-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #374151; cursor: pointer; user-select: none; }
+    .check-item input[type=checkbox] { width: 16px; height: 16px; accent-color: #2563eb; cursor: pointer; flex-shrink: 0; }
+    .stepper-wrap { display: flex; align-items: center; gap: 0; }
+    .stepper-btn { width: 34px; height: 34px; border: 1.5px solid #e5e7eb; background: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #374151; transition: all 0.15s; font-family: inherit; }
+    .stepper-btn:first-child { border-radius: 8px 0 0 8px; }
+    .stepper-btn:last-child { border-radius: 0 8px 8px 0; }
+    .stepper-btn:hover { background: #eff6ff; border-color: #2563eb; color: #2563eb; }
+    .stepper-val { width: 44px; height: 34px; border: 1.5px solid #e5e7eb; border-left: 0; border-right: 0; text-align: center; font-size: 14px; font-weight: 600; background: white; outline: none; font-family: inherit; }
+    .active-filter-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: #dbeafe; color: #1d4ed8; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .active-filter-tag button { background: none; border: none; color: #1d4ed8; cursor: pointer; font-size: 11px; padding: 0; line-height: 1; }
+
+    /* Mobile improvements */
+    @media (max-width: 640px) {
+      .page-title-row { flex-direction: column; align-items: flex-start !important; }
+      .page-title-row > div:last-child { width: 100%; justify-content: space-between; }
+      #sortSelect { font-size: 12px; padding: 6px 10px; }
     }
-  </script>
+    @media (max-width: 480px) {
+      .properties-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .property-price { font-size: 14px; }
+      .property-title { font-size: 12px; }
+      .property-location { font-size: 11px; }
+      .spec-item { font-size: 11px; }
+    }
+  </style>
 </head>
 <body class="bg-gray-50">
 
 <!-- NAVBAR -->
-<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <a href="index.html" class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
-        <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
-      </a>
-      <div class="hidden md:flex items-center gap-1">
-        <a href="properti.html?listing=dijual" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Dijual</a>
-        <a href="properti.html?listing=disewa" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Disewa</a>
-        <a href="kpr.html" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">KPR</a>
-        <a href="artikel.html" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Artikel</a>
-      </div>
-      <div class="hidden md:flex items-center gap-3" id="navAuthSection">
-        <a href="tambah-properti.html" class="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition"><i class="fas fa-plus mr-1"></i>Pasang Iklan</a>
-        <a href="login.html" class="text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">Masuk</a>
-        <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">Daftar</a>
-      </div>
-      <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
-        <i class="fas fa-bars text-gray-700"></i>
-      </button>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <div class="navbar-logo-icon"><i class="fas fa-home"></i></div>
+      <div class="navbar-logo-text">Rumah<span>Kita</span></div>
+    </a>
+    <div class="navbar-links">
+      <a href="properti.html?listing=dijual">Dijual</a>
+      <a href="properti.html?listing=disewa">Disewa</a>
+      <a href="kpr.html">KPR</a>
+      <a href="artikel.html">Artikel</a>
     </div>
-  </div>
-  <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 py-4">
-    <div class="flex gap-3 mb-4">
-      <a href="login.html" class="flex-1 text-center py-2 border border-gray-300 text-gray-700 rounded-lg font-medium">Masuk</a>
-      <a href="register.html" class="flex-1 text-center py-2 bg-blue-600 text-white rounded-lg font-medium">Daftar</a>
-    </div>
-    <button onclick="openMobileFilter()" class="w-full py-3 bg-blue-50 text-blue-600 rounded-lg font-semibold"><i class="fas fa-sliders-h mr-2"></i>Filter Properti</button>
+    <div class="navbar-actions" id="navAuthDesktop"></div>
+    <button class="nav-hamburger" id="navHamburger"><i class="fas fa-bars"></i></button>
   </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+  <div class="mobile-menu-drawer">
+    <div class="mobile-menu-header">
+      <div class="navbar-logo"><div class="navbar-logo-icon"><i class="fas fa-home"></i></div><div class="navbar-logo-text">Rumah<span>Kita</span></div></div>
+      <button class="mobile-menu-close" id="mobileMenuClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mobile-menu-nav">
+      <a href="index.html"><i class="fas fa-home" style="color:#2563eb;"></i>Beranda</a>
+      <a href="properti.html?listing=dijual"><i class="fas fa-tag" style="color:#2563eb;"></i>Dijual</a>
+      <a href="properti.html?listing=disewa"><i class="fas fa-key" style="color:#16a34a;"></i>Disewa</a>
+      <a href="kpr.html"><i class="fas fa-calculator" style="color:#7c3aed;"></i>Simulasi KPR</a>
+      <a href="artikel.html"><i class="fas fa-newspaper" style="color:#ea580c;"></i>Artikel</a>
+    </div>
+    <div class="mobile-menu-footer" id="navAuthMobileFooter"></div>
+  </div>
+</div>
+
+<!-- FILTER DRAWER (Mobile) -->
+<div class="filter-drawer" id="filterDrawer">
+  <div class="filter-drawer-overlay" onclick="closeFilter()"></div>
+  <div class="filter-drawer-panel">
+    <div class="filter-drawer-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="font-size:17px;font-weight:700;">Filter Properti</h3>
+      <button onclick="closeFilter()" style="background:none;border:none;font-size:20px;color:#6b7280;cursor:pointer;"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="filterDrawerContent"><!-- filled by JS --></div>
+    <div style="display:flex;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #f3f4f6;">
+      <button onclick="resetFilters()" class="btn btn-gray btn-full">Reset</button>
+      <button onclick="applyDrawerFilters()" class="btn btn-primary btn-full">Tampilkan Hasil</button>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="padding-top:24px;padding-bottom:24px;">
   <!-- Breadcrumb -->
-  <nav class="text-sm text-gray-500 mb-4">
-    <a href="index.html" class="hover:text-blue-600">Beranda</a>
-    <span class="mx-2">›</span>
-    <span id="breadcrumbText" class="text-gray-900 font-medium">Semua Properti</span>
+  <nav style="font-size:13px;color:#6b7280;margin-bottom:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+    <a href="index.html" style="color:#6b7280;transition:color 0.15s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#6b7280'">Beranda</a>
+    <i class="fas fa-chevron-right" style="font-size:10px;"></i>
+    <span id="breadcrumbText" style="color:#111827;font-weight:500;">Semua Properti</span>
   </nav>
 
-  <!-- Header + Sort -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+  <!-- Page Title Row -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
     <div>
-      <h1 id="pageTitle" class="text-2xl font-extrabold text-gray-900">Semua Properti</h1>
-      <p id="resultCount" class="text-gray-500 text-sm mt-1">Memuat properti...</p>
+      <h1 id="pageTitle" style="font-size:clamp(1.2rem,3vw,1.6rem);font-weight:800;color:#111827;line-height:1.2;">Semua Properti</h1>
+      <p id="resultCount" style="font-size:13px;color:#6b7280;margin-top:4px;">Memuat...</p>
     </div>
-    <div class="flex items-center gap-3">
-      <button onclick="openMobileFilter()" class="md:hidden flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium bg-white">
-        <i class="fas fa-sliders-h text-blue-600"></i>Filter
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <button onclick="openFilter()" class="btn btn-gray" style="display:flex;align-items:center;gap:8px;" id="mobileFilterBtn">
+        <i class="fas fa-sliders-h" style="color:#2563eb;"></i>Filter
+        <span id="filterBadge" style="display:none;background:#2563eb;color:white;border-radius:50%;width:18px;height:18px;font-size:11px;font-weight:700;align-items:center;justify-content:center;"></span>
       </button>
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-gray-500">Urutkan:</label>
-        <select id="sortSelect" onchange="applyFilters()" class="border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label style="font-size:13px;color:#6b7280;white-space:nowrap;">Urutkan:</label>
+        <select id="sortSelect" onchange="applyFilters()" style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;background:white;outline:none;font-family:inherit;cursor:pointer;">
           <option value="terbaru">Terbaru</option>
           <option value="termurah">Termurah</option>
           <option value="termahal">Termahal</option>
-          <option value="views">Paling Dilihat</option>
+          <option value="views">Terpopuler</option>
         </select>
       </div>
-      <div class="flex gap-1">
-        <button onclick="setView('grid')" id="viewGrid" class="p-2 rounded-lg bg-blue-600 text-white" title="Grid View"><i class="fas fa-th text-sm"></i></button>
-        <button onclick="setView('list')" id="viewList" class="p-2 rounded-lg bg-white border border-gray-200 text-gray-500" title="List View"><i class="fas fa-list text-sm"></i></button>
+      <div style="display:flex;border:1.5px solid #e5e7eb;border-radius:10px;overflow:hidden;background:white;">
+        <button onclick="setView('grid')" id="viewGrid" title="Grid" style="width:38px;height:38px;border:none;background:#2563eb;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-th-large"></i></button>
+        <button onclick="setView('list')" id="viewList" title="List" style="width:38px;height:38px;border:none;background:white;color:#6b7280;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-list"></i></button>
       </div>
     </div>
   </div>
 
-  <div class="flex gap-6">
-    <!-- SIDEBAR FILTER (Desktop) -->
-    <aside class="hidden md:block w-72 flex-shrink-0">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sticky top-24">
-        <div class="flex items-center justify-between mb-5">
-          <h2 class="font-bold text-gray-900 text-lg">Filter</h2>
-          <button onclick="resetFilters()" class="text-xs text-blue-600 hover:underline font-medium">Reset Semua</button>
+  <!-- Active Filters -->
+  <div id="activeFiltersRow" style="display:none;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;">
+    <span style="font-size:12px;font-weight:500;color:#6b7280;">Filter aktif:</span>
+    <div id="activeFilterTags"></div>
+    <button onclick="resetFilters()" style="font-size:12px;color:#dc2626;background:none;border:none;cursor:pointer;font-weight:600;">Hapus semua</button>
+  </div>
+
+  <!-- Quick Type Filter -->
+  <div class="chip-scroll" style="margin-bottom:24px;">
+    <button class="chip active" onclick="setTypeChip(this,'')" data-type="">Semua</button>
+    <button class="chip" onclick="setTypeChip(this,'rumah')" data-type="rumah">🏠 Rumah</button>
+    <button class="chip" onclick="setTypeChip(this,'apartemen')" data-type="apartemen">🏢 Apartemen</button>
+    <button class="chip" onclick="setTypeChip(this,'tanah')" data-type="tanah">🌍 Tanah</button>
+    <button class="chip" onclick="setTypeChip(this,'ruko')" data-type="ruko">🏪 Ruko</button>
+    <button class="chip" onclick="setTypeChip(this,'villa')" data-type="villa">🏡 Villa</button>
+    <button class="chip" onclick="setTypeChip(this,'kos')" data-type="kos">🏨 Kos</button>
+    <button class="chip" onclick="setTypeChip(this,'gudang')" data-type="gudang">🏭 Gudang</button>
+    <button class="chip" onclick="setTypeChip(this,'kantor')" data-type="kantor">🏛️ Kantor</button>
+  </div>
+
+  <!-- Main Layout: Sidebar + Results -->
+  <div class="layout-grid">
+    <!-- SIDEBAR (Desktop) -->
+    <aside id="sidebarDesktop" style="display:none;">
+      <div class="sidebar sticky-sidebar" id="sidebarContent">
+        <div class="sidebar-header">
+          <span><i class="fas fa-sliders-h mr-2" style="color:#2563eb;"></i>Filter</span>
+          <button onclick="resetFilters()" style="font-size:12px;color:#2563eb;background:none;border:none;cursor:pointer;font-weight:600;">Reset</button>
         </div>
-        <div id="filterContent"></div>
-        <button onclick="applyFilters()" class="w-full mt-5 bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">
-          <i class="fas fa-search mr-2"></i>Terapkan Filter
-        </button>
+        <!-- Listing -->
+        <div class="sidebar-section">
+          <span class="filter-label">Status Listing</span>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" id="sf-jual" onchange="applyFilters()"><span>Dijual</span></label>
+            <label class="check-item"><input type="checkbox" id="sf-sewa" onchange="applyFilters()"><span>Disewa</span></label>
+          </div>
+        </div>
+        <!-- Price -->
+        <div class="sidebar-section">
+          <span class="filter-label">Rentang Harga</span>
+          <input type="range" id="sf-price-max" min="0" max="20000000000" step="100000000" value="20000000000" oninput="updatePriceRange()">
+          <div class="range-display">
+            <span>Rp 0</span>
+            <span id="priceMaxLabel">Semua</span>
+          </div>
+        </div>
+        <!-- Bedrooms -->
+        <div class="sidebar-section">
+          <span class="filter-label">Kamar Tidur</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="chip" onclick="setBedroom(this,0)" data-br="0">Semua</button>
+            <button class="chip" onclick="setBedroom(this,1)" data-br="1">1+</button>
+            <button class="chip" onclick="setBedroom(this,2)" data-br="2">2+</button>
+            <button class="chip" onclick="setBedroom(this,3)" data-br="3">3+</button>
+            <button class="chip" onclick="setBedroom(this,4)" data-br="4">4+</button>
+          </div>
+        </div>
+        <!-- Bathrooms -->
+        <div class="sidebar-section">
+          <span class="filter-label">Kamar Mandi</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="chip" onclick="setBathroom(this,0)" data-bth="0">Semua</button>
+            <button class="chip" onclick="setBathroom(this,1)" data-bth="1">1+</button>
+            <button class="chip" onclick="setBathroom(this,2)" data-bth="2">2+</button>
+            <button class="chip" onclick="setBathroom(this,3)" data-bth="3">3+</button>
+          </div>
+        </div>
+        <!-- Certificate -->
+        <div class="sidebar-section">
+          <span class="filter-label">Sertifikat</span>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" class="sf-cert" value="SHM" onchange="applyFilters()"><span>SHM</span></label>
+            <label class="check-item"><input type="checkbox" class="sf-cert" value="HGB" onchange="applyFilters()"><span>HGB</span></label>
+            <label class="check-item"><input type="checkbox" class="sf-cert" value="AJB" onchange="applyFilters()"><span>AJB</span></label>
+            <label class="check-item"><input type="checkbox" class="sf-cert" value="PPJB" onchange="applyFilters()"><span>PPJB</span></label>
+          </div>
+        </div>
+        <!-- Furnished -->
+        <div class="sidebar-section">
+          <span class="filter-label">Furnitur</span>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" class="sf-furn" value="furnished" onchange="applyFilters()"><span>Full Furnished</span></label>
+            <label class="check-item"><input type="checkbox" class="sf-furn" value="semi" onchange="applyFilters()"><span>Semi Furnished</span></label>
+            <label class="check-item"><input type="checkbox" class="sf-furn" value="unfurnished" onchange="applyFilters()"><span>Unfurnished</span></label>
+          </div>
+        </div>
+        <!-- Featured -->
+        <div class="sidebar-section">
+          <label class="check-item"><input type="checkbox" id="sf-featured" onchange="applyFilters()"><span style="font-weight:600;">⭐ Properti Unggulan</span></label>
+        </div>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 min-w-0">
-      <!-- Active Filters Tags -->
-      <div id="activeFilters" class="flex flex-wrap gap-2 mb-4"></div>
-
-      <!-- Property Grid -->
-      <div id="propertyGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Loading Skeleton -->
-        <div class="skeleton-card"><div class="skeleton" style="height:200px;"></div><div class="p-4"><div class="skeleton h-4 mb-2"></div><div class="skeleton h-3 w-3/4"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton" style="height:200px;"></div><div class="p-4"><div class="skeleton h-4 mb-2"></div><div class="skeleton h-3 w-3/4"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton" style="height:200px;"></div><div class="p-4"><div class="skeleton h-4 mb-2"></div><div class="skeleton h-3 w-3/4"></div></div></div>
+    <!-- RESULTS -->
+    <div>
+      <div id="propertyGrid" class="properties-grid">
+        <!-- Skeleton -->
+        <div class="card" style="overflow:hidden;"><div class="skeleton" style="height:200px;border-radius:0;"></div><div style="padding:16px;"><div class="skeleton" style="height:22px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:80%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:50%;"></div></div></div>
+        <div class="card" style="overflow:hidden;"><div class="skeleton" style="height:200px;border-radius:0;"></div><div style="padding:16px;"><div class="skeleton" style="height:22px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:80%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:50%;"></div></div></div>
+        <div class="card" style="overflow:hidden;"><div class="skeleton" style="height:200px;border-radius:0;"></div><div style="padding:16px;"><div class="skeleton" style="height:22px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:80%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:50%;"></div></div></div>
+        <div class="card" style="overflow:hidden;"><div class="skeleton" style="height:200px;border-radius:0;"></div><div style="padding:16px;"><div class="skeleton" style="height:22px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:80%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:50%;"></div></div></div>
+        <div class="card" style="overflow:hidden;"><div class="skeleton" style="height:200px;border-radius:0;"></div><div style="padding:16px;"><div class="skeleton" style="height:22px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:80%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:50%;"></div></div></div>
+        <div class="card" style="overflow:hidden;"><div class="skeleton" style="height:200px;border-radius:0;"></div><div style="padding:16px;"><div class="skeleton" style="height:22px;width:60%;margin-bottom:8px;"></div><div class="skeleton" style="height:16px;width:80%;margin-bottom:6px;"></div><div class="skeleton" style="height:16px;width:50%;"></div></div></div>
       </div>
-
-      <!-- Pagination -->
-      <div id="pagination" class="mt-8 flex justify-center"></div>
-
-      <!-- Empty State -->
-      <div id="emptyState" class="hidden empty-state">
-        <div class="empty-state-icon">🏠</div>
-        <h3 class="empty-state-title">Properti tidak ditemukan</h3>
-        <p class="empty-state-desc">Coba ubah filter atau kata kunci pencarian Anda</p>
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-title">Tidak ada properti ditemukan</div>
+        <div class="empty-state-desc">Coba ubah filter atau kata kunci pencarian Anda</div>
         <button onclick="resetFilters()" class="btn btn-primary">Reset Filter</button>
       </div>
-    </main>
-  </div>
-</div>
-
-<!-- Mobile Filter Drawer -->
-<div id="mobileFilterOverlay" class="fixed inset-0 bg-black/60 z-50 hidden" onclick="closeMobileFilter()"></div>
-<div id="mobileFilterDrawer" class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 transform translate-y-full transition-transform duration-300" style="max-height:85vh;overflow-y:auto;">
-  <div class="p-5">
-    <div class="flex items-center justify-between mb-5">
-      <h2 class="font-bold text-gray-900 text-lg">Filter Properti</h2>
-      <button onclick="closeMobileFilter()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"><i class="fas fa-times text-gray-600"></i></button>
-    </div>
-    <div id="mobileFilterContent"></div>
-    <div class="flex gap-3 mt-5">
-      <button onclick="resetFilters()" class="flex-1 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700">Reset</button>
-      <button onclick="applyFilters(); closeMobileFilter();" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-semibold">Terapkan</button>
+      <div class="pagination" id="pagination"></div>
     </div>
   </div>
 </div>
 
-<!-- Mobile Bottom Nav -->
-<div class="mobile-bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 px-2 py-2">
-  <div class="flex justify-around items-center">
-    <a href="index.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-home text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Beranda</span></a>
-    <a href="properti.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-search text-blue-600 text-xl"></i><span class="text-xs text-blue-600 font-medium">Cari</span></a>
-    <a href="tambah-properti.html" class="flex flex-col items-center gap-1 -mt-5"><div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-plus text-white text-lg"></i></div><span class="text-xs text-gray-400 mt-1">Pasang</span></a>
-    <a href="dashboard.html#favorit" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-heart text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Favorit</span></a>
-    <a href="login.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-user text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Akun</span></a>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo-text"><span>Rumah</span>Kita</div>
+      <p class="footer-desc">Platform properti terpercaya untuk jual, beli, dan sewa properti di seluruh Indonesia.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Properti</div>
+      <a href="properti.html?listing=dijual">Dijual</a>
+      <a href="properti.html?listing=disewa">Disewa</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Layanan</div>
+      <a href="tambah-properti.html">Pasang Iklan</a>
+      <a href="kpr.html">Simulasi KPR</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Info</div>
+      <a href="tentang.html">Tentang Kami</a>
+      <a href="kontak.html">Kontak</a>
+    </div>
   </div>
+  <div class="footer-bottom">
+    <span>© 2026 RumahKita. Seluruh hak cipta dilindungi.</span>
+    <div style="display:flex;gap:16px;"><a href="privasi.html">Privasi</a><a href="syarat.html">Syarat</a></div>
+  </div>
+</footer>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav">
+  <a href="index.html"><i class="fas fa-home"></i>Beranda</a>
+  <a href="properti.html" class="active"><i class="fas fa-search"></i>Cari</a>
+  <a href="tambah-properti.html" class="nav-add"><i class="fas fa-plus"></i>Pasang</a>
+  <a href="kpr.html"><i class="fas fa-calculator"></i>KPR</a>
+  <a href="dashboard.html"><i class="fas fa-user"></i>Akun</a>
 </div>
 
 <script src="js/data.js"></script>
+<script src="js/app.js"></script>
 <script>
 // ============================
 // FILTER STATE
 // ============================
-let filters = {};
+const filterState = {
+  listing: '', type: '', q: '', city: '', priceMax: 20000000000,
+  bedrooms: 0, bathrooms: 0, certs: [], furnished: [], featured: false, sort: 'terbaru'
+};
+const PAGE_SIZE = 9;
 let currentPage = 1;
-const ITEMS_PER_PAGE = 12;
 let currentView = 'grid';
+let filteredProps = [];
 
-// Parse URL params on load
-function parseURLParams() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('listing')) filters.listing = params.get('listing');
-  if (params.get('type')) filters.type = params.get('type');
-  if (params.get('city')) filters.city = params.get('city');
-  if (params.get('min_price')) filters.min_price = parseInt(params.get('min_price'));
-  if (params.get('max_price')) filters.max_price = parseInt(params.get('max_price'));
-  if (params.get('bedrooms')) filters.bedrooms = parseInt(params.get('bedrooms'));
-  if (params.get('featured')) filters.featured = params.get('featured') === 'true';
-  if (params.get('q')) filters.q = params.get('q');
+// Read URL params
+function readURLParams() {
+  const p = new URLSearchParams(window.location.search);
+  filterState.listing = p.get('listing') || '';
+  filterState.type = p.get('type') || '';
+  filterState.q = p.get('q') || '';
+  filterState.city = p.get('city') || '';
+  filterState.featured = p.get('featured') === 'true';
+  const price = p.get('price');
+  if (price) { const [,max] = price.split('-'); filterState.priceMax = parseInt(max) || 20000000000; }
 }
 
-// ============================
-// FILTER HTML
-// ============================
-function buildFilterHTML() {
-  return `
-    <!-- Tipe Listing -->
-    <div class="mb-5">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Tipe Listing</label>
-      <div class="flex gap-2">
-        <button onclick="toggleFilter('listing','dijual',this)" class="filter-chip flex-1 justify-center ${filters.listing==='dijual'?'active':''}">Dijual</button>
-        <button onclick="toggleFilter('listing','disewa',this)" class="filter-chip flex-1 justify-center ${filters.listing==='disewa'?'active':''}">Disewa</button>
-      </div>
-    </div>
+// Sync UI from state
+function syncUIFromState() {
+  if (filterState.listing === 'dijual') document.getElementById('sf-jual').checked = true;
+  if (filterState.listing === 'disewa') document.getElementById('sf-sewa').checked = true;
+  if (filterState.featured) document.getElementById('sf-featured').checked = true;
+  document.getElementById('sf-price-max').value = filterState.priceMax;
+  updatePriceRange();
 
-    <!-- Tipe Properti -->
-    <div class="mb-5">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Tipe Properti</label>
-      <div class="grid grid-cols-2 gap-2">
-        ${['rumah','apartemen','tanah','ruko','kos','villa','gudang','kantor'].map(t => 
-          `<button onclick="toggleFilter('type','${t}',this)" class="filter-chip ${filters.type===t?'active':''}">${getTypeLabel(t)}</button>`
-        ).join('')}
-      </div>
-    </div>
-
-    <!-- Lokasi -->
-    <div class="mb-5">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Kota</label>
-      <select id="filterCity" onchange="filters.city=this.value;applyFilters()" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <option value="">Semua Kota</option>
-        ${['Jakarta Selatan','Jakarta Barat','Jakarta Utara','Jakarta Timur','Bandung','Surabaya','Yogyakarta','Ubud','Bali','Denpasar','Medan','Tangerang Selatan','Tangerang','Bekasi','Bogor','Depok','Malang'].map(c => 
-          `<option value="${c}" ${filters.city===c?'selected':''}>${c}</option>`
-        ).join('')}
-      </select>
-    </div>
-
-    <!-- Range Harga -->
-    <div class="mb-5">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Rentang Harga</label>
-      <div class="grid grid-cols-2 gap-2">
-        <input type="text" id="filterMinPrice" placeholder="Min (Rp)" value="${filters.min_price || ''}" oninput="filters.min_price=parseRupiah(this.value)" class="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-        <input type="text" id="filterMaxPrice" placeholder="Max (Rp)" value="${filters.max_price || ''}" oninput="filters.max_price=parseRupiah(this.value)" class="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-      </div>
-      <div class="flex flex-wrap gap-1.5 mt-2">
-        ${[{l:'< 500 Jt',max:500000000},{l:'500 Jt - 1 M',min:500000000,max:1000000000},{l:'1 - 2 M',min:1000000000,max:2000000000},{l:'> 2 M',min:2000000000}].map(r =>
-          `<button onclick="setPriceRange(${r.min||0},${r.max||0})" class="text-xs px-2.5 py-1 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-300 transition">${r.l}</button>`
-        ).join('')}
-      </div>
-    </div>
-
-    <!-- Kamar Tidur -->
-    <div class="mb-5">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Kamar Tidur</label>
-      <div class="flex flex-wrap gap-2">
-        ${[1,2,3,4,'5+'].map(n => 
-          `<button onclick="toggleFilter('bedrooms',${typeof n==='number'?n:5},this)" class="filter-chip ${filters.bedrooms===(typeof n==='number'?n:5)?'active':''}">${n}</button>`
-        ).join('')}
-      </div>
-    </div>
-
-    <!-- Furnished -->
-    <div class="mb-5">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Furnished</label>
-      <div class="space-y-2">
-        ${[{v:'furnished',l:'Furnished'},{v:'semi_furnished',l:'Semi Furnished'},{v:'unfurnished',l:'Unfurnished'}].map(f =>
-          `<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" ${filters.furnished===f.v?'checked':''} onchange="filters.furnished=this.checked?'${f.v}':''" class="w-4 h-4 rounded accent-blue-600"><span class="text-sm text-gray-700">${f.l}</span></label>`
-        ).join('')}
-      </div>
-    </div>
-
-    <!-- Sertifikat -->
-    <div class="mb-2">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Sertifikat</label>
-      <div class="flex flex-wrap gap-2">
-        ${['SHM','HGB','Strata Title','AJB'].map(c =>
-          `<button onclick="toggleFilter('certificate','${c}',this)" class="filter-chip text-xs ${filters.certificate===c?'active':''}">${c}</button>`
-        ).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function getTypeLabel(type) {
-  const map = { rumah:'Rumah', apartemen:'Apartemen', tanah:'Tanah', ruko:'Ruko', kos:'Kos', villa:'Villa', gudang:'Gudang', kantor:'Kantor' };
-  return map[type] || type;
-}
-
-function toggleFilter(key, value, btn) {
-  if (filters[key] === value) {
-    delete filters[key];
-    if (btn) btn.classList.remove('active');
-  } else {
-    filters[key] = value;
-    // Remove active from siblings
-    if (btn && btn.parentElement) {
-      btn.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-    }
-    if (btn) btn.classList.add('active');
-  }
-  applyFilters();
-}
-
-function setPriceRange(min, max) {
-  if (min) filters.min_price = min;
-  else delete filters.min_price;
-  if (max) filters.max_price = max;
-  else delete filters.max_price;
-  renderFilters();
-  applyFilters();
-}
-
-function parseRupiah(str) { return parseInt(str.replace(/\D/g,'')) || 0; }
-
-function resetFilters() {
-  filters = {};
-  currentPage = 1;
-  history.pushState({}, '', 'properti.html');
-  renderFilters();
-  applyFilters();
-}
-
-// ============================
-// RENDER FILTERS
-// ============================
-function renderFilters() {
-  const html = buildFilterHTML();
-  document.getElementById('filterContent').innerHTML = html;
-  document.getElementById('mobileFilterContent').innerHTML = html;
-}
-
-// ============================
-// APPLY FILTERS & RENDER
-// ============================
-function applyFilters() {
-  currentPage = 1;
-  updateURL();
-  renderProperties();
-  renderActiveFilterTags();
-  updatePageTitle();
-}
-
-function updateURL() {
-  const params = new URLSearchParams();
-  if (filters.listing) params.set('listing', filters.listing);
-  if (filters.type) params.set('type', filters.type);
-  if (filters.city) params.set('city', filters.city);
-  if (filters.min_price) params.set('min_price', filters.min_price);
-  if (filters.max_price) params.set('max_price', filters.max_price);
-  if (filters.bedrooms) params.set('bedrooms', filters.bedrooms);
-  if (filters.certificate) params.set('certificate', filters.certificate);
-  const str = params.toString();
-  history.pushState({}, '', 'properti.html' + (str ? '?' + str : ''));
-}
-
-function getFilteredProperties() {
-  let list = [...RUMAHKITA_PROPERTIES];
-
-  if (filters.listing) list = list.filter(p => p.listing === filters.listing);
-  if (filters.type) list = list.filter(p => p.type === filters.type);
-  if (filters.city) list = list.filter(p => p.city.toLowerCase().includes(filters.city.toLowerCase()) || (p.district && p.district.toLowerCase().includes(filters.city.toLowerCase())));
-  if (filters.min_price) list = list.filter(p => p.price >= filters.min_price);
-  if (filters.max_price) list = list.filter(p => p.price <= filters.max_price);
-  if (filters.bedrooms) list = list.filter(p => p.bedrooms >= filters.bedrooms);
-  if (filters.certificate) list = list.filter(p => p.certificate === filters.certificate);
-  if (filters.furnished) list = list.filter(p => p.furnished === filters.furnished);
-  if (filters.featured) list = list.filter(p => p.is_featured);
-  if (filters.q) {
-    const q = filters.q.toLowerCase();
-    list = list.filter(p => p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
+  // Type chips
+  if (filterState.type) {
+    document.querySelectorAll('[data-type]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type === filterState.type);
+    });
   }
 
-  // Sort
-  const sort = document.getElementById('sortSelect')?.value || 'terbaru';
-  if (sort === 'terbaru') list.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-  if (sort === 'termurah') list.sort((a,b) => a.price - b.price);
-  if (sort === 'termahal') list.sort((a,b) => b.price - a.price);
-  if (sort === 'views') list.sort((a,b) => b.views - a.views);
-
-  return list;
-}
-
-function renderProperties() {
-  const list = getFilteredProperties();
-  const total = list.length;
-  const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginated = list.slice(start, start + ITEMS_PER_PAGE);
-
-  const grid = document.getElementById('propertyGrid');
-  const empty = document.getElementById('emptyState');
-  const count = document.getElementById('resultCount');
-
-  if (total === 0) {
-    grid.innerHTML = '';
-    grid.classList.add('hidden');
-    empty.classList.remove('hidden');
-    count.textContent = 'Tidak ada properti ditemukan';
-  } else {
-    grid.classList.remove('hidden');
-    empty.classList.add('hidden');
-    count.textContent = `Menampilkan ${start+1}-${Math.min(start+ITEMS_PER_PAGE,total)} dari ${total} properti`;
-
-    if (currentView === 'grid') {
-      grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5';
-      grid.innerHTML = paginated.map(p => createPropertyCard(p)).join('');
-    } else {
-      grid.className = 'flex flex-col gap-4';
-      grid.innerHTML = paginated.map(p => createListCard(p)).join('');
-    }
-  }
-
-  renderPagination(total);
-}
-
-function createListCard(p) {
-  const priceLabel = formatPrice(p);
-  return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex gap-0 overflow-hidden card-hover cursor-pointer" onclick="location.href='detail-properti.html?id=${p.id}'">
-    <div class="relative w-48 sm:w-64 flex-shrink-0">
-      <img src="${p.images[0]}" alt="${p.title}" class="w-full h-full object-cover" style="min-height:160px;">
-      <div class="absolute top-2 left-2 flex gap-1">
-        <span class="${p.listing==='dijual'?'bg-blue-600':'bg-green-600'} text-white text-xs px-2 py-0.5 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span>
-        ${p.is_featured?'<span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">⭐</span>':''}
-      </div>
-    </div>
-    <div class="flex-1 p-4 flex flex-col justify-between">
-      <div>
-        <div class="flex items-start justify-between gap-2 mb-1">
-          <span class="text-blue-600 text-xl font-extrabold">${priceLabel}</span>
-          ${p.is_negotiable?'<span class="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium">Nego</span>':''}
-        </div>
-        <h3 class="font-bold text-gray-900 mb-1">${p.title}</h3>
-        <p class="text-gray-500 text-sm mb-2">📍 ${p.district?p.district+', ':''}${p.city}</p>
-        <div class="flex flex-wrap gap-3 text-sm text-gray-600">
-          ${p.bedrooms>0?`<span>🛏 ${p.bedrooms} KT</span>`:''}
-          ${p.bathrooms>0?`<span>🚿 ${p.bathrooms} KM</span>`:''}
-          ${p.building_area>0?`<span>📐 ${p.building_area}m²</span>`:''}
-          ${p.land_area>0?`<span>📏 ${p.land_area}m²</span>`:''}
-        </div>
-      </div>
-      <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${getTypeLabel(p.type)}</span>
-        <span class="text-xs text-gray-400">${relativeTime(p.created_at)}</span>
-      </div>
-    </div>
-  </div>`;
-}
-
-function formatPrice(p) {
-  const price = formatRupiah(p.price);
-  if (p.price_type === 'per_bulan') return price + '/bulan';
-  if (p.price_type === 'per_tahun') return price + '/tahun';
-  return price;
-}
-
-function formatRupiah(angka) {
-  return 'Rp ' + parseInt(angka).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-function relativeTime(dateStr) {
-  const now = new Date(); const date = new Date(dateStr);
-  const diff = Math.floor((now - date) / 1000);
-  if (diff < 3600) return Math.floor(diff/60) + ' mnt lalu';
-  if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
-  if (diff < 604800) return Math.floor(diff/86400) + ' hari lalu';
-  return date.toLocaleDateString('id-ID', { day:'numeric', month:'short' });
-}
-
-// ============================
-// PAGINATION
-// ============================
-function renderPagination(total) {
-  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-  const container = document.getElementById('pagination');
-  if (totalPages <= 1) { container.innerHTML = ''; return; }
-
-  let html = `<button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} class="page-btn"><i class="fas fa-chevron-left text-xs"></i></button>`;
-  for (let i = 1; i <= totalPages; i++) {
-    if (i === 1 || i === totalPages || (i >= currentPage-1 && i <= currentPage+1)) {
-      html += `<button onclick="goPage(${i})" class="page-btn ${i===currentPage?'active':''}">${i}</button>`;
-    } else if (i === currentPage-2 || i === currentPage+2) {
-      html += `<span class="page-btn" style="cursor:default;">...</span>`;
-    }
-  }
-  html += `<button onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''} class="page-btn"><i class="fas fa-chevron-right text-xs"></i></button>`;
-  container.innerHTML = html;
-}
-
-function goPage(p) {
-  currentPage = p;
-  renderProperties();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ============================
-// ACTIVE FILTER TAGS
-// ============================
-function renderActiveFilterTags() {
-  const container = document.getElementById('activeFilters');
-  const tags = [];
-  if (filters.listing) tags.push({ label: filters.listing === 'dijual' ? 'Dijual' : 'Disewa', key: 'listing' });
-  if (filters.type) tags.push({ label: getTypeLabel(filters.type), key: 'type' });
-  if (filters.city) tags.push({ label: filters.city, key: 'city' });
-  if (filters.min_price || filters.max_price) tags.push({ label: `Harga: ${filters.min_price?formatRupiah(filters.min_price)+' -':''} ${filters.max_price?formatRupiah(filters.max_price):''}`.trim(), key: 'price' });
-  if (filters.bedrooms) tags.push({ label: `${filters.bedrooms}+ KT`, key: 'bedrooms' });
-  if (filters.certificate) tags.push({ label: filters.certificate, key: 'certificate' });
-
-  container.innerHTML = tags.map(t => 
-    `<span class="flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-      ${t.label}
-      <button onclick="removeFilter('${t.key}')" class="w-4 h-4 bg-blue-200 rounded-full flex items-center justify-center hover:bg-blue-300">
-        <i class="fas fa-times text-blue-700" style="font-size:8px;"></i>
-      </button>
-    </span>`
-  ).join('');
-}
-
-function removeFilter(key) {
-  if (key === 'price') { delete filters.min_price; delete filters.max_price; }
-  else delete filters[key];
-  renderFilters();
-  applyFilters();
-}
-
-// ============================
-// PAGE TITLE
-// ============================
-function updatePageTitle() {
-  const parts = [];
-  if (filters.type) parts.push(getTypeLabel(filters.type));
-  if (filters.listing) parts.push(filters.listing === 'dijual' ? 'Dijual' : 'Disewa');
-  if (filters.city) parts.push('di ' + filters.city);
-  
-  const title = parts.length ? parts.join(' ') : 'Semua Properti';
+  // Breadcrumb + title
+  let title = 'Semua Properti';
+  let bc = 'Semua Properti';
+  if (filterState.listing === 'dijual') { title = 'Properti Dijual'; bc = 'Dijual'; }
+  else if (filterState.listing === 'disewa') { title = 'Properti Disewa'; bc = 'Disewa'; }
+  if (filterState.type) title += ` - ${capitalize(filterState.type)}`;
+  if (filterState.city) title += ` di ${filterState.city}`;
+  if (filterState.q) title = `Hasil pencarian: "${filterState.q}"`;
   document.getElementById('pageTitle').textContent = title;
-  document.getElementById('breadcrumbText').textContent = title;
+  document.getElementById('breadcrumbText').textContent = bc;
   document.title = title + ' - RumahKita';
 }
 
-// ============================
-// VIEW MODE
-// ============================
-function setView(mode) {
-  currentView = mode;
-  document.getElementById('viewGrid').className = mode === 'grid' ? 'p-2 rounded-lg bg-blue-600 text-white' : 'p-2 rounded-lg bg-white border border-gray-200 text-gray-500';
-  document.getElementById('viewList').className = mode === 'list' ? 'p-2 rounded-lg bg-blue-600 text-white' : 'p-2 rounded-lg bg-white border border-gray-200 text-gray-500';
-  renderProperties();
+function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
+
+// Apply all filters
+function applyFilters() {
+  // Read sidebar state
+  const jual = document.getElementById('sf-jual')?.checked;
+  const sewa = document.getElementById('sf-sewa')?.checked;
+  if (jual && !sewa) filterState.listing = 'dijual';
+  else if (sewa && !jual) filterState.listing = 'disewa';
+  else if (!jual && !sewa) filterState.listing = '';
+  else filterState.listing = '';
+
+  filterState.priceMax = parseInt(document.getElementById('sf-price-max')?.value) || 20000000000;
+  filterState.featured = document.getElementById('sf-featured')?.checked || false;
+  filterState.sort = document.getElementById('sortSelect')?.value || 'terbaru';
+  filterState.certs = [...document.querySelectorAll('.sf-cert:checked')].map(el => el.value);
+  filterState.furnished = [...document.querySelectorAll('.sf-furn:checked')].map(el => el.value);
+
+  currentPage = 1;
+  filterAndRender();
+  updateURL();
 }
 
-// ============================
-// MOBILE FILTER
-// ============================
-function openMobileFilter() {
-  document.getElementById('mobileFilterOverlay').classList.remove('hidden');
-  document.getElementById('mobileFilterDrawer').style.transform = 'translateY(0)';
-  document.body.style.overflow = 'hidden';
-}
-function closeMobileFilter() {
-  document.getElementById('mobileFilterOverlay').classList.add('hidden');
-  document.getElementById('mobileFilterDrawer').style.transform = 'translateY(100%)';
-  document.body.style.overflow = '';
+function filterAndRender() {
+  if (typeof RUMAHKITA_PROPERTIES === 'undefined') return;
+
+  let props = [...RUMAHKITA_PROPERTIES];
+
+  // Filter
+  if (filterState.q) {
+    const q = filterState.q.toLowerCase();
+    props = props.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.city?.toLowerCase().includes(q) ||
+      p.district?.toLowerCase().includes(q) ||
+      p.description?.toLowerCase().includes(q)
+    );
+  }
+  if (filterState.city) {
+    const c = filterState.city.toLowerCase();
+    props = props.filter(p => p.city?.toLowerCase().includes(c) || p.province?.toLowerCase().includes(c));
+  }
+  if (filterState.listing) props = props.filter(p => p.listing === filterState.listing);
+  if (filterState.type) props = props.filter(p => p.type === filterState.type);
+  if (filterState.priceMax < 20000000000) props = props.filter(p => p.price <= filterState.priceMax);
+  if (filterState.bedrooms > 0) props = props.filter(p => (p.bedrooms || 0) >= filterState.bedrooms);
+  if (filterState.bathrooms > 0) props = props.filter(p => (p.bathrooms || 0) >= filterState.bathrooms);
+  if (filterState.certs.length) props = props.filter(p => filterState.certs.includes(p.certificate));
+  if (filterState.furnished.length) props = props.filter(p => filterState.furnished.includes(p.furnished));
+  if (filterState.featured) props = props.filter(p => p.is_featured);
+
+  // Sort
+  const sort = filterState.sort;
+  if (sort === 'termurah') props.sort((a,b) => a.price - b.price);
+  else if (sort === 'termahal') props.sort((a,b) => b.price - a.price);
+  else if (sort === 'views') props.sort((a,b) => (b.views||0) - (a.views||0));
+  else props.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+  filteredProps = props;
+  document.getElementById('resultCount').textContent = `${props.length.toLocaleString('id-ID')} properti ditemukan`;
+  renderPage();
+  renderPagination();
+  renderActiveFilters();
 }
 
-// Property card from shared data (fallback if data.js not loaded)
-function createPropertyCard(p) {
-  const priceLabel = formatPrice(p);
-  const specs = [];
-  if (p.bedrooms > 0) specs.push(`<span>🛏 ${p.bedrooms}</span>`);
-  if (p.bathrooms > 0) specs.push(`<span>🚿 ${p.bathrooms}</span>`);
-  if (p.building_area > 0) specs.push(`<span>📐 ${p.building_area}m²</span>`);
-  if (p.land_area > 0) specs.push(`<span>📏 ${p.land_area}m²</span>`);
-  const imgSrc = p.images[0];
-  const fav = localStorage.getItem('fav_'+p.id) === '1';
-  return `<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 card-hover cursor-pointer" onclick="location.href='detail-properti.html?id=${p.id}'">
-    <div class="relative" style="padding-top:66.67%;">
-      <img src="${imgSrc}" alt="${p.title}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
-      <div class="absolute top-3 left-3 flex gap-1.5">
-        <span class="${p.listing==='dijual'?'bg-blue-600':'bg-green-600'} text-white text-xs px-2 py-1 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span>
-        ${p.is_featured?'<span class="bg-amber-500 text-white text-xs px-2 py-1 rounded-full font-semibold">⭐ Unggulan</span>':''}
-      </div>
-      <button onclick="event.stopPropagation();const k='fav_${p.id}';const is=localStorage.getItem(k)==='1';is?localStorage.removeItem(k):localStorage.setItem(k,'1');this.innerHTML=is?'<i class=\\'far fa-heart text-sm text-gray-400\\'></i>':'<i class=\\'fas fa-heart text-sm text-red-500\\'></i>'" class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow flex items-center justify-center hover:scale-110 transition">
-        <i class="${fav?'fas text-red-500':'far text-gray-400'} fa-heart text-sm"></i>
-      </button>
-      <div class="absolute bottom-2 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">📷 ${p.images.length}</div>
+function renderPage() {
+  const grid = document.getElementById('propertyGrid');
+  const empty = document.getElementById('emptyState');
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageProps = filteredProps.slice(start, start + PAGE_SIZE);
+
+  if (!filteredProps.length) {
+    grid.innerHTML = '';
+    grid.style.display = 'none';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  grid.style.display = '';
+
+  if (currentView === 'list') {
+    grid.style.gridTemplateColumns = '1fr';
+    grid.innerHTML = pageProps.map(p => renderListCard(p)).join('');
+  } else {
+    grid.style.gridTemplateColumns = '';
+    grid.className = 'properties-grid';
+    grid.innerHTML = pageProps.map(p => renderPropertyCard(p)).join('');
+  }
+}
+
+function renderListCard(prop) {
+  const imgs = prop.images || [];
+  const badgeClass = prop.listing === 'dijual' ? 'badge-jual' : 'badge-sewa';
+  const badgeLabel = prop.listing === 'dijual' ? 'Dijual' : 'Disewa';
+  return `
+  <div class="card fade-in" style="display:flex;gap:0;cursor:pointer;overflow:hidden;" onclick="window.location='detail-properti.html?id=${prop.id}'">
+    <div style="width:200px;min-width:200px;height:160px;overflow:hidden;position:relative;flex-shrink:0;">
+      <img src="${imgs[0] || 'https://picsum.photos/seed/'+prop.id+'/600/400'}" alt="${prop.title}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+      <span class="card-badge ${badgeClass}" style="position:absolute;top:10px;left:10px;">${badgeLabel}</span>
     </div>
-    <div class="p-4">
-      <div class="flex items-start justify-between gap-2 mb-1">
-        <div class="text-blue-600 text-base font-extrabold leading-tight">${priceLabel}</div>
-        ${p.is_negotiable?'<span class="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium shrink-0">Nego</span>':''}
-      </div>
-      <h3 class="text-gray-900 font-semibold text-sm mb-1 line-clamp-2">${p.title}</h3>
-      <p class="text-gray-500 text-xs mb-2">📍 ${p.district?p.district+', ':''}${p.city}</p>
-      ${specs.length?`<div class="flex flex-wrap gap-2 text-xs text-gray-600 mb-2">${specs.join('')}</div>`:''}
-      <div class="flex items-center justify-between pt-2 border-t border-gray-50">
-        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${getTypeLabel(p.type)}</span>
-        <span class="text-xs text-gray-400">${relativeTime(p.created_at)}</span>
+    <div style="padding:16px;flex:1;min-width:0;">
+      <div class="property-price">${Fmt.price(prop.price)}</div>
+      <div class="property-title" style="-webkit-line-clamp:1;">${prop.title}</div>
+      <div class="property-location"><i class="fas fa-map-marker-alt" style="font-size:11px;color:#9ca3af;"></i>${prop.district || ''}${prop.district && prop.city ? ', ' : ''}${prop.city || ''}</div>
+      <div class="property-specs" style="margin-top:8px;">
+        ${prop.bedrooms ? `<div class="spec-item"><i class="fas fa-bed"></i>${prop.bedrooms} KT</div>` : ''}
+        ${prop.bathrooms ? `<div class="spec-item"><i class="fas fa-bath"></i>${prop.bathrooms} KM</div>` : ''}
+        ${prop.building_area ? `<div class="spec-item"><i class="fas fa-vector-square"></i>${prop.building_area}m²</div>` : ''}
+        ${prop.land_area ? `<div class="spec-item"><i class="fas fa-expand-arrows-alt"></i>${prop.land_area}m²</div>` : ''}
       </div>
     </div>
+    <button class="card-heart ${Favorites.has(prop.id)?'active':''}" style="position:static;margin:16px 16px auto auto;flex-shrink:0;" onclick="event.stopPropagation();toggleFav('${prop.id}',this)"><i class="fas fa-heart"></i></button>
   </div>`;
 }
 
-// ============================
+function renderPagination() {
+  const total = Math.ceil(filteredProps.length / PAGE_SIZE);
+  const pag = document.getElementById('pagination');
+  if (total <= 1) { pag.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+  for (let i = 1; i <= total; i++) {
+    if (total > 7) {
+      if (i > 2 && i < total - 1 && Math.abs(i - currentPage) > 1) {
+        if (i === 3 || i === total - 2) html += `<span class="page-btn" style="cursor:default;border:none;">…</span>`;
+        continue;
+      }
+    }
+    html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
+  pag.innerHTML = html;
+}
+
+function goPage(page) {
+  const total = Math.ceil(filteredProps.length / PAGE_SIZE);
+  if (page < 1 || page > total) return;
+  currentPage = page;
+  renderPage();
+  renderPagination();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderActiveFilters() {
+  const tags = [];
+  if (filterState.listing) tags.push({ label: filterState.listing === 'dijual' ? 'Dijual' : 'Disewa', key: 'listing' });
+  if (filterState.type) tags.push({ label: capitalize(filterState.type), key: 'type' });
+  if (filterState.q) tags.push({ label: `"${filterState.q}"`, key: 'q' });
+  if (filterState.city) tags.push({ label: filterState.city, key: 'city' });
+  if (filterState.bedrooms) tags.push({ label: `${filterState.bedrooms}+ KT`, key: 'bedrooms' });
+  if (filterState.bathrooms) tags.push({ label: `${filterState.bathrooms}+ KM`, key: 'bathrooms' });
+  if (filterState.featured) tags.push({ label: 'Unggulan', key: 'featured' });
+  if (filterState.priceMax < 20000000000) tags.push({ label: `Maks ${Fmt.price(filterState.priceMax)}`, key: 'priceMax' });
+
+  const row = document.getElementById('activeFiltersRow');
+  const tagsDiv = document.getElementById('activeFilterTags');
+  row.style.display = tags.length ? 'flex' : 'none';
+  tagsDiv.innerHTML = tags.map(t => `
+    <span class="active-filter-tag">${t.label}
+      <button onclick="removeFilter('${t.key}')"><i class="fas fa-times"></i></button>
+    </span>`).join('');
+
+  // Filter badge count
+  const badge = document.getElementById('filterBadge');
+  if (tags.length) { badge.style.display = 'inline-flex'; badge.textContent = tags.length; }
+  else badge.style.display = 'none';
+}
+
+function removeFilter(key) {
+  if (key === 'listing') { filterState.listing = ''; document.getElementById('sf-jual').checked = false; document.getElementById('sf-sewa').checked = false; }
+  else if (key === 'type') { filterState.type = ''; document.querySelectorAll('[data-type]').forEach(b => b.classList.toggle('active', b.dataset.type === '')); }
+  else if (key === 'q') filterState.q = '';
+  else if (key === 'city') filterState.city = '';
+  else if (key === 'bedrooms') { filterState.bedrooms = 0; document.querySelectorAll('[data-br]').forEach(b => b.classList.toggle('active', b.dataset.br === '0')); }
+  else if (key === 'bathrooms') { filterState.bathrooms = 0; document.querySelectorAll('[data-bth]').forEach(b => b.classList.toggle('active', b.dataset.bth === '0')); }
+  else if (key === 'featured') { filterState.featured = false; document.getElementById('sf-featured').checked = false; }
+  else if (key === 'priceMax') { filterState.priceMax = 20000000000; document.getElementById('sf-price-max').value = 20000000000; updatePriceRange(); }
+  currentPage = 1; filterAndRender(); updateURL();
+}
+
+function resetFilters() {
+  filterState.listing = ''; filterState.type = ''; filterState.q = ''; filterState.city = '';
+  filterState.priceMax = 20000000000; filterState.bedrooms = 0; filterState.bathrooms = 0;
+  filterState.certs = []; filterState.furnished = []; filterState.featured = false;
+  document.getElementById('sf-jual').checked = false;
+  document.getElementById('sf-sewa').checked = false;
+  document.getElementById('sf-featured').checked = false;
+  document.getElementById('sf-price-max').value = 20000000000;
+  document.querySelectorAll('.sf-cert,.sf-furn').forEach(el => el.checked = false);
+  document.querySelectorAll('[data-type]').forEach(b => b.classList.toggle('active', b.dataset.type === ''));
+  document.querySelectorAll('[data-br]').forEach(b => b.classList.toggle('active', b.dataset.br === '0'));
+  document.querySelectorAll('[data-bth]').forEach(b => b.classList.toggle('active', b.dataset.bth === '0'));
+  updatePriceRange();
+  currentPage = 1; filterAndRender(); updateURL();
+  closeFilter();
+}
+
+function updatePriceRange() {
+  const val = parseInt(document.getElementById('sf-price-max')?.value) || 20000000000;
+  filterState.priceMax = val;
+  const label = document.getElementById('priceMaxLabel');
+  if (label) label.textContent = val >= 20000000000 ? 'Semua' : Fmt.price(val);
+}
+
+function updateURL() {
+  const p = new URLSearchParams();
+  if (filterState.listing) p.set('listing', filterState.listing);
+  if (filterState.type) p.set('type', filterState.type);
+  if (filterState.q) p.set('q', filterState.q);
+  if (filterState.city) p.set('city', filterState.city);
+  if (filterState.featured) p.set('featured', 'true');
+  if (filterState.sort !== 'terbaru') p.set('sort', filterState.sort);
+  const qs = p.toString();
+  window.history.replaceState({}, '', qs ? '?' + qs : window.location.pathname);
+}
+
+function setTypeChip(btn, type) {
+  filterState.type = type;
+  document.querySelectorAll('[data-type]').forEach(b => b.classList.toggle('active', b.dataset.type === type));
+  currentPage = 1; applyFilters();
+}
+
+function setBedroom(btn, val) {
+  filterState.bedrooms = val;
+  document.querySelectorAll('[data-br]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.br) === val));
+  currentPage = 1; filterAndRender();
+}
+
+function setBathroom(btn, val) {
+  filterState.bathrooms = val;
+  document.querySelectorAll('[data-bth]').forEach(b => b.classList.toggle('active', parseInt(b.dataset.bth) === val));
+  currentPage = 1; filterAndRender();
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('viewGrid').style.background = v === 'grid' ? '#2563eb' : 'white';
+  document.getElementById('viewGrid').style.color = v === 'grid' ? 'white' : '#6b7280';
+  document.getElementById('viewList').style.background = v === 'list' ? '#2563eb' : 'white';
+  document.getElementById('viewList').style.color = v === 'list' ? 'white' : '#6b7280';
+  renderPage();
+}
+
+// Mobile filter
+function openFilter() {
+  // Fill drawer with same content as sidebar
+  const drawer = document.getElementById('filterDrawerContent');
+  drawer.innerHTML = `
+    <div style="margin-bottom:16px;">
+      <span class="filter-label">Status Listing</span>
+      <div style="display:flex;gap:8px;">
+        <button class="chip ${filterState.listing==='' ?'active':''}" onclick="tempListingFilter(this,'')">Semua</button>
+        <button class="chip ${filterState.listing==='dijual'?'active':''}" onclick="tempListingFilter(this,'dijual')">Dijual</button>
+        <button class="chip ${filterState.listing==='disewa'?'active':''}" onclick="tempListingFilter(this,'disewa')">Disewa</button>
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <span class="filter-label">Harga Maksimum: <span id="drawerPriceLabel">${filterState.priceMax >= 20000000000 ? 'Semua' : Fmt.price(filterState.priceMax)}</span></span>
+      <input type="range" id="drawerPrice" min="0" max="20000000000" step="100000000" value="${filterState.priceMax}" oninput="updateDrawerPrice()">
+    </div>
+    <div style="margin-bottom:16px;">
+      <span class="filter-label">Kamar Tidur Min</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${[0,1,2,3,4].map(n => `<button class="chip ${filterState.bedrooms===n?'active':''}" onclick="setDrawerBedroom(this,${n})">${n===0?'Semua':n+'+'}</button>`).join('')}
+      </div>
+    </div>
+    <div>
+      <span class="filter-label">Properti Unggulan</span>
+      <label class="check-item"><input type="checkbox" id="drawerFeatured" ${filterState.featured?'checked':''}><span>Tampilkan hanya unggulan</span></label>
+    </div>`;
+  document.getElementById('filterDrawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFilter() {
+  document.getElementById('filterDrawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+let tempListing = filterState.listing;
+function tempListingFilter(btn, val) {
+  tempListing = val;
+  btn.closest('div').querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setDrawerBedroom(btn, val) {
+  btn.closest('div').querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.dataset.val = val;
+}
+
+function updateDrawerPrice() {
+  const val = document.getElementById('drawerPrice').value;
+  document.getElementById('drawerPriceLabel').textContent = parseInt(val) >= 20000000000 ? 'Semua' : Fmt.price(parseInt(val));
+}
+
+function applyDrawerFilters() {
+  filterState.listing = tempListing;
+  filterState.priceMax = parseInt(document.getElementById('drawerPrice')?.value) || 20000000000;
+  filterState.featured = document.getElementById('drawerFeatured')?.checked || false;
+  const activeBR = document.querySelector('#filterDrawerContent [data-val].active');
+  if (activeBR) filterState.bedrooms = parseInt(activeBR.dataset.val) || 0;
+  // Sync to sidebar checkboxes
+  document.getElementById('sf-jual').checked = filterState.listing === 'dijual';
+  document.getElementById('sf-sewa').checked = filterState.listing === 'disewa';
+  document.getElementById('sf-featured').checked = filterState.featured;
+  document.getElementById('sf-price-max').value = filterState.priceMax;
+  updatePriceRange();
+  currentPage = 1; filterAndRender(); updateURL();
+  closeFilter();
+}
+
+// Show sidebar on desktop
+function checkLayout() {
+  const isDesktop = window.innerWidth >= 900;
+  document.getElementById('sidebarDesktop').style.display = isDesktop ? 'block' : 'none';
+  document.getElementById('mobileFilterBtn').style.display = isDesktop ? 'none' : '';
+}
+window.addEventListener('resize', checkLayout);
+
 // INIT
-// ============================
 document.addEventListener('DOMContentLoaded', () => {
-  parseURLParams();
-  renderFilters();
-  applyFilters();
-  updatePageTitle();
+  readURLParams();
+  syncUIFromState();
+  checkLayout();
+  setTimeout(() => {
+    filterState.sort = document.getElementById('sortSelect').value;
+    filterAndRender();
+  }, 150);
 });
 </script>
 </body>

@@ -8,14 +8,19 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <link rel="stylesheet" href="css/style.css">
+  <style>body{padding-bottom:60px;}@media(min-width:768px){body{padding-bottom:0;}}</style>
 </head>
-<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
-<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <a href="index.html" class="flex items-center gap-2"><div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div><span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span></a>
-    <a href="index.html" class="text-sm text-gray-600 hover:text-blue-600"><i class="fas fa-arrow-left mr-1"></i>Beranda</a>
+<body class="bg-gray-50">
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo"><div class="navbar-logo-icon"><i class="fas fa-home"></i></div><div class="navbar-logo-text">Rumah<span>Kita</span></div></a>
+    <div class="navbar-links"><a href="properti.html">Properti</a><a href="kpr.html">KPR</a><a href="artikel.html">Artikel</a></div>
+    <div class="navbar-actions" id="navAuthDesktop"></div>
+    <button class="nav-hamburger" id="navHamburger"><i class="fas fa-bars"></i></button>
   </div>
 </nav>
+<div class="mobile-menu" id="mobileMenu"><div class="mobile-menu-overlay" id="mobileMenuOverlay"></div><div class="mobile-menu-drawer"><div class="mobile-menu-header"><div class="navbar-logo"><div class="navbar-logo-icon"><i class="fas fa-home"></i></div><div class="navbar-logo-text">Rumah<span>Kita</span></div></div><button class="mobile-menu-close" id="mobileMenuClose"><i class="fas fa-times"></i></button></div><div class="mobile-menu-nav"><a href="index.html"><i class="fas fa-home" style="color:#2563eb;"></i>Beranda</a><a href="properti.html"><i class="fas fa-search" style="color:#2563eb;"></i>Cari Properti</a></div><div class="mobile-menu-footer" id="navAuthMobileFooter"></div></div></div>
 
 <div class="bg-blue-600 text-white py-14 text-center">
   <h1 class="text-4xl font-extrabold mb-2">Hubungi Kami</h1>
@@ -86,18 +91,25 @@
   <p>© 2026 RumahKita | <a href="syarat.html" class="hover:text-white">Syarat</a> | <a href="privasi.html" class="hover:text-white">Privasi</a></p>
 </footer>
 
+<script src="js/app.js"></script>
 <script>
 function submitContact(e) {
   e.preventDefault();
   const btn = document.getElementById('submitContactBtn');
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mengirim...';
   setTimeout(() => {
-    document.getElementById('contactAlert').classList.remove('hidden');
-    document.getElementById('contactAlert').textContent = '✅ Pesan berhasil dikirim! Tim kami akan menghubungi Anda dalam 1x24 jam.';
+    Toast.success('Pesan berhasil dikirim! Tim kami akan menghubungi Anda dalam 1x24 jam.');
     document.getElementById('contactForm').reset();
     btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Pesan';
   }, 1000);
 }
 </script>
+<div class="mobile-bottom-nav">
+  <a href="index.html"><i class="fas fa-home"></i>Beranda</a>
+  <a href="properti.html"><i class="fas fa-search"></i>Cari</a>
+  <a href="tambah-properti.html" class="nav-add"><i class="fas fa-plus"></i>Pasang</a>
+  <a href="kpr.html"><i class="fas fa-calculator"></i>KPR</a>
+  <a href="dashboard.html"><i class="fas fa-user"></i>Akun</a>
+</div>
 </body>
 </html>
