@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - RumahKita</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+</head>
+<body class="bg-gray-50">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
+        <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="tambah-properti.html" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+          <i class="fas fa-plus"></i><span class="hidden sm:inline">Pasang Iklan</span>
+        </a>
+        <div class="relative">
+          <button id="userMenuBtn" onclick="document.getElementById('userDD').classList.toggle('open')" class="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100">
+            <div id="userAvatar" class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">?</div>
+            <i class="fas fa-chevron-down text-xs text-gray-500 hidden sm:block"></i>
+          </button>
+          <div id="userDD" class="dropdown-menu">
+            <a href="dashboard.html" class="block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-lg"><i class="fas fa-th-large mr-2 text-blue-600"></i>Dashboard</a>
+            <a href="profil.html" class="block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 rounded-lg"><i class="fas fa-user mr-2 text-gray-500"></i>Profil</a>
+            <hr class="my-1 border-gray-100">
+            <button onclick="logout()" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg"><i class="fas fa-sign-out-alt mr-2"></i>Keluar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Welcome Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-2xl font-extrabold text-gray-900">Selamat datang, <span id="welcomeName">...</span>! 👋</h1>
+      <p class="text-gray-500 text-sm mt-1">Kelola properti dan pantau performa iklan Anda</p>
+    </div>
+    <div class="text-sm text-gray-500"><i class="fas fa-calendar mr-1"></i><span id="currentDate"></span></div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center"><i class="fas fa-home text-blue-600"></i></div>
+        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">+2 baru</span>
+      </div>
+      <div class="text-2xl font-extrabold text-gray-900" id="statTotal">3</div>
+      <div class="text-sm text-gray-500 mt-0.5">Total Properti</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-eye text-green-600"></i></div>
+        <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">↑ 12%</span>
+      </div>
+      <div class="text-2xl font-extrabold text-gray-900" id="statViews">1,240</div>
+      <div class="text-sm text-gray-500 mt-0.5">Total Dilihat</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center"><i class="fas fa-heart text-red-500"></i></div>
+        <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">minggu ini</span>
+      </div>
+      <div class="text-2xl font-extrabold text-gray-900" id="statFavs">28</div>
+      <div class="text-sm text-gray-500 mt-0.5">Difavoritkan</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-check-circle text-purple-600"></i></div>
+        <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">aktif</span>
+      </div>
+      <div class="text-2xl font-extrabold text-gray-900" id="statActive">2</div>
+      <div class="text-sm text-gray-500 mt-0.5">Properti Aktif</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="border-b border-gray-100">
+      <div class="flex overflow-x-auto">
+        <button onclick="switchTab('properti')" id="tab-properti" class="px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 border-blue-600 text-blue-600">
+          <i class="fas fa-home mr-2"></i>Properti Saya
+        </button>
+        <button onclick="switchTab('pesan')" id="tab-pesan" class="px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700 relative">
+          <i class="fas fa-envelope mr-2"></i>Pesan Masuk
+          <span class="absolute top-3 right-3 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+        </button>
+        <button onclick="switchTab('favorit')" id="tab-favorit" class="px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+          <i class="fas fa-heart mr-2"></i>Favorit Saya
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: PROPERTI SAYA -->
+    <div id="content-properti" class="p-6">
+      <!-- Filter Bar -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-5">
+        <input type="text" id="searchMyProp" placeholder="Cari properti Anda..." oninput="filterMyProperties()" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1">
+        <div class="flex gap-2 overflow-x-auto">
+          ${['Semua','Aktif','Nonaktif','Terjual','Tersewa'].map((s,i) =>
+            `<button onclick="filterByStatus('${s.toLowerCase()}')" class="status-filter-btn whitespace-nowrap px-3 py-2 rounded-xl text-sm font-medium border ${i===0?'bg-blue-600 text-white border-blue-600':'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}">${s}</button>`
+          ).join('')}
+        </div>
+      </div>
+
+      <!-- Property List -->
+      <div id="myPropertyList" class="space-y-4"></div>
+      
+      <!-- Empty -->
+      <div id="myPropEmpty" class="hidden text-center py-16">
+        <div class="text-5xl mb-4">🏠</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Belum ada properti</h3>
+        <p class="text-gray-500 mb-4">Mulai pasang iklan properti Anda sekarang</p>
+        <a href="tambah-properti.html" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">
+          <i class="fas fa-plus"></i>Pasang Iklan Pertama
+        </a>
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: PESAN -->
+    <div id="content-pesan" class="hidden p-6">
+      <div id="messageList" class="space-y-3"></div>
+    </div>
+
+    <!-- TAB CONTENT: FAVORIT -->
+    <div id="content-favorit" class="hidden p-6">
+      <div id="favoritList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      <div id="favoritEmpty" class="hidden text-center py-16">
+        <div class="text-5xl mb-4">❤️</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Belum ada properti favorit</h3>
+        <p class="text-gray-500 mb-4">Tambahkan properti ke favorit saat menjelajahi</p>
+        <a href="properti.html" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">
+          <i class="fas fa-search"></i>Jelajahi Properti
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div id="deleteModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
+    <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-trash-alt text-red-500 text-xl"></i></div>
+    <h3 class="font-bold text-gray-900 text-lg mb-2">Hapus Properti?</h3>
+    <p class="text-gray-500 text-sm mb-5">Tindakan ini tidak dapat dibatalkan. Properti akan dihapus permanen.</p>
+    <div class="flex gap-3">
+      <button onclick="document.getElementById('deleteModal').classList.add('hidden')" class="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-xl font-semibold text-sm">Batal</button>
+      <button onclick="confirmDelete()" class="flex-1 py-2.5 bg-red-500 text-white rounded-xl font-semibold text-sm hover:bg-red-600">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="mobile-bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 px-2 py-2">
+  <div class="flex justify-around items-center">
+    <a href="index.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-home text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Beranda</span></a>
+    <a href="properti.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-search text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Cari</span></a>
+    <a href="tambah-properti.html" class="flex flex-col items-center gap-1 -mt-5"><div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-plus text-white text-lg"></i></div><span class="text-xs text-gray-400 mt-1">Pasang</span></a>
+    <button onclick="switchTab('favorit')" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-heart text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Favorit</span></button>
+    <a href="profil.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-user text-blue-600 text-xl"></i><span class="text-xs text-blue-600 font-medium">Akun</span></a>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+let user = null;
+let myProperties = [];
+let propToDelete = null;
+let activeStatusFilter = 'semua';
+
+// Mock user properties (with status)
+function getUserProperties(userId) {
+  const props = RUMAHKITA_PROPERTIES.slice(0,5).map((p,i) => ({
+    ...p,
+    status: ['aktif','aktif','nonaktif','terjual','tersewa'][i] || 'aktif'
+  }));
+  return props;
+}
+
+// Mock messages
+const MESSAGES = [
+  { id:'msg1', sender:'Rian Kusuma', avatar:'https://picsum.photos/seed/msg1/60/60', property:'Rumah Mewah Modern di Kemang', message:'Halo, saya tertarik dengan properti ini. Apakah masih tersedia? Bisa survey kapan ya?', time:'2 jam yang lalu', read:false, phone:'0812345678' },
+  { id:'msg2', sender:'Nina Putri', avatar:'https://picsum.photos/seed/msg2/60/60', property:'Apartemen Premium View Laut', message:'Selamat pagi, apakah harga bisa nego? Saya ingin beli cash.', time:'1 hari yang lalu', read:false, phone:'0878901234' },
+  { id:'msg3', sender:'Dodi Hartono', avatar:'https://picsum.photos/seed/msg3/60/60', property:'Rumah Cluster BSD City', message:'Apakah properti ini sudah ada sertifikat SHM? Mohon infonya.', time:'3 hari yang lalu', read:false, phone:'0856789012' },
+  { id:'msg4', sender:'Linda Sari', avatar:'https://picsum.photos/seed/msg4/60/60', property:'Rumah Mewah Modern di Kemang', message:'Saya ingin melakukan survey besok pagi. Bisa diatur ya pak?', time:'5 hari yang lalu', read:true, phone:'0821234567' },
+];
+
+// ============================
+// INIT
+// ============================
+document.addEventListener('DOMContentLoaded', () => {
+  user = JSON.parse(localStorage.getItem('rumahkita_user') || 'null');
+  if (!user) { window.location.href = 'login.html'; return; }
+  
+  document.getElementById('welcomeName').textContent = user.name.split(' ')[0];
+  document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  
+  myProperties = getUserProperties(user.id);
+  renderMyProperties();
+  renderMessages();
+  renderFavorites();
+  
+  // Check hash for tab
+  if (window.location.hash === '#favorit') switchTab('favorit');
+  if (window.location.hash === '#pesan') switchTab('pesan');
+});
+
+// ============================
+// TABS
+// ============================
+function switchTab(tab) {
+  ['properti','pesan','favorit'].forEach(t => {
+    document.getElementById('content-' + t).classList.toggle('hidden', t !== tab);
+    const btn = document.getElementById('tab-' + t);
+    if (btn) btn.className = `px-6 py-4 text-sm font-semibold whitespace-nowrap border-b-2 relative ${t === tab ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`;
+  });
+  history.pushState({}, '', '#' + tab);
+}
+
+// ============================
+// MY PROPERTIES
+// ============================
+function renderMyProperties() {
+  let list = [...myProperties];
+  const search = document.getElementById('searchMyProp').value.toLowerCase();
+  if (search) list = list.filter(p => p.title.toLowerCase().includes(search));
+  if (activeStatusFilter !== 'semua') list = list.filter(p => p.status === activeStatusFilter);
+  
+  const container = document.getElementById('myPropertyList');
+  const empty = document.getElementById('myPropEmpty');
+  
+  if (!list.length) {
+    container.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  
+  const statusConfig = {
+    aktif: { label:'Aktif', bg:'bg-green-100', text:'text-green-700' },
+    nonaktif: { label:'Nonaktif', bg:'bg-gray-100', text:'text-gray-600' },
+    terjual: { label:'Terjual', bg:'bg-red-100', text:'text-red-700' },
+    tersewa: { label:'Tersewa', bg:'bg-orange-100', text:'text-orange-700' },
+    draft: { label:'Draft', bg:'bg-yellow-100', text:'text-yellow-700' },
+  };
+  
+  container.innerHTML = list.map(p => {
+    const sc = statusConfig[p.status] || statusConfig.aktif;
+    return `<div class="flex flex-col sm:flex-row gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100 hover:border-blue-200 transition">
+      <img src="${p.images[0]}" alt="${p.title}" class="w-full sm:w-32 h-24 object-cover rounded-xl flex-shrink-0 cursor-pointer" onclick="location.href='detail-properti.html?id=${p.id}'">
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-center gap-2 mb-1">
+          <span class="${sc.bg} ${sc.text} text-xs px-2 py-0.5 rounded-full font-semibold">${sc.label}</span>
+          <span class="${p.listing==='dijual'?'bg-blue-100 text-blue-700':'bg-green-100 text-green-700'} text-xs px-2 py-0.5 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span>
+        </div>
+        <h3 class="font-bold text-gray-900 line-clamp-1 mb-1">${p.title}</h3>
+        <p class="text-blue-600 font-bold">${formatRupiah(p.price)}${p.price_type==='per_bulan'?'/bulan':''}</p>
+        <div class="flex items-center gap-4 text-xs text-gray-400 mt-1">
+          <span><i class="fas fa-eye mr-1"></i>${p.views.toLocaleString('id-ID')}</span>
+          <span><i class="fas fa-map-marker-alt mr-1"></i>${p.city}</span>
+          <span><i class="fas fa-calendar mr-1"></i>${relativeTime(p.created_at)}</span>
+        </div>
+      </div>
+      <div class="flex flex-row sm:flex-col gap-2 flex-shrink-0">
+        <a href="detail-properti.html?id=${p.id}" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition"><i class="fas fa-eye text-blue-600"></i>Lihat</a>
+        <a href="tambah-properti.html?edit=${p.id}" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition"><i class="fas fa-edit text-green-600"></i>Edit</a>
+        <button onclick="toggleStatus('${p.id}')" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition"><i class="fas fa-toggle-${p.status==='aktif'?'on text-blue-600':'off text-gray-400'}"></i>${p.status==='aktif'?'Nonaktifkan':'Aktifkan'}</button>
+        <button onclick="openDeleteModal('${p.id}')" class="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-red-200 rounded-lg font-medium text-red-600 hover:bg-red-50 transition"><i class="fas fa-trash-alt"></i>Hapus</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterMyProperties() { renderMyProperties(); }
+function filterByStatus(status) {
+  activeStatusFilter = status;
+  document.querySelectorAll('.status-filter-btn').forEach(btn => {
+    btn.className = btn.className.replace('bg-blue-600 text-white border-blue-600','bg-white text-gray-600 border-gray-200 hover:border-blue-300');
+  });
+  event.target.className = event.target.className.replace('bg-white text-gray-600 border-gray-200 hover:border-blue-300','bg-blue-600 text-white border-blue-600');
+  renderMyProperties();
+}
+
+function toggleStatus(id) {
+  const p = myProperties.find(x => x.id === id);
+  if (p) {
+    p.status = p.status === 'aktif' ? 'nonaktif' : 'aktif';
+    renderMyProperties();
+    showDashboardToast(`Properti ${p.status === 'aktif' ? 'diaktifkan' : 'dinonaktifkan'}`, 'success');
+  }
+}
+
+function openDeleteModal(id) {
+  propToDelete = id;
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+function confirmDelete() {
+  myProperties = myProperties.filter(p => p.id !== propToDelete);
+  document.getElementById('deleteModal').classList.add('hidden');
+  renderMyProperties();
+  showDashboardToast('Properti berhasil dihapus', 'info');
+  document.getElementById('statTotal').textContent = myProperties.length;
+  document.getElementById('statActive').textContent = myProperties.filter(p => p.status === 'aktif').length;
+}
+
+// ============================
+// MESSAGES
+// ============================
+function renderMessages() {
+  document.getElementById('messageList').innerHTML = MESSAGES.map(m => `
+    <div class="flex gap-4 p-4 rounded-xl ${m.read ? 'bg-gray-50' : 'bg-blue-50 border border-blue-100'} hover:bg-gray-100 transition cursor-pointer" onclick="markRead('${m.id}')">
+      <img src="${m.avatar}" alt="${m.sender}" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="font-semibold text-gray-900">${m.sender}</span>
+            ${!m.read ? '<span class="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full ml-1">Baru</span>' : ''}
+          </div>
+          <span class="text-xs text-gray-400 shrink-0">${m.time}</span>
+        </div>
+        <p class="text-xs text-blue-600 font-medium mb-1">Re: ${m.property}</p>
+        <p class="text-sm text-gray-600 line-clamp-2">${m.message}</p>
+      </div>
+      <div class="shrink-0">
+        <a href="https://wa.me/${m.phone.replace(/^0/,'62')}" target="_blank" class="flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-semibold hover:bg-green-600 transition">
+          <i class="fab fa-whatsapp"></i>Balas
+        </a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function markRead(id) {
+  const msg = MESSAGES.find(m => m.id === id);
+  if (msg) msg.read = true;
+  renderMessages();
+}
+
+// ============================
+// FAVORITES
+// ============================
+function renderFavorites() {
+  const favIds = RUMAHKITA_PROPERTIES.map(p => p.id).filter(id => localStorage.getItem('fav_'+id) === '1');
+  const favProps = RUMAHKITA_PROPERTIES.filter(p => favIds.includes(p.id));
+  
+  const container = document.getElementById('favoritList');
+  const empty = document.getElementById('favoritEmpty');
+  
+  if (!favProps.length) { container.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  
+  container.innerHTML = favProps.map(p => `
+    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition" onclick="location.href='detail-properti.html?id=${p.id}'">
+      <div class="relative" style="padding-top:60%;">
+        <img src="${p.images[0]}" alt="${p.title}" class="absolute inset-0 w-full h-full object-cover">
+        <button onclick="event.stopPropagation(); removeFav('${p.id}', this.closest('.bg-white'))" class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full shadow flex items-center justify-center hover:scale-110 transition">
+          <i class="fas fa-heart text-red-500 text-sm"></i>
+        </button>
+      </div>
+      <div class="p-3">
+        <div class="text-blue-600 font-bold text-sm">${formatRupiah(p.price)}${p.price_type==='per_bulan'?'/bln':''}</div>
+        <div class="text-gray-800 font-medium text-xs line-clamp-2 mt-1">${p.title}</div>
+        <div class="text-gray-400 text-xs mt-1">📍 ${p.city}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removeFav(id, card) {
+  localStorage.removeItem('fav_' + id);
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.9)';
+  card.style.transition = 'all 0.3s';
+  setTimeout(() => { card.remove(); renderFavorites(); }, 300);
+  showDashboardToast('Dihapus dari favorit', 'info');
+}
+
+// ============================
+// UTILS
+// ============================
+function formatRupiah(angka) { return 'Rp ' + parseInt(angka).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function relativeTime(dateStr) {
+  const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
+  if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
+  if (diff < 604800) return Math.floor(diff/86400) + ' hari lalu';
+  return new Date(dateStr).toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+}
+function showDashboardToast(msg, type='info') {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;bottom:80px;right:24px;z-index:99999;background:${type==='success'?'#16a34a':type==='error'?'#dc2626':'#374151'};color:white;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.2);transform:translateY(20px);opacity:0;transition:all 0.3s;`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.transform = 'translateY(0)'; el.style.opacity = '1'; });
+  setTimeout(() => { el.style.transform = 'translateY(20px)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+function logout() {
+  localStorage.removeItem('rumahkita_user');
+  window.location.href = 'login.html';
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#userDD') && !e.target.closest('#userMenuBtn')) {
+    document.getElementById('userDD').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

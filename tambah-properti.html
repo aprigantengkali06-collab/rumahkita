@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Properti - RumahKita</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <style>
+    #mapPicker { height: 350px; border-radius: 16px; }
+    .type-btn { transition: all 0.2s; cursor: pointer; border: 2px solid #e5e7eb; }
+    .type-btn:hover { border-color: #93c5fd; background: #eff6ff; }
+    .type-btn.selected { border-color: #2563eb; background: #eff6ff; }
+    .type-btn.selected .type-icon { background: #2563eb; }
+    .type-icon { width: 48px; height: 48px; border-radius: 12px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 8px; transition: background 0.2s; }
+    .listing-toggle { display: flex; gap: 0; border: 2px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+    .listing-opt { flex: 1; text-align: center; padding: 12px; cursor: pointer; font-weight: 600; font-size: 0.9375rem; transition: all 0.2s; background: white; }
+    .listing-opt.selected { background: #2563eb; color: white; }
+    .upload-thumb { position: relative; width: 100px; height: 100px; border-radius: 10px; overflow: hidden; border: 2px solid #e5e7eb; }
+    .upload-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .upload-thumb .remove-btn { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .upload-thumb .primary-badge { position: absolute; bottom: 4px; left: 4px; background: #2563eb; color: white; font-size: 9px; padding: 2px 5px; border-radius: 4px; font-weight: 700; }
+    .feature-checkbox { display: none; }
+    .feature-label { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 0.8125rem; font-weight: 500; transition: all 0.2s; }
+    .feature-checkbox:checked + .feature-label { border-color: #2563eb; background: #eff6ff; color: #2563eb; }
+    .progress-fill { height: 100%; background: #2563eb; border-radius: 4px; transition: width 0.4s ease; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
+        <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+      </a>
+      <a href="dashboard.html" class="text-sm text-gray-600 hover:text-blue-600 font-medium"><i class="fas fa-arrow-left mr-1"></i>Kembali ke Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Pasang Iklan Properti</h1>
+    <p class="text-gray-500">Isi informasi properti Anda dengan lengkap dan akurat</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="mb-8">
+    <div class="flex justify-between text-xs font-semibold text-gray-500 mb-3">
+      <span id="stepLabel">Langkah 1 dari 5</span>
+      <span id="stepPct">20%</span>
+    </div>
+    <div class="h-2 bg-gray-200 rounded-full">
+      <div id="progressBar" class="progress-fill" style="width:20%;"></div>
+    </div>
+    <!-- Step Indicators -->
+    <div class="flex justify-between mt-3">
+      ${[1,2,3,4,5].map((n,i) => `<div class="flex flex-col items-center gap-1" style="flex:1;">
+        <div id="stepCircle${n}" class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${n===1?'bg-blue-600 text-white':'bg-gray-200 text-gray-500'}">
+          ${n}
+        </div>
+        <span class="text-xs text-center hidden sm:block ${n===1?'text-blue-600 font-semibold':'text-gray-400'}" id="stepName${n}">${['Dasar','Harga & Spek','Lokasi','Foto','Fasilitas'][i]}</span>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- FORM CONTAINER -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+    
+    <!-- STEP 1: INFORMASI DASAR -->
+    <div id="step1" class="p-6 sm:p-8">
+      <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">1</span>Informasi Dasar</h2>
+      
+      <!-- Tipe Listing -->
+      <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 mb-3">Tipe Iklan <span class="text-red-500">*</span></label>
+        <div class="listing-toggle">
+          <div onclick="selectListing('dijual')" id="opt-dijual" class="listing-opt selected">
+            <i class="fas fa-tag mr-2"></i>Dijual
+          </div>
+          <div onclick="selectListing('disewa')" id="opt-disewa" class="listing-opt">
+            <i class="fas fa-key mr-2"></i>Disewa
+          </div>
+        </div>
+        <input type="hidden" id="listingType" value="dijual">
+      </div>
+
+      <!-- Tipe Properti -->
+      <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 mb-3">Tipe Properti <span class="text-red-500">*</span></label>
+        <div class="grid grid-cols-4 sm:grid-cols-8 gap-3">
+          ${[
+            {v:'rumah',icon:'🏠',label:'Rumah'},
+            {v:'apartemen',icon:'🏢',label:'Apartemen'},
+            {v:'tanah',icon:'🌍',label:'Tanah'},
+            {v:'ruko',icon:'🏪',label:'Ruko'},
+            {v:'kos',icon:'🏨',label:'Kos'},
+            {v:'villa',icon:'🏡',label:'Villa'},
+            {v:'gudang',icon:'🏭',label:'Gudang'},
+            {v:'kantor',icon:'🏛️',label:'Kantor'},
+          ].map(t => `
+            <div onclick="selectType('${t.v}')" id="type-${t.v}" class="type-btn rounded-xl p-3 text-center">
+              <div class="type-icon">${t.icon}</div>
+              <span class="text-xs font-semibold text-gray-700">${t.label}</span>
+            </div>
+          `).join('')}
+        </div>
+        <input type="hidden" id="propertyType" value="">
+        <p id="typeError" class="text-red-500 text-xs mt-1 hidden"><i class="fas fa-exclamation-circle mr-1"></i>Pilih tipe properti</p>
+      </div>
+
+      <!-- Judul -->
+      <div class="mb-5">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Judul Iklan <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <input type="text" id="propTitle" maxlength="100" placeholder="cth: Rumah Mewah 3KT di Kemang, Jakarta Selatan" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" oninput="updateCharCount()">
+          <span id="charCount" class="absolute right-3 top-3.5 text-xs text-gray-400">0/100</span>
+        </div>
+        <p id="titleError" class="text-red-500 text-xs mt-1 hidden"><i class="fas fa-exclamation-circle mr-1"></i>Judul harus diisi (minimal 10 karakter)</p>
+      </div>
+
+      <!-- Deskripsi -->
+      <div class="mb-5">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Deskripsi <span class="text-red-500">*</span></label>
+        <p class="text-xs text-gray-400 mb-2 italic">Deskripsikan kondisi, keunggulan, dan lokasi strategis properti Anda</p>
+        <textarea id="propDesc" rows="6" placeholder="Ceritakan tentang properti Anda: kondisi bangunan, keunggulan lokasi, fasilitas di sekitar, akses transportasi, dll." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        <div class="flex justify-between mt-1">
+          <p id="descError" class="text-red-500 text-xs hidden"><i class="fas fa-exclamation-circle mr-1"></i>Deskripsi harus minimal 50 karakter</p>
+          <span id="descCount" class="text-xs text-gray-400 ml-auto">0 karakter</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: HARGA & SPESIFIKASI -->
+    <div id="step2" class="p-6 sm:p-8 hidden">
+      <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">2</span>Harga & Spesifikasi</h2>
+
+      <!-- Harga -->
+      <div class="mb-5">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Harga <span class="text-red-500">*</span></label>
+        <div class="relative">
+          <span class="absolute left-4 top-3.5 text-gray-500 font-medium text-sm">Rp</span>
+          <input type="text" id="propPrice" placeholder="1.500.000.000" class="w-full border border-gray-200 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="formatPriceInput(this)">
+        </div>
+        <!-- Tipe Harga (untuk sewa) -->
+        <div id="priceTypeWrapper" class="hidden mt-2">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Periode Sewa</label>
+          <div class="flex gap-2">
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="priceType" value="per_bulan" checked class="accent-blue-600"> <span class="text-sm">Per Bulan</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="priceType" value="per_tahun" class="accent-blue-600"> <span class="text-sm">Per Tahun</span></label>
+          </div>
+        </div>
+        <p id="priceError" class="text-red-500 text-xs mt-1 hidden"><i class="fas fa-exclamation-circle mr-1"></i>Harga harus diisi</p>
+      </div>
+
+      <!-- Bisa Nego -->
+      <div class="mb-6 flex items-center gap-3">
+        <div class="relative">
+          <input type="checkbox" id="isNego" class="w-5 h-5 rounded accent-blue-600 cursor-pointer">
+        </div>
+        <label for="isNego" class="text-sm font-medium text-gray-700 cursor-pointer">Harga Bisa Nego</label>
+      </div>
+
+      <!-- Specs Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5" id="specsGrid">
+        <!-- Kamar Tidur -->
+        <div id="bedroomsRow">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Kamar Tidur <span class="text-red-500">*</span></label>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" onclick="stepChange('bedrooms',-1)">−</button>
+            <input type="number" id="bedrooms" value="2" min="0" max="20" class="stepper-value" onchange="validateSpec()">
+            <button type="button" class="stepper-btn" onclick="stepChange('bedrooms',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Kamar Mandi -->
+        <div id="bathroomsRow">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Kamar Mandi <span class="text-red-500">*</span></label>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" onclick="stepChange('bathrooms',-1)">−</button>
+            <input type="number" id="bathrooms" value="1" min="0" max="20" class="stepper-value" onchange="validateSpec()">
+            <button type="button" class="stepper-btn" onclick="stepChange('bathrooms',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Luas Bangunan -->
+        <div id="buildingRow">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Luas Bangunan (m²) <span class="text-red-500">*</span></label>
+          <input type="number" id="buildingArea" placeholder="150" min="0" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Luas Tanah -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Luas Tanah (m²)</label>
+          <input type="number" id="landArea" placeholder="200" min="0" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Lantai -->
+        <div id="floorsRow">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Jumlah Lantai</label>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" onclick="stepChange('floors',-1)">−</button>
+            <input type="number" id="floors" value="1" min="1" max="50" class="stepper-value">
+            <button type="button" class="stepper-btn" onclick="stepChange('floors',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Garasi -->
+        <div id="garageRow">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Garasi</label>
+          <div class="stepper">
+            <button type="button" class="stepper-btn" onclick="stepChange('garage',-1)">−</button>
+            <input type="number" id="garage" value="0" min="0" max="10" class="stepper-value">
+            <button type="button" class="stepper-btn" onclick="stepChange('garage',1)">+</button>
+          </div>
+        </div>
+
+        <!-- Furnished -->
+        <div id="furnishedRow">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Furnished</label>
+          <select id="furnished" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="unfurnished">Unfurnished</option>
+            <option value="semi_furnished">Semi Furnished</option>
+            <option value="furnished">Furnished</option>
+          </select>
+        </div>
+
+        <!-- Sertifikat -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Sertifikat</label>
+          <select id="certificate" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">Pilih Sertifikat</option>
+            <option value="SHM">SHM (Sertifikat Hak Milik)</option>
+            <option value="HGB">HGB (Hak Guna Bangunan)</option>
+            <option value="Strata Title">Strata Title</option>
+            <option value="AJB">AJB (Akta Jual Beli)</option>
+            <option value="Girik">Girik</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+
+        <!-- Tahun Dibangun -->
+        <div id="yearRow">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Tahun Dibangun</label>
+          <input type="number" id="yearBuilt" placeholder="2020" min="1950" max="2026" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: LOKASI -->
+    <div id="step3" class="p-6 sm:p-8 hidden">
+      <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">3</span>Lokasi Properti</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Provinsi <span class="text-red-500">*</span></label>
+          <select id="province" onchange="updateCities()" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">Pilih Provinsi</option>
+            ${['Aceh','Sumatera Utara','Sumatera Barat','Riau','Kepulauan Riau','Jambi','Bengkulu','Sumatera Selatan','Kepulauan Bangka Belitung','Lampung','DKI Jakarta','Jawa Barat','Banten','Jawa Tengah','DI Yogyakarta','Jawa Timur','Bali','Nusa Tenggara Barat','Nusa Tenggara Timur','Kalimantan Barat','Kalimantan Tengah','Kalimantan Selatan','Kalimantan Timur','Kalimantan Utara','Sulawesi Utara','Sulawesi Tengah','Sulawesi Selatan','Sulawesi Tenggara','Gorontalo','Sulawesi Barat','Maluku','Maluku Utara','Papua','Papua Barat'].map(p => `<option value="${p}">${p}</option>`).join('')}
+          </select>
+          <p id="provinceError" class="text-red-500 text-xs mt-1 hidden">Pilih provinsi</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Kota / Kabupaten <span class="text-red-500">*</span></label>
+          <input type="text" id="city" placeholder="cth: Jakarta Selatan" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <p id="cityError" class="text-red-500 text-xs mt-1 hidden">Kota harus diisi</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Kecamatan / Area</label>
+          <input type="text" id="district" placeholder="cth: Kemang" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Kode Pos</label>
+          <input type="text" id="postalCode" placeholder="12730" maxlength="5" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat Lengkap <span class="text-red-500">*</span></label>
+        <textarea id="address" rows="3" placeholder="cth: Jl. Kemang Raya No. 15, Kemang, Jakarta Selatan, DKI Jakarta 12730" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        <p id="addressError" class="text-red-500 text-xs mt-1 hidden">Alamat harus diisi</p>
+      </div>
+
+      <!-- Map Picker -->
+      <div class="mb-5">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Tandai Lokasi di Peta</label>
+        <p class="text-xs text-gray-400 mb-2">Klik peta untuk menandai lokasi properti, atau seret pin untuk menyesuaikan</p>
+        <div class="flex gap-2 mb-3">
+          <button type="button" onclick="getMyLocation()" class="flex items-center gap-2 px-4 py-2 border border-blue-200 text-blue-600 rounded-xl text-sm font-medium hover:bg-blue-50 transition">
+            <i class="fas fa-location-arrow"></i>Gunakan Lokasi Saya
+          </button>
+        </div>
+        <div id="mapPicker"></div>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <div>
+            <label class="text-xs font-medium text-gray-600">Latitude</label>
+            <input type="text" id="latitude" placeholder="-6.2615" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mt-1">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-600">Longitude</label>
+            <input type="text" id="longitude" placeholder="106.8106" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mt-1">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: FOTO -->
+    <div id="step4" class="p-6 sm:p-8 hidden">
+      <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">4</span>Foto Properti</h2>
+
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+        <i class="fas fa-cloud-upload-alt text-4xl text-blue-400 mb-3"></i>
+        <p class="font-semibold text-gray-700 mb-1">Klik atau seret foto ke sini</p>
+        <p class="text-sm text-gray-400">Format: JPG, PNG, WEBP • Maksimal 2MB per foto • Min 1 foto, maks 15 foto</p>
+        <button type="button" class="mt-3 px-5 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Pilih Foto</button>
+        <input type="file" id="fileInput" multiple accept="image/*" class="hidden" onchange="handleFiles(this.files)">
+      </div>
+
+      <p id="photoError" class="text-red-500 text-sm mt-2 hidden"><i class="fas fa-exclamation-circle mr-1"></i>Minimal 1 foto harus diupload</p>
+
+      <!-- Photo Previews -->
+      <div class="mt-5">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm font-semibold text-gray-700"><span id="photoCount">0</span> foto dipilih</p>
+          <p class="text-xs text-gray-400">Foto pertama = foto utama (thumbnail)</p>
+        </div>
+        <div id="photoPreview" class="flex flex-wrap gap-3"></div>
+      </div>
+
+      <!-- Tips -->
+      <div class="mt-5 p-4 bg-blue-50 rounded-xl">
+        <h4 class="font-semibold text-blue-800 mb-2 text-sm">💡 Tips Foto Properti</h4>
+        <ul class="text-xs text-blue-700 space-y-1">
+          <li>• Upload minimal 5 foto untuk hasil terbaik</li>
+          <li>• Pastikan foto terang dan berkualitas baik</li>
+          <li>• Sertakan foto eksterior, interior, dan fasilitas</li>
+          <li>• Foto pertama akan menjadi thumbnail utama</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STEP 5: FASILITAS -->
+    <div id="step5" class="p-6 sm:p-8 hidden">
+      <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><span class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">5</span>Fasilitas & Fitur</h2>
+      <p class="text-gray-500 text-sm mb-5">Pilih fasilitas yang tersedia di properti Anda</p>
+      
+      <div class="flex flex-wrap gap-2 mb-8" id="featuresGrid">
+        ${[
+          'AC','Kolam Renang','Taman','CCTV','Security 24 Jam','Carport','Balkon',
+          'Rooftop','Gym','Playground','Musholla','Water Heater','Kitchen Set',
+          'Internet/WiFi','Listrik PLN','Air PDAM','Jet Pump','One Gate System',
+          'Row Jalan Lebar','Dekat Tol','Dekat Sekolah','Dekat Mall','Dekat RS',
+          'Dekat Pantai','Laundry','Genset','Lift'
+        ].map(f => `
+          <label>
+            <input type="checkbox" class="feature-checkbox" name="features" value="${f}" id="feat-${f.replace(/\s+/g,'-').replace(/\//g,'-')}">
+            <span class="feature-label">
+              <i class="fas fa-check text-blue-600 text-xs hidden check-icon"></i>
+              ${f}
+            </span>
+          </label>
+        `).join('')}
+      </div>
+
+      <!-- Review Summary -->
+      <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+        <h3 class="font-bold text-gray-900 mb-4">📋 Ringkasan Properti</h3>
+        <div id="reviewSummary" class="space-y-2 text-sm text-gray-600"></div>
+      </div>
+
+      <!-- Terms -->
+      <div class="mt-5">
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" id="agreeTerms" class="w-5 h-5 mt-0.5 accent-blue-600 shrink-0">
+          <span class="text-sm text-gray-600">Saya menyatakan bahwa informasi yang saya masukkan adalah benar dan saya setuju dengan <a href="syarat.html" class="text-blue-600 hover:underline">Syarat & Ketentuan</a> serta <a href="privasi.html" class="text-blue-600 hover:underline">Kebijakan Privasi</a> RumahKita.</span>
+        </label>
+        <p id="termsError" class="text-red-500 text-xs mt-1 hidden"><i class="fas fa-exclamation-circle mr-1"></i>Anda harus menyetujui syarat dan ketentuan</p>
+      </div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div id="stepSuccess" class="p-8 text-center hidden">
+      <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-check-circle text-green-500 text-4xl"></i>
+      </div>
+      <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Iklan Berhasil Dipasang!</h2>
+      <p class="text-gray-500 mb-6">Properti Anda sudah live dan dapat dilihat oleh calon pembeli atau penyewa.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="properti.html" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">Lihat Properti Saya</a>
+        <a href="tambah-properti.html" onclick="localStorage.removeItem('rk_form_data')" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition">Pasang Iklan Lagi</a>
+      </div>
+    </div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div id="formNav" class="flex items-center justify-between p-6 border-t border-gray-100">
+      <button id="prevBtn" onclick="prevStep()" class="flex items-center gap-2 px-5 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition hidden">
+        <i class="fas fa-arrow-left text-sm"></i>Sebelumnya
+      </button>
+      <div class="ml-auto flex gap-3">
+        <button id="saveDraftBtn" onclick="saveDraft()" class="px-5 py-3 border border-gray-300 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 transition">
+          Simpan Draft
+        </button>
+        <button id="nextBtn" onclick="nextStep()" class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
+          Selanjutnya <i class="fas fa-arrow-right text-sm"></i>
+        </button>
+        <button id="submitBtn" onclick="submitForm()" class="hidden flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition">
+          <i class="fas fa-paper-plane"></i>Terbitkan Properti
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ============================
+// STATE
+// ============================
+let currentStep = 1;
+const TOTAL_STEPS = 5;
+let selectedType = '';
+let selectedListing = 'dijual';
+let uploadedPhotos = [];
+let mapPicker = null;
+let mapMarker = null;
+
+// Load draft from localStorage
+const savedData = JSON.parse(localStorage.getItem('rk_form_data') || '{}');
+
+// ============================
+// STEP NAVIGATION
+// ============================
+function updateStepUI() {
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const el = document.getElementById('step' + i);
+    const circle = document.getElementById('stepCircle' + i);
+    const name = document.getElementById('stepName' + i);
+    if (el) el.classList.toggle('hidden', i !== currentStep);
+    if (circle) {
+      circle.className = `w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i < currentStep ? 'bg-blue-600 text-white' : i === currentStep ? 'bg-blue-600 text-white ring-4 ring-blue-200' : 'bg-gray-200 text-gray-500'}`;
+      circle.textContent = i < currentStep ? '✓' : i;
+    }
+    if (name) name.className = `text-xs text-center hidden sm:block ${i === currentStep ? 'text-blue-600 font-semibold' : i < currentStep ? 'text-blue-400' : 'text-gray-400'}`;
+  }
+  
+  const pct = (currentStep / TOTAL_STEPS) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('stepLabel').textContent = `Langkah ${currentStep} dari ${TOTAL_STEPS}`;
+  document.getElementById('stepPct').textContent = Math.round(pct) + '%';
+  
+  document.getElementById('prevBtn').classList.toggle('hidden', currentStep === 1);
+  document.getElementById('nextBtn').classList.toggle('hidden', currentStep === TOTAL_STEPS);
+  document.getElementById('submitBtn').classList.toggle('hidden', currentStep !== TOTAL_STEPS);
+  
+  if (currentStep === 3 && !mapPicker) setTimeout(initMapPicker, 100);
+  if (currentStep === 5) renderReviewSummary();
+}
+
+function nextStep() {
+  if (!validateCurrentStep()) return;
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    updateStepUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    autoSaveDraft();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) {
+    currentStep--;
+    updateStepUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ============================
+// VALIDATION
+// ============================
+function validateCurrentStep() {
+  if (currentStep === 1) return validateStep1();
+  if (currentStep === 2) return validateStep2();
+  if (currentStep === 3) return validateStep3();
+  if (currentStep === 4) return validateStep4();
+  return true;
+}
+
+function validateStep1() {
+  let valid = true;
+  const title = document.getElementById('propTitle').value.trim();
+  const desc = document.getElementById('propDesc').value.trim();
+  
+  if (!selectedType) {
+    document.getElementById('typeError').classList.remove('hidden');
+    valid = false;
+  } else document.getElementById('typeError').classList.add('hidden');
+  
+  if (title.length < 10) {
+    document.getElementById('titleError').classList.remove('hidden');
+    valid = false;
+  } else document.getElementById('titleError').classList.add('hidden');
+  
+  if (desc.length < 50) {
+    document.getElementById('descError').classList.remove('hidden');
+    valid = false;
+  } else document.getElementById('descError').classList.add('hidden');
+  
+  return valid;
+}
+
+function validateStep2() {
+  const price = document.getElementById('propPrice').value.replace(/\D/g,'');
+  if (!price || parseInt(price) === 0) {
+    document.getElementById('priceError').classList.remove('hidden');
+    return false;
+  }
+  document.getElementById('priceError').classList.add('hidden');
+  return true;
+}
+
+function validateStep3() {
+  let valid = true;
+  if (!document.getElementById('province').value) {
+    document.getElementById('provinceError').classList.remove('hidden');
+    valid = false;
+  } else document.getElementById('provinceError').classList.add('hidden');
+  if (!document.getElementById('city').value.trim()) {
+    document.getElementById('cityError').classList.remove('hidden');
+    valid = false;
+  } else document.getElementById('cityError').classList.add('hidden');
+  if (!document.getElementById('address').value.trim()) {
+    document.getElementById('addressError').classList.remove('hidden');
+    valid = false;
+  } else document.getElementById('addressError').classList.add('hidden');
+  return valid;
+}
+
+function validateStep4() {
+  if (uploadedPhotos.length === 0) {
+    document.getElementById('photoError').classList.remove('hidden');
+    return false;
+  }
+  document.getElementById('photoError').classList.add('hidden');
+  return true;
+}
+
+// ============================
+// STEP 1 - LISTING & TYPE
+// ============================
+function selectListing(type) {
+  selectedListing = type;
+  document.getElementById('opt-dijual').className = 'listing-opt' + (type === 'dijual' ? ' selected' : '');
+  document.getElementById('opt-disewa').className = 'listing-opt' + (type === 'disewa' ? ' selected' : '');
+  document.getElementById('listingType').value = type;
+  document.getElementById('priceTypeWrapper').classList.toggle('hidden', type !== 'disewa');
+}
+
+function selectType(type) {
+  selectedType = type;
+  document.getElementById('propertyType').value = type;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('type-' + type).classList.add('selected');
+  document.getElementById('typeError').classList.add('hidden');
+  
+  // Hide/show spec fields based on type
+  const isTanah = type === 'tanah';
+  const hideFields = ['bedroomsRow','bathroomsRow','buildingRow','floorsRow','garageRow','furnishedRow','yearRow'];
+  if (isTanah) {
+    hideFields.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
+  } else {
+    hideFields.forEach(id => { const el = document.getElementById(id); if(el) el.style.display = ''; });
+  }
+}
+
+function updateCharCount() {
+  const val = document.getElementById('propTitle').value;
+  document.getElementById('charCount').textContent = val.length + '/100';
+}
+
+document.getElementById('propDesc')?.addEventListener('input', function() {
+  document.getElementById('descCount').textContent = this.value.length + ' karakter';
+});
+
+// ============================
+// STEP 2 - PRICE FORMAT
+// ============================
+function formatPriceInput(el) {
+  const raw = el.value.replace(/\D/g,'');
+  el.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function stepChange(id, delta) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = parseInt(el.value) || 0;
+  const min = parseInt(el.min) || 0;
+  const max = parseInt(el.max) || 99;
+  el.value = Math.max(min, Math.min(max, val + delta));
+}
+
+// ============================
+// STEP 3 - MAP PICKER
+// ============================
+function initMapPicker() {
+  mapPicker = L.map('mapPicker').setView([-6.2088, 106.8456], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(mapPicker);
+  
+  mapPicker.on('click', e => {
+    setMapMarker(e.latlng.lat, e.latlng.lng);
+  });
+  
+  // Load saved coords
+  const savedLat = document.getElementById('latitude').value;
+  const savedLng = document.getElementById('longitude').value;
+  if (savedLat && savedLng) setMapMarker(parseFloat(savedLat), parseFloat(savedLng));
+}
+
+function setMapMarker(lat, lng) {
+  const pos = [lat, lng];
+  if (mapMarker) mapMarker.setLatLng(pos);
+  else mapMarker = L.marker(pos, { draggable: true }).addTo(mapPicker).on('dragend', e => {
+    const p = e.target.getLatLng();
+    document.getElementById('latitude').value = p.lat.toFixed(6);
+    document.getElementById('longitude').value = p.lng.toFixed(6);
+  });
+  mapPicker.setView(pos, 15);
+  document.getElementById('latitude').value = lat.toFixed(6);
+  document.getElementById('longitude').value = lng.toFixed(6);
+}
+
+function getMyLocation() {
+  if (!navigator.geolocation) { alert('Geolokasi tidak didukung browser Anda'); return; }
+  navigator.geolocation.getCurrentPosition(
+    p => setMapMarker(p.coords.latitude, p.coords.longitude),
+    () => alert('Gagal mendapatkan lokasi. Pastikan izin lokasi diaktifkan.')
+  );
+}
+
+// ============================
+// STEP 4 - PHOTO UPLOAD
+// ============================
+function handleFiles(files) {
+  const remaining = 15 - uploadedPhotos.length;
+  const toProcess = Array.from(files).slice(0, remaining);
+  
+  toProcess.forEach(file => {
+    if (!file.type.startsWith('image/')) { showToast('Hanya file gambar yang diizinkan', 'error'); return; }
+    if (file.size > 2 * 1024 * 1024) { showToast(`${file.name} terlalu besar (maks 2MB)`, 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedPhotos.push({ name: file.name, src: e.target.result });
+      renderPhotoPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPhotoPreview() {
+  document.getElementById('photoCount').textContent = uploadedPhotos.length;
+  document.getElementById('photoPreview').innerHTML = uploadedPhotos.map((p,i) => `
+    <div class="upload-thumb">
+      <img src="${p.src}" alt="${p.name}">
+      <button type="button" onclick="removePhoto(${i})" class="remove-btn"><i class="fas fa-times" style="font-size:8px;"></i></button>
+      ${i === 0 ? '<span class="primary-badge">UTAMA</span>' : ''}
+    </div>
+  `).join('');
+}
+
+function removePhoto(idx) {
+  uploadedPhotos.splice(idx, 1);
+  renderPhotoPreview();
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+function handleDragLeave(e) {
+  document.getElementById('uploadZone').classList.remove('drag-over');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+}
+
+// ============================
+// STEP 5 - REVIEW
+// ============================
+function renderReviewSummary() {
+  const features = [...document.querySelectorAll('.feature-checkbox:checked')].map(c => c.value);
+  const rows = [
+    ['Tipe Iklan', selectedListing === 'dijual' ? '🏷️ Dijual' : '🔑 Disewa'],
+    ['Tipe Properti', selectedType ? selectedType.charAt(0).toUpperCase()+selectedType.slice(1) : '-'],
+    ['Judul', document.getElementById('propTitle').value || '-'],
+    ['Harga', document.getElementById('propPrice').value ? 'Rp ' + document.getElementById('propPrice').value : '-'],
+    ['Kamar Tidur', document.getElementById('bedrooms')?.value || '-'],
+    ['Kamar Mandi', document.getElementById('bathrooms')?.value || '-'],
+    ['Luas Bangunan', document.getElementById('buildingArea')?.value ? document.getElementById('buildingArea').value + ' m²' : '-'],
+    ['Luas Tanah', document.getElementById('landArea')?.value ? document.getElementById('landArea').value + ' m²' : '-'],
+    ['Lokasi', `${document.getElementById('city').value || '-'}, ${document.getElementById('province').value || '-'}`],
+    ['Foto', uploadedPhotos.length + ' foto'],
+    ['Fasilitas', features.length ? features.slice(0,5).join(', ') + (features.length>5?` +${features.length-5} lainnya`:'') : 'Belum dipilih'],
+  ];
+  document.getElementById('reviewSummary').innerHTML = rows.map(([k,v]) => 
+    `<div class="flex gap-3 py-1.5 border-b border-gray-100 last:border-0"><span class="text-gray-400 w-32 shrink-0">${k}</span><span class="text-gray-800 font-medium">${v}</span></div>`
+  ).join('');
+}
+
+// ============================
+// SUBMIT
+// ============================
+function submitForm() {
+  if (!document.getElementById('agreeTerms').checked) {
+    document.getElementById('termsError').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('termsError').classList.add('hidden');
+  
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...';
+  
+  // Simulate API call
+  setTimeout(() => {
+    localStorage.removeItem('rk_form_data');
+    document.querySelectorAll('[id^="step"]').forEach(el => el.classList.add('hidden'));
+    document.getElementById('formNav').classList.add('hidden');
+    document.getElementById('stepSuccess').classList.remove('hidden');
+  }, 1500);
+}
+
+// ============================
+// DRAFT
+// ============================
+function saveDraft() {
+  autoSaveDraft();
+  showToast('Draft tersimpan! ✅', 'success');
+}
+function autoSaveDraft() {
+  const data = {
+    listing: selectedListing, type: selectedType,
+    title: document.getElementById('propTitle').value,
+    desc: document.getElementById('propDesc').value,
+    price: document.getElementById('propPrice').value,
+    step: currentStep
+  };
+  localStorage.setItem('rk_form_data', JSON.stringify(data));
+}
+
+// Load draft
+if (savedData.title) {
+  if (savedData.listing) selectListing(savedData.listing);
+  if (savedData.type) selectType(savedData.type);
+  if (savedData.title) document.getElementById('propTitle').value = savedData.title;
+  if (savedData.desc) document.getElementById('propDesc').value = savedData.desc;
+  if (savedData.price) document.getElementById('propPrice').value = savedData.price;
+  updateCharCount();
+}
+
+// Feature checkbox style
+document.querySelectorAll('.feature-checkbox').forEach(cb => {
+  cb.addEventListener('change', function() {
+    const icon = this.nextElementSibling.querySelector('.check-icon');
+    if (icon) icon.classList.toggle('hidden', !this.checked);
+  });
+});
+
+// ============================
+// TOAST
+// ============================
+function showToast(msg, type='info') {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:99999;background:${type==='success'?'#16a34a':type==='error'?'#dc2626':'#374151'};color:white;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.2);max-width:320px;transform:translateY(20px);opacity:0;transition:all 0.3s;`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.transform = 'translateY(0)'; el.style.opacity = '1'; });
+  setTimeout(() => { el.style.transform = 'translateY(20px)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// Init
+updateStepUI();
+</script>
+</body>
+</html>

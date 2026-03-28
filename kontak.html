@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontak - RumahKita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+</head>
+<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="index.html" class="flex items-center gap-2"><div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div><span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span></a>
+    <a href="index.html" class="text-sm text-gray-600 hover:text-blue-600"><i class="fas fa-arrow-left mr-1"></i>Beranda</a>
+  </div>
+</nav>
+
+<div class="bg-blue-600 text-white py-14 text-center">
+  <h1 class="text-4xl font-extrabold mb-2">Hubungi Kami</h1>
+  <p class="text-blue-200 text-lg">Kami siap membantu Anda 24/7</p>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Contact Info -->
+    <div class="space-y-5">
+      ${[
+        ['fas fa-envelope','bg-blue-100','text-blue-600','Email Dukungan','halo@rumahkita.com'],
+        ['fas fa-phone','bg-green-100','text-green-600','Telepon','(021) 1234-5678'],
+        ['fab fa-whatsapp','bg-green-100','text-green-600','WhatsApp','0812-3456-7890'],
+        ['fas fa-map-marker-alt','bg-red-100','text-red-500','Kantor','Jl. Sudirman No. 123, Jakarta Selatan, DKI Jakarta 12190'],
+        ['fas fa-clock','bg-purple-100','text-purple-600','Jam Operasional','Senin - Jumat: 08.00 - 18.00 WIB'],
+      ].map(([icon,bg,tc,label,val]) => `
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex gap-4">
+          <div class="w-10 h-10 ${bg} rounded-xl flex items-center justify-center flex-shrink-0"><i class="${icon} ${tc}"></i></div>
+          <div><div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">${label}</div><div class="font-medium text-gray-900">${val}</div></div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Form -->
+    <div class="lg:col-span-2 bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+      <h2 class="text-xl font-bold text-gray-900 mb-5">Kirim Pesan</h2>
+      <div id="contactAlert" class="hidden mb-4 p-4 rounded-xl text-sm font-medium bg-green-50 text-green-700 border border-green-200"></div>
+      <form id="contactForm" onsubmit="submitContact(event)" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Lengkap *</label>
+            <input type="text" required placeholder="Nama Anda" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email *</label>
+            <input type="email" required placeholder="email@anda.com" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nomor HP</label>
+          <input type="tel" placeholder="08xxxxxxxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Subjek *</label>
+          <select required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            <option value="">Pilih subjek</option>
+            <option>Pertanyaan Umum</option>
+            <option>Bantuan Teknis</option>
+            <option>Laporan Iklan</option>
+            <option>Kerjasama</option>
+            <option>Lainnya</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Pesan *</label>
+          <textarea required rows="5" placeholder="Ceritakan bagaimana kami dapat membantu Anda..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2" id="submitContactBtn">
+          <i class="fas fa-paper-plane"></i>Kirim Pesan
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm">
+  <p>© 2026 RumahKita | <a href="syarat.html" class="hover:text-white">Syarat</a> | <a href="privasi.html" class="hover:text-white">Privasi</a></p>
+</footer>
+
+<script>
+function submitContact(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitContactBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mengirim...';
+  setTimeout(() => {
+    document.getElementById('contactAlert').classList.remove('hidden');
+    document.getElementById('contactAlert').textContent = '✅ Pesan berhasil dikirim! Tim kami akan menghubungi Anda dalam 1x24 jam.';
+    document.getElementById('contactForm').reset();
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Pesan';
+  }, 1000);
+}
+</script>
+</body>
+</html>

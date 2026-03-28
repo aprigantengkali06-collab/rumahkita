@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Properti - RumahKita</title>
+  <meta name="description" content="Detail properti lengkap di RumahKita">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <style>
+    #map { height: 400px; border-radius: 16px; }
+    .gallery-main-img { height: 380px; object-fit: cover; cursor: pointer; transition: opacity 0.2s; }
+    .gallery-main-img:hover { opacity: 0.92; }
+    .gallery-thumb-img { height: 185px; object-fit: cover; cursor: pointer; transition: opacity 0.2s; }
+    .gallery-thumb-img:hover { opacity: 0.85; }
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; }
+    .lightbox.open { display: flex; }
+    .sticky-sidebar { position: sticky; top: 80px; }
+    .feature-check { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #374151; }
+    .spec-item { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px; background: #f9fafb; border-radius: 12px; gap: 6px; }
+    .spec-icon { font-size: 1.5rem; }
+    .spec-label { font-size: 0.6875rem; color: #6b7280; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .spec-value { font-size: 1rem; font-weight: 700; color: #111827; }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
+        <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-3" id="navAuth">
+        <a href="tambah-properti.html" class="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition"><i class="fas fa-plus mr-1"></i>Pasang Iklan</a>
+        <a href="login.html" class="text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">Masuk</a>
+        <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">Daftar</a>
+      </div>
+      <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg hover:bg-gray-100"><i class="fas fa-bars text-gray-700"></i></button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 py-3 flex gap-3">
+    <a href="login.html" class="flex-1 text-center py-2 border border-gray-300 text-gray-700 rounded-lg font-medium text-sm">Masuk</a>
+    <a href="register.html" class="flex-1 text-center py-2 bg-blue-600 text-white rounded-lg font-medium text-sm">Daftar</a>
+  </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="mainContent">
+  <!-- Loading State -->
+  <div id="loadingState" class="space-y-4">
+    <div class="skeleton h-6 w-64 mb-4"></div>
+    <div class="skeleton" style="height:400px;border-radius:16px;"></div>
+    <div class="skeleton h-8 w-3/4 mt-6"></div>
+    <div class="skeleton h-4 w-1/2"></div>
+  </div>
+  
+  <!-- Main Content (hidden until loaded) -->
+  <div id="propertyContent" class="hidden"></div>
+
+  <!-- Not Found State -->
+  <div id="notFound" class="hidden text-center py-24">
+    <div class="text-6xl mb-4">🏠</div>
+    <h2 class="text-2xl font-bold text-gray-900 mb-2">Properti Tidak Ditemukan</h2>
+    <p class="text-gray-500 mb-6">Properti yang Anda cari mungkin telah dihapus atau tidak tersedia</p>
+    <a href="properti.html" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Cari Properti Lain</a>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button onclick="prevPhoto()" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-white/40 transition z-10">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  <div class="relative max-w-4xl w-full mx-4" onclick="event.stopPropagation()">
+    <img id="lightboxImg" src="" alt="" class="w-full max-h-screen-75 object-contain rounded-xl" style="max-height:75vh;">
+    <div id="lightboxCounter" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm px-4 py-2 rounded-full"></div>
+  </div>
+  <button onclick="nextPhoto()" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-white/40 transition z-10">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+  <button onclick="closeLightbox()" class="absolute top-4 right-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/40 transition">
+    <i class="fas fa-times"></i>
+  </button>
+</div>
+
+<!-- MESSAGE MODAL -->
+<div id="messageModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-bold text-gray-900 text-lg">Kirim Pesan</h3>
+      <button onclick="document.getElementById('messageModal').classList.add('hidden')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200"><i class="fas fa-times text-gray-600 text-sm"></i></button>
+    </div>
+    <form id="messageForm" onsubmit="sendMessage(event)">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap *</label>
+          <input type="text" id="msgName" required placeholder="Nama Anda" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP / WhatsApp *</label>
+          <input type="tel" id="msgPhone" required placeholder="08xxxxxxxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Pesan *</label>
+          <textarea id="msgText" required rows="4" placeholder="Halo, saya tertarik dengan properti ini..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
+          <i class="fas fa-paper-plane mr-2"></i>Kirim Pesan
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div id="reportModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-bold text-gray-900 text-lg">Laporkan Listing</h3>
+      <button onclick="document.getElementById('reportModal').classList.add('hidden')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"><i class="fas fa-times text-gray-600 text-sm"></i></button>
+    </div>
+    <div class="space-y-3 mb-5">
+      ${['Spam atau iklan palsu','Penipuan','Konten tidak pantas','Properti tidak ada','Harga tidak sesuai','Alasan lainnya'].map(r =>
+        `<label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50 border border-gray-100">
+          <input type="radio" name="reportReason" value="${r}" class="w-4 h-4 accent-red-500">
+          <span class="text-sm text-gray-700">${r}</span>
+        </label>`
+      ).join('')}
+    </div>
+    <button onclick="submitReport()" class="w-full bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600 transition">Kirim Laporan</button>
+  </div>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="mobile-bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 px-2 py-2">
+  <div class="flex justify-around items-center">
+    <a href="index.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-home text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Beranda</span></a>
+    <a href="properti.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-search text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Cari</span></a>
+    <button id="mobileWaBtn" class="flex flex-col items-center gap-1 -mt-5"><div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg"><i class="fab fa-whatsapp text-white text-lg"></i></div><span class="text-xs text-gray-400 mt-1">WhatsApp</span></button>
+    <button onclick="toggleFavBtn()" id="mobileFavBtn" class="flex flex-col items-center gap-1 py-1 px-3"><i class="far fa-heart text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Simpan</span></button>
+    <a href="login.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-user text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Akun</span></a>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/data.js"></script>
+<script>
+let currentProperty = null;
+let currentPhotoIndex = 0;
+let mapInstance = null;
+
+// ============================
+// LOAD PROPERTY
+// ============================
+function loadProperty() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  
+  if (!id) { showNotFound(); return; }
+  
+  const prop = RUMAHKITA_PROPERTIES.find(p => p.id === id);
+  
+  if (!prop) { showNotFound(); return; }
+  
+  currentProperty = prop;
+  document.title = prop.title + ' - RumahKita';
+  document.querySelector('meta[name="description"]').content = prop.description.substring(0, 160);
+  
+  setTimeout(() => {
+    document.getElementById('loadingState').classList.add('hidden');
+    document.getElementById('propertyContent').classList.remove('hidden');
+    renderProperty(prop);
+  }, 300);
+}
+
+function showNotFound() {
+  document.getElementById('loadingState').classList.add('hidden');
+  document.getElementById('notFound').classList.remove('hidden');
+}
+
+// ============================
+// RENDER PROPERTY
+// ============================
+function renderProperty(p) {
+  const content = document.getElementById('propertyContent');
+  const isFav = localStorage.getItem('fav_' + p.id) === '1';
+  
+  content.innerHTML = `
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-500 mb-4">
+      <a href="index.html" class="hover:text-blue-600">Beranda</a>
+      <span class="mx-2">›</span>
+      <a href="properti.html" class="hover:text-blue-600">Properti</a>
+      <span class="mx-2">›</span>
+      <a href="properti.html?city=${p.city}" class="hover:text-blue-600">${p.city}</a>
+      <span class="mx-2">›</span>
+      <span class="text-gray-900 font-medium line-clamp-1">${p.title}</span>
+    </nav>
+
+    <!-- GALLERY -->
+    <div class="mb-8">
+      <div class="grid gap-2" style="grid-template-columns:1fr 1fr;grid-template-rows:${p.images.length>1?'185px 185px':'380px'};">
+        <div style="grid-row:span 2;" class="overflow-hidden rounded-l-2xl">
+          <img src="${p.images[0]}" alt="${p.title}" class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition gallery-main-img" onclick="openLightbox(0)" style="height:100%;border-radius:0;">
+        </div>
+        ${p.images.slice(1,5).map((img,i) => `
+          <div class="overflow-hidden ${i===1?'rounded-tr-2xl':''} ${i===3?'rounded-br-2xl':''} relative">
+            <img src="${img}" alt="${p.title}" class="w-full h-full object-cover cursor-pointer hover:opacity-85 transition" onclick="openLightbox(${i+1})" style="height:185px;">
+            ${i===3 && p.images.length>5 ? `<div onclick="openLightbox(4)" class="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer rounded-br-2xl"><span class="text-white font-bold text-lg">+${p.images.length-5} foto</span></div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      <div class="mt-2 flex justify-end">
+        <button onclick="openLightbox(0)" class="flex items-center gap-2 text-sm text-gray-600 bg-white border border-gray-200 px-4 py-2 rounded-xl hover:bg-gray-50 transition">
+          <i class="fas fa-images text-blue-600"></i>Lihat Semua ${p.images.length} Foto
+        </button>
+      </div>
+    </div>
+
+    <!-- 2 COLUMN LAYOUT -->
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- MAIN CONTENT -->
+      <div class="flex-1 min-w-0">
+
+        <!-- Property Header -->
+        <div class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
+          <div class="flex flex-wrap gap-2 mb-3">
+            <span class="${p.listing==='dijual'?'bg-blue-600':'bg-green-600'} text-white text-xs px-3 py-1 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span>
+            <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full font-semibold">${getTypeLabel(p.type)}</span>
+            ${p.is_featured?'<span class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-semibold">⭐ Unggulan</span>':''}
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3">${p.title}</h1>
+          <p class="text-gray-600 flex items-center gap-2 mb-4"><i class="fas fa-map-marker-alt text-blue-600"></i>${p.address}</p>
+          
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="text-3xl md:text-4xl font-extrabold text-blue-600">${formatRupiah(p.price)}${p.price_type==='per_bulan'?'<span class="text-xl text-gray-500 font-semibold">/bulan</span>':p.price_type==='per_tahun'?'<span class="text-xl text-gray-500 font-semibold">/tahun</span>':''}</span>
+            ${p.is_negotiable?'<span class="bg-green-50 text-green-700 text-sm px-3 py-1 rounded-full font-semibold border border-green-200">Bisa Nego</span>':''}
+          </div>
+          ${p.certificate ? `<p class="text-sm text-gray-500 mt-2"><i class="fas fa-certificate text-amber-500 mr-1"></i>Sertifikat: <strong class="text-gray-700">${p.certificate}</strong></p>` : ''}
+        </div>
+
+        <!-- Specs -->
+        <div class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Spesifikasi Properti</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            ${p.bedrooms>0?`<div class="spec-item"><div class="spec-icon">🛏</div><div class="spec-label">Kamar Tidur</div><div class="spec-value">${p.bedrooms}</div></div>`:''}
+            ${p.bathrooms>0?`<div class="spec-item"><div class="spec-icon">🚿</div><div class="spec-label">Kamar Mandi</div><div class="spec-value">${p.bathrooms}</div></div>`:''}
+            ${p.building_area>0?`<div class="spec-item"><div class="spec-icon">📐</div><div class="spec-label">Luas Bangunan</div><div class="spec-value">${p.building_area} m²</div></div>`:''}
+            ${p.land_area>0?`<div class="spec-item"><div class="spec-icon">📏</div><div class="spec-label">Luas Tanah</div><div class="spec-value">${p.land_area} m²</div></div>`:''}
+            ${p.floors>0?`<div class="spec-item"><div class="spec-icon">🏢</div><div class="spec-label">Jumlah Lantai</div><div class="spec-value">${p.floors}</div></div>`:''}
+            ${p.garage>0?`<div class="spec-item"><div class="spec-icon">🚗</div><div class="spec-label">Garasi</div><div class="spec-value">${p.garage}</div></div>`:''}
+            ${p.furnished&&p.furnished!=='unfurnished'?`<div class="spec-item"><div class="spec-icon">🪑</div><div class="spec-label">Furnished</div><div class="spec-value" style="font-size:0.8rem">${p.furnished==='furnished'?'Furnished':'Semi Furnished'}</div></div>`:''}
+            ${p.year_built>0?`<div class="spec-item"><div class="spec-icon">📅</div><div class="spec-label">Dibangun</div><div class="spec-value">${p.year_built}</div></div>`:''}
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Deskripsi Properti</h2>
+          <div id="descContainer">
+            <p class="text-gray-600 leading-relaxed" id="descText" style="overflow:hidden;">${p.description}</p>
+          </div>
+          <button id="descToggle" onclick="toggleDesc()" class="mt-3 text-blue-600 font-semibold text-sm hover:underline hidden">Baca Selengkapnya <i class="fas fa-chevron-down ml-1 text-xs"></i></button>
+        </div>
+
+        <!-- Features -->
+        ${p.features && p.features.length > 0 ? `
+        <div class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Fasilitas</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            ${p.features.map(f => `<div class="feature-check"><span class="text-green-500 text-lg">✅</span><span>${f}</span></div>`).join('')}
+          </div>
+        </div>` : ''}
+
+        <!-- Map -->
+        <div class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900 mb-2">Lokasi</h2>
+          <p class="text-gray-500 text-sm mb-4"><i class="fas fa-map-marker-alt text-blue-600 mr-1"></i>${p.address}</p>
+          <div id="map"></div>
+          <a href="https://www.google.com/maps?q=${p.lat},${p.lng}" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-2 text-blue-600 text-sm font-semibold hover:underline">
+            <i class="fas fa-external-link-alt"></i>Buka di Google Maps
+          </a>
+        </div>
+
+        <!-- KPR Calculator (for Dijual) -->
+        ${p.listing === 'dijual' ? `
+        <div class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Simulasi KPR</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Uang Muka (%)</label>
+              <input type="number" id="detKprDP" value="20" min="0" max="90" oninput="hitungKPRDetail()" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tenor (Tahun)</label>
+              <input type="number" id="detKprTenor" value="15" min="1" max="30" oninput="hitungKPRDetail()" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Bunga (%/thn)</label>
+              <input type="number" id="detKprBunga" value="8.5" min="0" max="30" step="0.1" oninput="hitungKPRDetail()" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-4">
+            <div class="flex justify-between items-center">
+              <span class="text-blue-700 font-semibold">Estimasi Cicilan / Bulan</span>
+              <span id="detKprResult" class="text-2xl font-extrabold text-blue-600">Menghitung...</span>
+            </div>
+          </div>
+        </div>` : ''}
+
+        <!-- Similar Properties -->
+        <div class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Properti Serupa</h2>
+          <div id="similarProperties" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+          <a href="properti.html?city=${p.city}&type=${p.type}" class="mt-4 block text-center text-blue-600 font-semibold text-sm hover:underline">Lihat Lebih Banyak →</a>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="lg:w-80 flex-shrink-0">
+        <div class="sticky-sidebar space-y-4">
+          
+          <!-- Agent Card -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3 mb-4">
+              <img src="${p.user.avatar}" alt="${p.user.name}" class="w-14 h-14 rounded-full object-cover border-2 border-blue-100">
+              <div>
+                <h3 class="font-bold text-gray-900">${p.user.name}</h3>
+                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${p.user.type==='agen'?'bg-blue-50 text-blue-700':'bg-green-50 text-green-700'} capitalize">
+                  ${p.user.type==='agen'?'<i class="fas fa-id-badge"></i>':'<i class="fas fa-user"></i>'} ${p.user.type.charAt(0).toUpperCase()+p.user.type.slice(1)}
+                </span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-4 pb-4 border-b border-gray-100">
+              <div><i class="fas fa-star text-amber-400 mr-1"></i><span>4.8 Rating</span></div>
+              <div><i class="fas fa-home text-blue-400 mr-1"></i><span>${p.user.active_listings} listing</span></div>
+              <div class="col-span-2"><i class="fas fa-calendar text-gray-400 mr-1"></i>Member sejak ${new Date(p.user.member_since).toLocaleDateString('id-ID',{month:'long',year:'numeric'})}</div>
+            </div>
+            
+            <div class="space-y-3">
+              <a href="https://wa.me/${p.user.whatsapp}?text=Halo+${encodeURIComponent(p.user.name)}%2C+saya+tertarik+dengan+properti+%22${encodeURIComponent(p.title)}%22+yang+ada+di+RumahKita.+Bisakah+kita+diskusi+lebih+lanjut%3F" 
+                target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-semibold transition">
+                <i class="fab fa-whatsapp text-lg"></i>Hubungi via WhatsApp
+              </a>
+              <a href="tel:${p.user.phone}" class="w-full flex items-center justify-center gap-2 border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+                <i class="fas fa-phone"></i>Telepon
+              </a>
+              <button onclick="document.getElementById('messageModal').classList.remove('hidden')" class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition">
+                <i class="fas fa-envelope"></i>Kirim Pesan
+              </button>
+            </div>
+            
+            <a href="agen.html?id=${p.user.id}" class="mt-4 block text-center text-sm text-blue-600 hover:underline">Lihat semua properti dari ${p.user.name} →</a>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="toggleFavBtn()" id="favBtn" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border border-gray-200 hover:bg-red-50 hover:border-red-200 transition">
+                <i id="favIcon" class="${isFav?'fas text-red-500':'far text-gray-400'} fa-heart text-xl"></i>
+                <span class="text-xs text-gray-600 font-medium">${isFav?'Tersimpan':'Simpan'}</span>
+              </button>
+              <button onclick="shareProperty()" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition">
+                <i class="fas fa-share-alt text-gray-400 text-xl"></i>
+                <span class="text-xs text-gray-600 font-medium">Bagikan</span>
+              </button>
+              <button onclick="document.getElementById('reportModal').classList.remove('hidden')" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border border-gray-200 hover:bg-red-50 hover:border-red-200 transition">
+                <i class="fas fa-flag text-gray-400 text-xl"></i>
+                <span class="text-xs text-gray-600 font-medium">Laporkan</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Listing Info -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <h3 class="font-semibold text-gray-900 mb-3">Info Listing</h3>
+            <div class="space-y-2 text-sm text-gray-500">
+              <div class="flex justify-between"><span>ID Properti</span><span class="font-mono text-gray-700">${p.id.toUpperCase().replace('PROP-','PRO-')}</span></div>
+              <div class="flex justify-between"><span>Dilihat</span><span class="font-semibold text-gray-700">${p.views.toLocaleString('id-ID')} kali</span></div>
+              <div class="flex justify-between"><span>Diposting</span><span class="text-gray-700">${new Date(p.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}</span></div>
+              <div class="flex justify-between"><span>Diperbarui</span><span class="text-gray-700">${new Date(p.updated_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Init map
+  setTimeout(() => {
+    initMap(p);
+    initKPRCalc(p);
+    renderSimilar(p);
+    checkDescLength();
+  }, 100);
+
+  // Mobile WA Button
+  document.getElementById('mobileWaBtn').onclick = () => {
+    window.open(`https://wa.me/${p.user.whatsapp}?text=Halo%2C+saya+tertarik+dengan+${encodeURIComponent(p.title)}`);
+  };
+  
+  // Update fav button
+  updateFavBtn();
+}
+
+// ============================
+// MAP
+// ============================
+function initMap(p) {
+  if (!p.lat || !p.lng) return;
+  if (mapInstance) { mapInstance.remove(); }
+  
+  mapInstance = L.map('map').setView([p.lat, p.lng], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(mapInstance);
+  
+  const icon = L.divIcon({
+    html: `<div style="background:#2563eb;color:white;padding:8px 12px;border-radius:12px;font-size:12px;font-weight:700;white-space:nowrap;box-shadow:0 4px 15px rgba(37,99,235,0.4);">📍 ${formatRupiah(p.price)}</div>`,
+    className: '',
+    iconAnchor: [60, 40]
+  });
+  
+  L.marker([p.lat, p.lng], { icon })
+    .addTo(mapInstance)
+    .bindPopup(`<strong>${p.title}</strong><br>${p.address}`)
+    .openPopup();
+}
+
+// ============================
+// KPR CALCULATOR
+// ============================
+function initKPRCalc(p) {
+  if (p.listing !== 'dijual') return;
+  hitungKPRDetail();
+}
+
+function hitungKPRDetail() {
+  const harga = currentProperty ? currentProperty.price : 0;
+  const dp = parseFloat(document.getElementById('detKprDP')?.value) || 20;
+  const tenor = parseInt(document.getElementById('detKprTenor')?.value) || 15;
+  const bunga = parseFloat(document.getElementById('detKprBunga')?.value) || 8.5;
+  const pokok = harga * (1 - dp/100);
+  const r = (bunga/100)/12;
+  const n = tenor*12;
+  let cicilan = r > 0 ? pokok * (r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1) : pokok/n;
+  document.getElementById('detKprResult').textContent = formatRupiah(Math.round(cicilan));
+}
+
+function formatRupiah(angka) {
+  return 'Rp ' + parseInt(angka).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function getTypeLabel(t) {
+  return {rumah:'Rumah',apartemen:'Apartemen',tanah:'Tanah',ruko:'Ruko',kos:'Kos',villa:'Villa',gudang:'Gudang',kantor:'Kantor'}[t] || t;
+}
+
+// ============================
+// SIMILAR PROPERTIES
+// ============================
+function renderSimilar(p) {
+  const similar = RUMAHKITA_PROPERTIES.filter(x => x.id !== p.id && (x.type === p.type || x.city === p.city)).slice(0,4);
+  const container = document.getElementById('similarProperties');
+  if (!similar.length) { container.innerHTML = '<p class="text-gray-500 text-sm col-span-2">Tidak ada properti serupa</p>'; return; }
+  container.innerHTML = similar.map(s => {
+    const price = formatRupiah(s.price) + (s.price_type==='per_bulan'?'/bln':'');
+    return `<div class="bg-gray-50 rounded-xl overflow-hidden cursor-pointer hover:shadow-md transition border border-gray-100" onclick="location.href='detail-properti.html?id=${s.id}'">
+      <img src="${s.images[0]}" alt="${s.title}" class="w-full object-cover" style="height:130px;">
+      <div class="p-3">
+        <div class="text-blue-600 font-bold text-sm">${price}</div>
+        <div class="text-gray-800 text-xs font-medium line-clamp-2 mt-1">${s.title}</div>
+        <div class="text-gray-500 text-xs mt-1">📍 ${s.city}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================
+// DESCRIPTION TOGGLE
+// ============================
+function checkDescLength() {
+  const desc = document.getElementById('descText');
+  if (!desc) return;
+  if (desc.scrollHeight > 120) {
+    desc.style.maxHeight = '120px';
+    desc.style.overflow = 'hidden';
+    document.getElementById('descToggle').classList.remove('hidden');
+  }
+}
+let descExpanded = false;
+function toggleDesc() {
+  const desc = document.getElementById('descText');
+  const btn = document.getElementById('descToggle');
+  if (descExpanded) {
+    desc.style.maxHeight = '120px';
+    desc.style.overflow = 'hidden';
+    btn.innerHTML = 'Baca Selengkapnya <i class="fas fa-chevron-down ml-1 text-xs"></i>';
+  } else {
+    desc.style.maxHeight = 'none';
+    desc.style.overflow = 'visible';
+    btn.innerHTML = 'Tutup <i class="fas fa-chevron-up ml-1 text-xs"></i>';
+  }
+  descExpanded = !descExpanded;
+}
+
+// ============================
+// GALLERY LIGHTBOX
+// ============================
+function openLightbox(idx) {
+  if (!currentProperty) return;
+  currentPhotoIndex = idx;
+  document.getElementById('lightbox').classList.add('open');
+  updateLightboxImg();
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function prevPhoto() {
+  currentPhotoIndex = (currentPhotoIndex - 1 + currentProperty.images.length) % currentProperty.images.length;
+  updateLightboxImg();
+}
+function nextPhoto() {
+  currentPhotoIndex = (currentPhotoIndex + 1) % currentProperty.images.length;
+  updateLightboxImg();
+}
+function updateLightboxImg() {
+  document.getElementById('lightboxImg').src = currentProperty.images[currentPhotoIndex];
+  document.getElementById('lightboxCounter').textContent = `${currentPhotoIndex + 1} / ${currentProperty.images.length} foto`;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightbox').classList.contains('open')) {
+    if (e.key === 'ArrowLeft') prevPhoto();
+    if (e.key === 'ArrowRight') nextPhoto();
+    if (e.key === 'Escape') closeLightbox();
+  }
+});
+
+// ============================
+// FAVORITE
+// ============================
+function toggleFavBtn() {
+  if (!currentProperty) return;
+  const key = 'fav_' + currentProperty.id;
+  const isFav = localStorage.getItem(key) === '1';
+  if (isFav) {
+    localStorage.removeItem(key);
+    showToastMsg('Dihapus dari favorit', 'info');
+  } else {
+    localStorage.setItem(key, '1');
+    showToastMsg('Ditambahkan ke favorit ❤️', 'success');
+  }
+  updateFavBtn();
+}
+
+function updateFavBtn() {
+  if (!currentProperty) return;
+  const isFav = localStorage.getItem('fav_' + currentProperty.id) === '1';
+  const icon = document.getElementById('favIcon');
+  const btn = document.getElementById('favBtn');
+  if (icon) { icon.className = isFav ? 'fas fa-heart text-red-500 text-xl' : 'far fa-heart text-gray-400 text-xl'; }
+  if (btn) btn.querySelector('span').textContent = isFav ? 'Tersimpan' : 'Simpan';
+}
+
+// ============================
+// SHARE
+// ============================
+function shareProperty() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: currentProperty.title, url });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(url);
+    showToastMsg('Link berhasil disalin! 📋', 'success');
+  }
+}
+
+// ============================
+// MESSAGE FORM
+// ============================
+function sendMessage(e) {
+  e.preventDefault();
+  const name = document.getElementById('msgName').value;
+  const phone = document.getElementById('msgPhone').value;
+  const text = document.getElementById('msgText').value;
+  
+  // In real app, this would call Supabase API
+  document.getElementById('messageModal').classList.add('hidden');
+  showToastMsg('Pesan berhasil dikirim!', 'success');
+  document.getElementById('messageForm').reset();
+}
+
+// ============================
+// REPORT
+// ============================
+function submitReport() {
+  document.getElementById('reportModal').classList.add('hidden');
+  showToastMsg('Laporan berhasil dikirim. Terima kasih!', 'success');
+}
+
+// ============================
+// TOAST
+// ============================
+function showToastMsg(msg, type='info') {
+  const existing = document.getElementById('rk-toast');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'rk-toast';
+  el.style.cssText = `position:fixed;bottom:80px;right:24px;z-index:99999;background:${type==='success'?'#16a34a':type==='error'?'#dc2626':'#374151'};color:white;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.2);max-width:320px;transform:translateY(20px);opacity:0;transition:all 0.3s;`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.transform = 'translateY(0)'; el.style.opacity = '1'; });
+  setTimeout(() => { el.style.transform = 'translateY(20px)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3500);
+}
+
+// ============================
+// INIT
+// ============================
+document.addEventListener('DOMContentLoaded', loadProperty);
+</script>
+</body>
+</html>

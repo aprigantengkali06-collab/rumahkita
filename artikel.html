@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel & Panduan Properti - RumahKita</title>
+  <meta name="description" content="Tips, panduan, dan informasi terkini seputar jual beli dan sewa properti di Indonesia.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+  <style>
+    .article-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .article-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
+      <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-1">
+      <a href="properti.html?listing=dijual" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Dijual</a>
+      <a href="properti.html?listing=disewa" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Disewa</a>
+      <a href="kpr.html" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">KPR</a>
+      <a href="artikel.html" class="px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">Artikel</a>
+    </div>
+    <div class="flex gap-2">
+      <a href="login.html" class="text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">Masuk</a>
+      <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">Daftar</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="bg-gradient-to-br from-gray-900 to-gray-700 text-white py-14">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h1 class="text-4xl font-extrabold mb-3">Panduan Properti</h1>
+    <p class="text-gray-300 text-lg mb-6">Tips, panduan, dan informasi terkini seputar properti Indonesia</p>
+    <div class="max-w-md mx-auto relative">
+      <i class="fas fa-search absolute left-4 top-3.5 text-gray-400"></i>
+      <input type="text" id="searchArtikel" placeholder="Cari artikel..." oninput="filterArticles(this.value)" class="w-full pl-10 pr-4 py-3 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <!-- Categories -->
+  <div class="flex flex-wrap gap-2 mb-8 justify-center">
+    ${['Semua','Tips & Trik','Investasi','KPR','Hukum Properti','Panduan Sewa','Checklist'].map((c,i) =>
+      `<button onclick="filterByCategory('${c}',this)" class="cat-filter-btn px-4 py-2 rounded-full text-sm font-medium border transition ${i===0?'bg-blue-600 text-white border-blue-600':'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}">${c}</button>`
+    ).join('')}
+  </div>
+
+  <!-- Articles Grid -->
+  <div id="articlesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  </div>
+
+  <!-- Empty State -->
+  <div id="artikelEmpty" class="hidden text-center py-16">
+    <div class="text-5xl mb-4">📰</div>
+    <h3 class="text-lg font-bold text-gray-900 mb-2">Artikel tidak ditemukan</h3>
+    <p class="text-gray-500">Coba kata kunci lain</p>
+  </div>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 px-2 py-2">
+  <div class="flex justify-around items-center">
+    <a href="index.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-home text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Beranda</span></a>
+    <a href="properti.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-search text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Cari</span></a>
+    <a href="tambah-properti.html" class="flex flex-col items-center gap-1 -mt-5"><div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-plus text-white text-lg"></i></div><span class="text-xs text-gray-400 mt-1">Pasang</span></a>
+    <a href="login.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-user text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Akun</span></a>
+  </div>
+</div>
+
+<script>
+const ARTICLES = [
+  {
+    slug: 'tips-membeli-rumah-pertama',
+    title: 'Tips Membeli Rumah Pertama untuk Pemula',
+    category: 'Tips & Trik',
+    excerpt: 'Panduan lengkap bagi Anda yang baru pertama kali membeli rumah. Dari persiapan dana, KPR, hingga proses akad kredit.',
+    image: 'https://picsum.photos/seed/artikel1/600/400',
+    author: 'Tim RumahKita',
+    date: '10 Januari 2026',
+    readTime: '5 menit',
+    tags: ['rumah pertama','tips','KPR']
+  },
+  {
+    slug: 'panduan-investasi-properti',
+    title: 'Panduan Investasi Properti yang Menguntungkan',
+    category: 'Investasi',
+    excerpt: 'Pelajari strategi investasi properti yang tepat untuk jangka pendek maupun jangka panjang. Mulai dari modal terjangkau hingga properti premium.',
+    image: 'https://picsum.photos/seed/artikel2/600/400',
+    author: 'Tim RumahKita',
+    date: '15 Januari 2026',
+    readTime: '7 menit',
+    tags: ['investasi','properti','return']
+  },
+  {
+    slug: 'cara-mengajukan-kpr',
+    title: 'Cara Mengajukan KPR: Syarat dan Prosesnya',
+    category: 'KPR',
+    excerpt: 'Panduan step-by-step pengajuan KPR dari persiapan dokumen, survei bank, hingga persetujuan dan proses akad kredit.',
+    image: 'https://picsum.photos/seed/artikel3/600/400',
+    author: 'Tim RumahKita',
+    date: '20 Januari 2026',
+    readTime: '8 menit',
+    tags: ['KPR','kredit','bank']
+  },
+  {
+    slug: 'perbedaan-shm-hgb-strata-title',
+    title: 'Perbedaan SHM, HGB, dan Strata Title',
+    category: 'Hukum Properti',
+    excerpt: 'Pahami perbedaan jenis sertifikat properti di Indonesia: SHM, HGB, Strata Title, AJB, dan Girik. Mana yang terbaik untuk Anda?',
+    image: 'https://picsum.photos/seed/artikel4/600/400',
+    author: 'Tim RumahKita',
+    date: '25 Januari 2026',
+    readTime: '6 menit',
+    tags: ['SHM','HGB','sertifikat','hukum']
+  },
+  {
+    slug: 'tips-menyewakan-properti-cepat',
+    title: 'Tips Menyewakan Properti agar Cepat Laku',
+    category: 'Panduan Sewa',
+    excerpt: 'Strategi efektif untuk menyewakan properti Anda dengan cepat, harga optimal, dan tenant yang berkualitas baik.',
+    image: 'https://picsum.photos/seed/artikel5/600/400',
+    author: 'Tim RumahKita',
+    date: '1 Februari 2026',
+    readTime: '5 menit',
+    tags: ['sewa','pemilik','tips','iklan']
+  },
+  {
+    slug: 'checklist-sebelum-membeli-rumah-bekas',
+    title: 'Checklist Sebelum Membeli Rumah Bekas',
+    category: 'Checklist',
+    excerpt: 'Daftar lengkap hal-hal yang harus diperiksa sebelum memutuskan membeli rumah bekas agar tidak menyesal kemudian.',
+    image: 'https://picsum.photos/seed/artikel6/600/400',
+    author: 'Tim RumahKita',
+    date: '5 Februari 2026',
+    readTime: '9 menit',
+    tags: ['checklist','rumah bekas','tips']
+  },
+];
+
+let activeCategory = 'Semua';
+let searchQuery = '';
+
+const catColors = {
+  'Tips & Trik': 'bg-blue-50 text-blue-700',
+  'Investasi': 'bg-green-50 text-green-700',
+  'KPR': 'bg-purple-50 text-purple-700',
+  'Hukum Properti': 'bg-red-50 text-red-700',
+  'Panduan Sewa': 'bg-orange-50 text-orange-700',
+  'Checklist': 'bg-teal-50 text-teal-700',
+};
+
+function renderArticles() {
+  let list = [...ARTICLES];
+  if (activeCategory !== 'Semua') list = list.filter(a => a.category === activeCategory);
+  if (searchQuery) list = list.filter(a => a.title.toLowerCase().includes(searchQuery) || a.excerpt.toLowerCase().includes(searchQuery));
+  
+  const grid = document.getElementById('articlesGrid');
+  const empty = document.getElementById('artikelEmpty');
+  
+  if (!list.length) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  
+  grid.innerHTML = list.map(a => `
+    <a href="artikel-detail.html?slug=${a.slug}" class="article-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 block">
+      <div class="overflow-hidden" style="height:220px;">
+        <img src="${a.image}" alt="${a.title}" class="w-full h-full object-cover transition hover:scale-105 duration-500" loading="lazy">
+      </div>
+      <div class="p-5">
+        <span class="${catColors[a.category]||'bg-gray-50 text-gray-600'} text-xs font-semibold px-2.5 py-1 rounded-full">${a.category}</span>
+        <h3 class="font-bold text-gray-900 text-base mt-3 mb-2 leading-snug" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${a.title}</h3>
+        <p class="text-gray-500 text-sm mb-4 leading-relaxed" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${a.excerpt}</p>
+        <div class="flex items-center justify-between text-xs text-gray-400 pt-3 border-t border-gray-100">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center"><i class="fas fa-user text-white" style="font-size:8px;"></i></div>
+            <span>${a.author}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span><i class="fas fa-clock mr-1"></i>${a.readTime}</span>
+            <span>${a.date}</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  `).join('');
+}
+
+function filterByCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-filter-btn').forEach(b => {
+    b.className = b.className.replace('bg-blue-600 text-white border-blue-600','bg-white text-gray-600 border-gray-200 hover:border-blue-300');
+  });
+  btn.className = btn.className.replace('bg-white text-gray-600 border-gray-200 hover:border-blue-300','bg-blue-600 text-white border-blue-600');
+  renderArticles();
+}
+
+function filterArticles(val) {
+  searchQuery = val.toLowerCase();
+  renderArticles();
+}
+
+renderArticles();
+</script>
+</body>
+</html>

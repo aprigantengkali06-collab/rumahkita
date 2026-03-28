@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi KPR - RumahKita</title>
+  <meta name="description" content="Hitung estimasi cicilan KPR Anda secara gratis dan mudah di RumahKita.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+</head>
+<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
+      <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-1">
+      <a href="properti.html?listing=dijual" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Dijual</a>
+      <a href="properti.html?listing=disewa" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Disewa</a>
+      <a href="kpr.html" class="px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">KPR</a>
+      <a href="artikel.html" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Artikel</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-14">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fas fa-calculator text-white text-2xl"></i></div>
+    <h1 class="text-4xl font-extrabold mb-3">Simulasi KPR</h1>
+    <p class="text-blue-200 text-lg max-w-2xl mx-auto">Hitung estimasi cicilan KPR sesuai kemampuan finansial Anda. Gratis, mudah, dan akurat.</p>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Calculator Input -->
+    <div class="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+      <h2 class="text-xl font-bold text-gray-900 mb-6"><i class="fas fa-sliders-h mr-2 text-blue-600"></i>Masukkan Data KPR</h2>
+      
+      <div class="space-y-5">
+        <!-- Harga Properti -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Harga Properti</label>
+          <div class="relative">
+            <span class="absolute left-4 top-3.5 text-gray-500 font-semibold text-sm">Rp</span>
+            <input type="text" id="kprHarga" value="1.000.000.000" class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="formatAndCalculate(this)">
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            ${[{l:'Rp 500 Jt',v:500000000},{l:'Rp 1 M',v:1000000000},{l:'Rp 2 M',v:2000000000},{l:'Rp 3 M',v:3000000000},{l:'Rp 5 M',v:5000000000}].map(q =>
+              `<button onclick="setHarga(${q.v})" class="text-xs px-2.5 py-1 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-300 transition">${q.l}</button>`
+            ).join('')}
+          </div>
+        </div>
+
+        <!-- Uang Muka -->
+        <div>
+          <div class="flex justify-between mb-1.5">
+            <label class="text-sm font-semibold text-gray-700">Uang Muka</label>
+            <span id="dpPct" class="text-sm font-bold text-blue-600">20%</span>
+          </div>
+          <input type="range" id="dpSlider" min="0" max="90" value="20" oninput="updateDP(this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1">
+            <span>0%</span>
+            <span id="dpNominal" class="font-semibold text-gray-700">Rp 200.000.000</span>
+            <span>90%</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-1.5">
+            ${[10,15,20,25,30].map(p => `<button onclick="setDP(${p})" class="text-xs px-2.5 py-1 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-300 transition">${p}%</button>`).join('')}
+          </div>
+        </div>
+
+        <!-- Tenor -->
+        <div>
+          <div class="flex justify-between mb-1.5">
+            <label class="text-sm font-semibold text-gray-700">Tenor</label>
+            <span id="tenorLabel" class="text-sm font-bold text-blue-600">15 Tahun (180 bulan)</span>
+          </div>
+          <input type="range" id="tenorSlider" min="1" max="30" value="15" oninput="updateTenor(this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1">
+            <span>1 Thn</span>
+            <span>30 Thn</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-1.5">
+            ${[5,10,15,20,25,30].map(t => `<button onclick="setTenor(${t})" class="text-xs px-2.5 py-1 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-300 transition">${t} Thn</button>`).join('')}
+          </div>
+        </div>
+
+        <!-- Suku Bunga -->
+        <div>
+          <div class="flex justify-between mb-1.5">
+            <label class="text-sm font-semibold text-gray-700">Suku Bunga</label>
+            <span id="bungaLabel" class="text-sm font-bold text-blue-600">8.5% / tahun</span>
+          </div>
+          <input type="range" id="bungaSlider" min="1" max="25" value="8.5" step="0.5" oninput="updateBunga(this.value)">
+          <div class="flex justify-between text-xs text-gray-400 mt-1">
+            <span>1%</span>
+            <span>25%</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-1.5">
+            ${['6','7','8','8.5','9','10'].map(b => `<button onclick="setBunga(${b})" class="text-xs px-2.5 py-1 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-300 transition">${b}%</button>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="space-y-5">
+      <!-- Main Result -->
+      <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-7 text-white shadow-lg">
+        <p class="text-blue-200 text-sm mb-1">Estimasi Cicilan Bulanan</p>
+        <div id="mainCicilan" class="text-4xl font-extrabold mb-5">Rp 7.955.560</div>
+        
+        <div class="space-y-3">
+          <div class="flex justify-between text-sm">
+            <span class="text-blue-200">Harga Properti</span>
+            <span id="showHarga" class="font-semibold">Rp 1.000.000.000</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-blue-200">Uang Muka</span>
+            <span id="showDP" class="font-semibold">Rp 200.000.000 (20%)</span>
+          </div>
+          <div class="flex justify-between text-sm border-t border-blue-500 pt-3">
+            <span class="text-blue-200">Pinjaman Pokok</span>
+            <span id="showPokok" class="font-bold text-lg">Rp 800.000.000</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-blue-200">Total Bunga</span>
+            <span id="showTotalBunga" class="font-semibold">Rp 631.000.800</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-blue-200">Total Pembayaran</span>
+            <span id="showTotalBayar" class="font-bold">Rp 1.431.000.800</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h3 class="font-semibold text-gray-900 mb-4">Komposisi Pembayaran</h3>
+        <div style="height:220px; position:relative;">
+          <canvas id="kprChart"></canvas>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <a id="cariPropBtn" href="properti.html?max_price=1000000000&listing=dijual" class="block w-full text-center bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-700 transition shadow-lg">
+        <i class="fas fa-search mr-2"></i>Cari Properti Sesuai Budget
+      </a>
+
+      <!-- Tips -->
+      <div class="bg-amber-50 rounded-2xl p-5 border border-amber-100">
+        <h4 class="font-semibold text-amber-800 mb-3 flex items-center gap-2"><i class="fas fa-lightbulb"></i>Tips KPR</h4>
+        <ul class="text-sm text-amber-700 space-y-2">
+          <li>• Idealnya cicilan KPR tidak melebihi 30% dari penghasilan bulanan</li>
+          <li>• Uang muka lebih besar = bunga total lebih kecil</li>
+          <li>• Bandingkan suku bunga dari beberapa bank sebelum memilih</li>
+          <li>• Pertimbangkan biaya lain: asuransi, notaris, dan biaya admin</li>
+        </ul>
+      </div>
+
+      <!-- Amortization Table (simplified) -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h3 class="font-semibold text-gray-900 mb-4">Tabel Angsuran (5 Tahun Pertama)</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-100">
+                <th class="text-left py-2 text-gray-500 font-semibold">Tahun</th>
+                <th class="text-right py-2 text-gray-500 font-semibold">Pokok</th>
+                <th class="text-right py-2 text-gray-500 font-semibold">Bunga</th>
+                <th class="text-right py-2 text-gray-500 font-semibold">Sisa</th>
+              </tr>
+            </thead>
+            <tbody id="amortTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ Section -->
+<section class="max-w-4xl mx-auto px-4 pb-12">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Pertanyaan Umum KPR</h2>
+  <div class="space-y-3">
+    ${[
+      ['Apa itu KPR?', 'KPR (Kredit Pemilikan Rumah) adalah fasilitas kredit dari bank untuk membantu Anda membeli rumah atau properti dengan cara mencicil dalam jangka waktu tertentu.'],
+      ['Berapa uang muka KPR minimal?', 'Umumnya uang muka KPR minimal adalah 10-20% dari harga properti, tergantung kebijakan masing-masing bank dan jenis propertinya.'],
+      ['Apa saja syarat pengajuan KPR?', 'Syarat umum: WNI, usia 21-55 tahun, memiliki penghasilan tetap, rekening tabungan aktif, slip gaji/laporan keuangan, dan KTP/NPWP.'],
+      ['Berapa lama proses persetujuan KPR?', 'Proses persetujuan KPR umumnya 7-30 hari kerja, tergantung bank dan kelengkapan dokumen yang Anda ajukan.'],
+    ].map(([q,a]) => `
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
+        <button onclick="toggleFAQ(this)" class="w-full text-left px-5 py-4 font-semibold text-gray-900 flex justify-between items-center">
+          <span>${q}</span><i class="fas fa-chevron-down text-gray-400 text-sm transition-transform"></i>
+        </button>
+        <div class="hidden px-5 pb-4 text-gray-600 text-sm leading-relaxed">${a}</div>
+      </div>
+    `).join('')}
+  </div>
+</section>
+
+<script>
+let harga = 1000000000, dp = 20, tenor = 15, bunga = 8.5;
+let kprChart = null;
+
+function formatRupiah(n) { return 'Rp ' + parseInt(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function parseNum(s) { return parseInt(s.toString().replace(/\D/g,'')) || 0; }
+
+function calculate() {
+  const dpNominal = harga * (dp/100);
+  const pokok = harga - dpNominal;
+  const r = (bunga/100)/12;
+  const n = tenor*12;
+  const cicilan = r > 0 ? pokok * (r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1) : pokok/n;
+  const totalBayar = cicilan * n;
+  const totalBunga = totalBayar - pokok;
+
+  document.getElementById('mainCicilan').textContent = formatRupiah(Math.round(cicilan));
+  document.getElementById('showHarga').textContent = formatRupiah(harga);
+  document.getElementById('showDP').textContent = formatRupiah(Math.round(dpNominal)) + ` (${dp}%)`;
+  document.getElementById('showPokok').textContent = formatRupiah(Math.round(pokok));
+  document.getElementById('showTotalBunga').textContent = formatRupiah(Math.round(totalBunga));
+  document.getElementById('showTotalBayar').textContent = formatRupiah(Math.round(totalBayar));
+  document.getElementById('cariPropBtn').href = `properti.html?max_price=${harga}&listing=dijual`;
+  
+  updateChart(Math.round(pokok), Math.round(totalBunga));
+  updateAmortTable(pokok, r, n, cicilan);
+}
+
+function updateChart(pokok, bunga) {
+  const ctx = document.getElementById('kprChart').getContext('2d');
+  if (kprChart) kprChart.destroy();
+  kprChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Pokok Pinjaman', 'Total Bunga'],
+      datasets: [{
+        data: [pokok, bunga],
+        backgroundColor: ['#2563eb', '#93c5fd'],
+        borderWidth: 0,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, font: { family: 'Inter', size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ' ' + formatRupiah(ctx.parsed) } }
+      },
+      cutout: '65%'
+    }
+  });
+}
+
+function updateAmortTable(pokok, r, n, cicilan) {
+  let saldo = pokok;
+  let html = '';
+  for (let tahun = 1; tahun <= Math.min(5, tenor); tahun++) {
+    let totalPokok = 0, totalBunga = 0;
+    for (let bln = 1; bln <= 12 && (tahun-1)*12+bln <= n; bln++) {
+      const bungaBln = saldo * r;
+      const pokokBln = cicilan - bungaBln;
+      totalPokok += pokokBln;
+      totalBunga += bungaBln;
+      saldo -= pokokBln;
+    }
+    html += `<tr class="border-b border-gray-50 hover:bg-gray-50">
+      <td class="py-2 font-medium">Thn ${tahun}</td>
+      <td class="py-2 text-right text-blue-600">${formatRupiah(Math.round(totalPokok))}</td>
+      <td class="py-2 text-right text-red-400">${formatRupiah(Math.round(totalBunga))}</td>
+      <td class="py-2 text-right text-gray-700">${formatRupiah(Math.round(Math.max(0,saldo)))}</td>
+    </tr>`;
+  }
+  document.getElementById('amortTable').innerHTML = html;
+}
+
+// Controls
+function formatAndCalculate(el) {
+  const raw = el.value.replace(/\D/g,'');
+  harga = parseInt(raw) || 0;
+  el.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  updateDP(dp);
+  calculate();
+}
+function setHarga(val) {
+  harga = val;
+  document.getElementById('kprHarga').value = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  updateDP(dp); calculate();
+}
+function updateDP(val) {
+  dp = parseFloat(val);
+  document.getElementById('dpSlider').value = dp;
+  document.getElementById('dpPct').textContent = dp + '%';
+  document.getElementById('dpNominal').textContent = formatRupiah(Math.round(harga*(dp/100)));
+  calculate();
+}
+function setDP(val) { updateDP(val); }
+function updateTenor(val) {
+  tenor = parseInt(val);
+  document.getElementById('tenorSlider').value = tenor;
+  document.getElementById('tenorLabel').textContent = `${tenor} Tahun (${tenor*12} bulan)`;
+  calculate();
+}
+function setTenor(val) { updateTenor(val); }
+function updateBunga(val) {
+  bunga = parseFloat(val);
+  document.getElementById('bungaSlider').value = bunga;
+  document.getElementById('bungaLabel').textContent = `${bunga}% / tahun`;
+  calculate();
+}
+function setBunga(val) { updateBunga(val); }
+
+function toggleFAQ(btn) {
+  const content = btn.nextElementSibling;
+  const icon = btn.querySelector('i');
+  content.classList.toggle('hidden');
+  icon.style.transform = content.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('harga')) { harga = parseInt(params.get('harga')); document.getElementById('kprHarga').value = harga.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+  calculate();
+});
+</script>
+</body>
+</html>

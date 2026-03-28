@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Properti - RumahKita</title>
+  <meta name="description" content="Temukan ribuan listing properti dijual dan disewa di seluruh Indonesia. Filter lengkap sesuai kebutuhan Anda.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+    }
+  </script>
+</head>
+<body class="bg-gray-50">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div>
+        <span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-1">
+        <a href="properti.html?listing=dijual" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Dijual</a>
+        <a href="properti.html?listing=disewa" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Disewa</a>
+        <a href="kpr.html" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">KPR</a>
+        <a href="artikel.html" class="px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50">Artikel</a>
+      </div>
+      <div class="hidden md:flex items-center gap-3" id="navAuthSection">
+        <a href="tambah-properti.html" class="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition"><i class="fas fa-plus mr-1"></i>Pasang Iklan</a>
+        <a href="login.html" class="text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50">Masuk</a>
+        <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">Daftar</a>
+      </div>
+      <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+        <i class="fas fa-bars text-gray-700"></i>
+      </button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 py-4">
+    <div class="flex gap-3 mb-4">
+      <a href="login.html" class="flex-1 text-center py-2 border border-gray-300 text-gray-700 rounded-lg font-medium">Masuk</a>
+      <a href="register.html" class="flex-1 text-center py-2 bg-blue-600 text-white rounded-lg font-medium">Daftar</a>
+    </div>
+    <button onclick="openMobileFilter()" class="w-full py-3 bg-blue-50 text-blue-600 rounded-lg font-semibold"><i class="fas fa-sliders-h mr-2"></i>Filter Properti</button>
+  </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <!-- Breadcrumb -->
+  <nav class="text-sm text-gray-500 mb-4">
+    <a href="index.html" class="hover:text-blue-600">Beranda</a>
+    <span class="mx-2">›</span>
+    <span id="breadcrumbText" class="text-gray-900 font-medium">Semua Properti</span>
+  </nav>
+
+  <!-- Header + Sort -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div>
+      <h1 id="pageTitle" class="text-2xl font-extrabold text-gray-900">Semua Properti</h1>
+      <p id="resultCount" class="text-gray-500 text-sm mt-1">Memuat properti...</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="openMobileFilter()" class="md:hidden flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium bg-white">
+        <i class="fas fa-sliders-h text-blue-600"></i>Filter
+      </button>
+      <div class="flex items-center gap-2">
+        <label class="text-sm text-gray-500">Urutkan:</label>
+        <select id="sortSelect" onchange="applyFilters()" class="border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="terbaru">Terbaru</option>
+          <option value="termurah">Termurah</option>
+          <option value="termahal">Termahal</option>
+          <option value="views">Paling Dilihat</option>
+        </select>
+      </div>
+      <div class="flex gap-1">
+        <button onclick="setView('grid')" id="viewGrid" class="p-2 rounded-lg bg-blue-600 text-white" title="Grid View"><i class="fas fa-th text-sm"></i></button>
+        <button onclick="setView('list')" id="viewList" class="p-2 rounded-lg bg-white border border-gray-200 text-gray-500" title="List View"><i class="fas fa-list text-sm"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex gap-6">
+    <!-- SIDEBAR FILTER (Desktop) -->
+    <aside class="hidden md:block w-72 flex-shrink-0">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sticky top-24">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-bold text-gray-900 text-lg">Filter</h2>
+          <button onclick="resetFilters()" class="text-xs text-blue-600 hover:underline font-medium">Reset Semua</button>
+        </div>
+        <div id="filterContent"></div>
+        <button onclick="applyFilters()" class="w-full mt-5 bg-blue-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">
+          <i class="fas fa-search mr-2"></i>Terapkan Filter
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 min-w-0">
+      <!-- Active Filters Tags -->
+      <div id="activeFilters" class="flex flex-wrap gap-2 mb-4"></div>
+
+      <!-- Property Grid -->
+      <div id="propertyGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Loading Skeleton -->
+        <div class="skeleton-card"><div class="skeleton" style="height:200px;"></div><div class="p-4"><div class="skeleton h-4 mb-2"></div><div class="skeleton h-3 w-3/4"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton" style="height:200px;"></div><div class="p-4"><div class="skeleton h-4 mb-2"></div><div class="skeleton h-3 w-3/4"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton" style="height:200px;"></div><div class="p-4"><div class="skeleton h-4 mb-2"></div><div class="skeleton h-3 w-3/4"></div></div></div>
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="mt-8 flex justify-center"></div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden empty-state">
+        <div class="empty-state-icon">🏠</div>
+        <h3 class="empty-state-title">Properti tidak ditemukan</h3>
+        <p class="empty-state-desc">Coba ubah filter atau kata kunci pencarian Anda</p>
+        <button onclick="resetFilters()" class="btn btn-primary">Reset Filter</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Mobile Filter Drawer -->
+<div id="mobileFilterOverlay" class="fixed inset-0 bg-black/60 z-50 hidden" onclick="closeMobileFilter()"></div>
+<div id="mobileFilterDrawer" class="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 transform translate-y-full transition-transform duration-300" style="max-height:85vh;overflow-y:auto;">
+  <div class="p-5">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="font-bold text-gray-900 text-lg">Filter Properti</h2>
+      <button onclick="closeMobileFilter()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"><i class="fas fa-times text-gray-600"></i></button>
+    </div>
+    <div id="mobileFilterContent"></div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="resetFilters()" class="flex-1 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700">Reset</button>
+      <button onclick="applyFilters(); closeMobileFilter();" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-semibold">Terapkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="mobile-bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 px-2 py-2">
+  <div class="flex justify-around items-center">
+    <a href="index.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-home text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Beranda</span></a>
+    <a href="properti.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-search text-blue-600 text-xl"></i><span class="text-xs text-blue-600 font-medium">Cari</span></a>
+    <a href="tambah-properti.html" class="flex flex-col items-center gap-1 -mt-5"><div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-plus text-white text-lg"></i></div><span class="text-xs text-gray-400 mt-1">Pasang</span></a>
+    <a href="dashboard.html#favorit" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-heart text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Favorit</span></a>
+    <a href="login.html" class="flex flex-col items-center gap-1 py-1 px-3"><i class="fas fa-user text-gray-400 text-xl"></i><span class="text-xs text-gray-400">Akun</span></a>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+// ============================
+// FILTER STATE
+// ============================
+let filters = {};
+let currentPage = 1;
+const ITEMS_PER_PAGE = 12;
+let currentView = 'grid';
+
+// Parse URL params on load
+function parseURLParams() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('listing')) filters.listing = params.get('listing');
+  if (params.get('type')) filters.type = params.get('type');
+  if (params.get('city')) filters.city = params.get('city');
+  if (params.get('min_price')) filters.min_price = parseInt(params.get('min_price'));
+  if (params.get('max_price')) filters.max_price = parseInt(params.get('max_price'));
+  if (params.get('bedrooms')) filters.bedrooms = parseInt(params.get('bedrooms'));
+  if (params.get('featured')) filters.featured = params.get('featured') === 'true';
+  if (params.get('q')) filters.q = params.get('q');
+}
+
+// ============================
+// FILTER HTML
+// ============================
+function buildFilterHTML() {
+  return `
+    <!-- Tipe Listing -->
+    <div class="mb-5">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Tipe Listing</label>
+      <div class="flex gap-2">
+        <button onclick="toggleFilter('listing','dijual',this)" class="filter-chip flex-1 justify-center ${filters.listing==='dijual'?'active':''}">Dijual</button>
+        <button onclick="toggleFilter('listing','disewa',this)" class="filter-chip flex-1 justify-center ${filters.listing==='disewa'?'active':''}">Disewa</button>
+      </div>
+    </div>
+
+    <!-- Tipe Properti -->
+    <div class="mb-5">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Tipe Properti</label>
+      <div class="grid grid-cols-2 gap-2">
+        ${['rumah','apartemen','tanah','ruko','kos','villa','gudang','kantor'].map(t => 
+          `<button onclick="toggleFilter('type','${t}',this)" class="filter-chip ${filters.type===t?'active':''}">${getTypeLabel(t)}</button>`
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Lokasi -->
+    <div class="mb-5">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Kota</label>
+      <select id="filterCity" onchange="filters.city=this.value;applyFilters()" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">Semua Kota</option>
+        ${['Jakarta Selatan','Jakarta Barat','Jakarta Utara','Jakarta Timur','Bandung','Surabaya','Yogyakarta','Ubud','Bali','Denpasar','Medan','Tangerang Selatan','Tangerang','Bekasi','Bogor','Depok','Malang'].map(c => 
+          `<option value="${c}" ${filters.city===c?'selected':''}>${c}</option>`
+        ).join('')}
+      </select>
+    </div>
+
+    <!-- Range Harga -->
+    <div class="mb-5">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Rentang Harga</label>
+      <div class="grid grid-cols-2 gap-2">
+        <input type="text" id="filterMinPrice" placeholder="Min (Rp)" value="${filters.min_price || ''}" oninput="filters.min_price=parseRupiah(this.value)" class="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+        <input type="text" id="filterMaxPrice" placeholder="Max (Rp)" value="${filters.max_price || ''}" oninput="filters.max_price=parseRupiah(this.value)" class="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+      </div>
+      <div class="flex flex-wrap gap-1.5 mt-2">
+        ${[{l:'< 500 Jt',max:500000000},{l:'500 Jt - 1 M',min:500000000,max:1000000000},{l:'1 - 2 M',min:1000000000,max:2000000000},{l:'> 2 M',min:2000000000}].map(r =>
+          `<button onclick="setPriceRange(${r.min||0},${r.max||0})" class="text-xs px-2.5 py-1 border border-gray-200 rounded-full hover:bg-blue-50 hover:border-blue-300 transition">${r.l}</button>`
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Kamar Tidur -->
+    <div class="mb-5">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Kamar Tidur</label>
+      <div class="flex flex-wrap gap-2">
+        ${[1,2,3,4,'5+'].map(n => 
+          `<button onclick="toggleFilter('bedrooms',${typeof n==='number'?n:5},this)" class="filter-chip ${filters.bedrooms===(typeof n==='number'?n:5)?'active':''}">${n}</button>`
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Furnished -->
+    <div class="mb-5">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Furnished</label>
+      <div class="space-y-2">
+        ${[{v:'furnished',l:'Furnished'},{v:'semi_furnished',l:'Semi Furnished'},{v:'unfurnished',l:'Unfurnished'}].map(f =>
+          `<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" ${filters.furnished===f.v?'checked':''} onchange="filters.furnished=this.checked?'${f.v}':''" class="w-4 h-4 rounded accent-blue-600"><span class="text-sm text-gray-700">${f.l}</span></label>`
+        ).join('')}
+      </div>
+    </div>
+
+    <!-- Sertifikat -->
+    <div class="mb-2">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Sertifikat</label>
+      <div class="flex flex-wrap gap-2">
+        ${['SHM','HGB','Strata Title','AJB'].map(c =>
+          `<button onclick="toggleFilter('certificate','${c}',this)" class="filter-chip text-xs ${filters.certificate===c?'active':''}">${c}</button>`
+        ).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function getTypeLabel(type) {
+  const map = { rumah:'Rumah', apartemen:'Apartemen', tanah:'Tanah', ruko:'Ruko', kos:'Kos', villa:'Villa', gudang:'Gudang', kantor:'Kantor' };
+  return map[type] || type;
+}
+
+function toggleFilter(key, value, btn) {
+  if (filters[key] === value) {
+    delete filters[key];
+    if (btn) btn.classList.remove('active');
+  } else {
+    filters[key] = value;
+    // Remove active from siblings
+    if (btn && btn.parentElement) {
+      btn.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    }
+    if (btn) btn.classList.add('active');
+  }
+  applyFilters();
+}
+
+function setPriceRange(min, max) {
+  if (min) filters.min_price = min;
+  else delete filters.min_price;
+  if (max) filters.max_price = max;
+  else delete filters.max_price;
+  renderFilters();
+  applyFilters();
+}
+
+function parseRupiah(str) { return parseInt(str.replace(/\D/g,'')) || 0; }
+
+function resetFilters() {
+  filters = {};
+  currentPage = 1;
+  history.pushState({}, '', 'properti.html');
+  renderFilters();
+  applyFilters();
+}
+
+// ============================
+// RENDER FILTERS
+// ============================
+function renderFilters() {
+  const html = buildFilterHTML();
+  document.getElementById('filterContent').innerHTML = html;
+  document.getElementById('mobileFilterContent').innerHTML = html;
+}
+
+// ============================
+// APPLY FILTERS & RENDER
+// ============================
+function applyFilters() {
+  currentPage = 1;
+  updateURL();
+  renderProperties();
+  renderActiveFilterTags();
+  updatePageTitle();
+}
+
+function updateURL() {
+  const params = new URLSearchParams();
+  if (filters.listing) params.set('listing', filters.listing);
+  if (filters.type) params.set('type', filters.type);
+  if (filters.city) params.set('city', filters.city);
+  if (filters.min_price) params.set('min_price', filters.min_price);
+  if (filters.max_price) params.set('max_price', filters.max_price);
+  if (filters.bedrooms) params.set('bedrooms', filters.bedrooms);
+  if (filters.certificate) params.set('certificate', filters.certificate);
+  const str = params.toString();
+  history.pushState({}, '', 'properti.html' + (str ? '?' + str : ''));
+}
+
+function getFilteredProperties() {
+  let list = [...RUMAHKITA_PROPERTIES];
+
+  if (filters.listing) list = list.filter(p => p.listing === filters.listing);
+  if (filters.type) list = list.filter(p => p.type === filters.type);
+  if (filters.city) list = list.filter(p => p.city.toLowerCase().includes(filters.city.toLowerCase()) || (p.district && p.district.toLowerCase().includes(filters.city.toLowerCase())));
+  if (filters.min_price) list = list.filter(p => p.price >= filters.min_price);
+  if (filters.max_price) list = list.filter(p => p.price <= filters.max_price);
+  if (filters.bedrooms) list = list.filter(p => p.bedrooms >= filters.bedrooms);
+  if (filters.certificate) list = list.filter(p => p.certificate === filters.certificate);
+  if (filters.furnished) list = list.filter(p => p.furnished === filters.furnished);
+  if (filters.featured) list = list.filter(p => p.is_featured);
+  if (filters.q) {
+    const q = filters.q.toLowerCase();
+    list = list.filter(p => p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
+  }
+
+  // Sort
+  const sort = document.getElementById('sortSelect')?.value || 'terbaru';
+  if (sort === 'terbaru') list.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  if (sort === 'termurah') list.sort((a,b) => a.price - b.price);
+  if (sort === 'termahal') list.sort((a,b) => b.price - a.price);
+  if (sort === 'views') list.sort((a,b) => b.views - a.views);
+
+  return list;
+}
+
+function renderProperties() {
+  const list = getFilteredProperties();
+  const total = list.length;
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginated = list.slice(start, start + ITEMS_PER_PAGE);
+
+  const grid = document.getElementById('propertyGrid');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('resultCount');
+
+  if (total === 0) {
+    grid.innerHTML = '';
+    grid.classList.add('hidden');
+    empty.classList.remove('hidden');
+    count.textContent = 'Tidak ada properti ditemukan';
+  } else {
+    grid.classList.remove('hidden');
+    empty.classList.add('hidden');
+    count.textContent = `Menampilkan ${start+1}-${Math.min(start+ITEMS_PER_PAGE,total)} dari ${total} properti`;
+
+    if (currentView === 'grid') {
+      grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5';
+      grid.innerHTML = paginated.map(p => createPropertyCard(p)).join('');
+    } else {
+      grid.className = 'flex flex-col gap-4';
+      grid.innerHTML = paginated.map(p => createListCard(p)).join('');
+    }
+  }
+
+  renderPagination(total);
+}
+
+function createListCard(p) {
+  const priceLabel = formatPrice(p);
+  return `<div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex gap-0 overflow-hidden card-hover cursor-pointer" onclick="location.href='detail-properti.html?id=${p.id}'">
+    <div class="relative w-48 sm:w-64 flex-shrink-0">
+      <img src="${p.images[0]}" alt="${p.title}" class="w-full h-full object-cover" style="min-height:160px;">
+      <div class="absolute top-2 left-2 flex gap-1">
+        <span class="${p.listing==='dijual'?'bg-blue-600':'bg-green-600'} text-white text-xs px-2 py-0.5 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span>
+        ${p.is_featured?'<span class="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">⭐</span>':''}
+      </div>
+    </div>
+    <div class="flex-1 p-4 flex flex-col justify-between">
+      <div>
+        <div class="flex items-start justify-between gap-2 mb-1">
+          <span class="text-blue-600 text-xl font-extrabold">${priceLabel}</span>
+          ${p.is_negotiable?'<span class="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium">Nego</span>':''}
+        </div>
+        <h3 class="font-bold text-gray-900 mb-1">${p.title}</h3>
+        <p class="text-gray-500 text-sm mb-2">📍 ${p.district?p.district+', ':''}${p.city}</p>
+        <div class="flex flex-wrap gap-3 text-sm text-gray-600">
+          ${p.bedrooms>0?`<span>🛏 ${p.bedrooms} KT</span>`:''}
+          ${p.bathrooms>0?`<span>🚿 ${p.bathrooms} KM</span>`:''}
+          ${p.building_area>0?`<span>📐 ${p.building_area}m²</span>`:''}
+          ${p.land_area>0?`<span>📏 ${p.land_area}m²</span>`:''}
+        </div>
+      </div>
+      <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${getTypeLabel(p.type)}</span>
+        <span class="text-xs text-gray-400">${relativeTime(p.created_at)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function formatPrice(p) {
+  const price = formatRupiah(p.price);
+  if (p.price_type === 'per_bulan') return price + '/bulan';
+  if (p.price_type === 'per_tahun') return price + '/tahun';
+  return price;
+}
+
+function formatRupiah(angka) {
+  return 'Rp ' + parseInt(angka).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function relativeTime(dateStr) {
+  const now = new Date(); const date = new Date(dateStr);
+  const diff = Math.floor((now - date) / 1000);
+  if (diff < 3600) return Math.floor(diff/60) + ' mnt lalu';
+  if (diff < 86400) return Math.floor(diff/3600) + ' jam lalu';
+  if (diff < 604800) return Math.floor(diff/86400) + ' hari lalu';
+  return date.toLocaleDateString('id-ID', { day:'numeric', month:'short' });
+}
+
+// ============================
+// PAGINATION
+// ============================
+function renderPagination(total) {
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  const container = document.getElementById('pagination');
+  if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+  let html = `<button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} class="page-btn"><i class="fas fa-chevron-left text-xs"></i></button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= currentPage-1 && i <= currentPage+1)) {
+      html += `<button onclick="goPage(${i})" class="page-btn ${i===currentPage?'active':''}">${i}</button>`;
+    } else if (i === currentPage-2 || i === currentPage+2) {
+      html += `<span class="page-btn" style="cursor:default;">...</span>`;
+    }
+  }
+  html += `<button onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''} class="page-btn"><i class="fas fa-chevron-right text-xs"></i></button>`;
+  container.innerHTML = html;
+}
+
+function goPage(p) {
+  currentPage = p;
+  renderProperties();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================
+// ACTIVE FILTER TAGS
+// ============================
+function renderActiveFilterTags() {
+  const container = document.getElementById('activeFilters');
+  const tags = [];
+  if (filters.listing) tags.push({ label: filters.listing === 'dijual' ? 'Dijual' : 'Disewa', key: 'listing' });
+  if (filters.type) tags.push({ label: getTypeLabel(filters.type), key: 'type' });
+  if (filters.city) tags.push({ label: filters.city, key: 'city' });
+  if (filters.min_price || filters.max_price) tags.push({ label: `Harga: ${filters.min_price?formatRupiah(filters.min_price)+' -':''} ${filters.max_price?formatRupiah(filters.max_price):''}`.trim(), key: 'price' });
+  if (filters.bedrooms) tags.push({ label: `${filters.bedrooms}+ KT`, key: 'bedrooms' });
+  if (filters.certificate) tags.push({ label: filters.certificate, key: 'certificate' });
+
+  container.innerHTML = tags.map(t => 
+    `<span class="flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+      ${t.label}
+      <button onclick="removeFilter('${t.key}')" class="w-4 h-4 bg-blue-200 rounded-full flex items-center justify-center hover:bg-blue-300">
+        <i class="fas fa-times text-blue-700" style="font-size:8px;"></i>
+      </button>
+    </span>`
+  ).join('');
+}
+
+function removeFilter(key) {
+  if (key === 'price') { delete filters.min_price; delete filters.max_price; }
+  else delete filters[key];
+  renderFilters();
+  applyFilters();
+}
+
+// ============================
+// PAGE TITLE
+// ============================
+function updatePageTitle() {
+  const parts = [];
+  if (filters.type) parts.push(getTypeLabel(filters.type));
+  if (filters.listing) parts.push(filters.listing === 'dijual' ? 'Dijual' : 'Disewa');
+  if (filters.city) parts.push('di ' + filters.city);
+  
+  const title = parts.length ? parts.join(' ') : 'Semua Properti';
+  document.getElementById('pageTitle').textContent = title;
+  document.getElementById('breadcrumbText').textContent = title;
+  document.title = title + ' - RumahKita';
+}
+
+// ============================
+// VIEW MODE
+// ============================
+function setView(mode) {
+  currentView = mode;
+  document.getElementById('viewGrid').className = mode === 'grid' ? 'p-2 rounded-lg bg-blue-600 text-white' : 'p-2 rounded-lg bg-white border border-gray-200 text-gray-500';
+  document.getElementById('viewList').className = mode === 'list' ? 'p-2 rounded-lg bg-blue-600 text-white' : 'p-2 rounded-lg bg-white border border-gray-200 text-gray-500';
+  renderProperties();
+}
+
+// ============================
+// MOBILE FILTER
+// ============================
+function openMobileFilter() {
+  document.getElementById('mobileFilterOverlay').classList.remove('hidden');
+  document.getElementById('mobileFilterDrawer').style.transform = 'translateY(0)';
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileFilter() {
+  document.getElementById('mobileFilterOverlay').classList.add('hidden');
+  document.getElementById('mobileFilterDrawer').style.transform = 'translateY(100%)';
+  document.body.style.overflow = '';
+}
+
+// Property card from shared data (fallback if data.js not loaded)
+function createPropertyCard(p) {
+  const priceLabel = formatPrice(p);
+  const specs = [];
+  if (p.bedrooms > 0) specs.push(`<span>🛏 ${p.bedrooms}</span>`);
+  if (p.bathrooms > 0) specs.push(`<span>🚿 ${p.bathrooms}</span>`);
+  if (p.building_area > 0) specs.push(`<span>📐 ${p.building_area}m²</span>`);
+  if (p.land_area > 0) specs.push(`<span>📏 ${p.land_area}m²</span>`);
+  const imgSrc = p.images[0];
+  const fav = localStorage.getItem('fav_'+p.id) === '1';
+  return `<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 card-hover cursor-pointer" onclick="location.href='detail-properti.html?id=${p.id}'">
+    <div class="relative" style="padding-top:66.67%;">
+      <img src="${imgSrc}" alt="${p.title}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <div class="absolute top-3 left-3 flex gap-1.5">
+        <span class="${p.listing==='dijual'?'bg-blue-600':'bg-green-600'} text-white text-xs px-2 py-1 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span>
+        ${p.is_featured?'<span class="bg-amber-500 text-white text-xs px-2 py-1 rounded-full font-semibold">⭐ Unggulan</span>':''}
+      </div>
+      <button onclick="event.stopPropagation();const k='fav_${p.id}';const is=localStorage.getItem(k)==='1';is?localStorage.removeItem(k):localStorage.setItem(k,'1');this.innerHTML=is?'<i class=\\'far fa-heart text-sm text-gray-400\\'></i>':'<i class=\\'fas fa-heart text-sm text-red-500\\'></i>'" class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow flex items-center justify-center hover:scale-110 transition">
+        <i class="${fav?'fas text-red-500':'far text-gray-400'} fa-heart text-sm"></i>
+      </button>
+      <div class="absolute bottom-2 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">📷 ${p.images.length}</div>
+    </div>
+    <div class="p-4">
+      <div class="flex items-start justify-between gap-2 mb-1">
+        <div class="text-blue-600 text-base font-extrabold leading-tight">${priceLabel}</div>
+        ${p.is_negotiable?'<span class="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium shrink-0">Nego</span>':''}
+      </div>
+      <h3 class="text-gray-900 font-semibold text-sm mb-1 line-clamp-2">${p.title}</h3>
+      <p class="text-gray-500 text-xs mb-2">📍 ${p.district?p.district+', ':''}${p.city}</p>
+      ${specs.length?`<div class="flex flex-wrap gap-2 text-xs text-gray-600 mb-2">${specs.join('')}</div>`:''}
+      <div class="flex items-center justify-between pt-2 border-t border-gray-50">
+        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${getTypeLabel(p.type)}</span>
+        <span class="text-xs text-gray-400">${relativeTime(p.created_at)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ============================
+// INIT
+// ============================
+document.addEventListener('DOMContentLoaded', () => {
+  parseURLParams();
+  renderFilters();
+  applyFilters();
+  updatePageTitle();
+});
+</script>
+</body>
+</html>

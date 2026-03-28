@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tentang RumahKita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+</head>
+<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="index.html" class="flex items-center gap-2"><div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div><span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span></a>
+    <a href="index.html" class="text-sm text-gray-600 hover:text-blue-600"><i class="fas fa-arrow-left mr-1"></i>Beranda</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="bg-gradient-to-br from-blue-600 to-blue-900 text-white py-20">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-5"><i class="fas fa-home text-white text-3xl"></i></div>
+    <h1 class="text-5xl font-extrabold mb-4">Tentang RumahKita</h1>
+    <p class="text-blue-200 text-xl max-w-2xl mx-auto">Platform properti terpercaya yang menghubungkan jutaan pembeli, penyewa, dan pemilik properti di seluruh Indonesia</p>
+  </div>
+</div>
+
+<!-- Story -->
+<section class="py-16 bg-white">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Cerita Kami</h2>
+        <p class="text-gray-600 leading-relaxed mb-4">RumahKita didirikan pada tahun 2024 dengan satu misi sederhana: membuat proses jual beli dan sewa properti di Indonesia menjadi lebih mudah, transparan, dan terjangkau bagi semua orang.</p>
+        <p class="text-gray-600 leading-relaxed mb-4">Kami percaya bahwa setiap orang berhak mendapatkan hunian yang layak dan informasi properti yang akurat. Oleh karena itu, kami membangun platform yang menghubungkan langsung antara pemilik properti dengan calon pembeli atau penyewa tanpa perantara yang mahal.</p>
+        <p class="text-gray-600 leading-relaxed">Dengan teknologi terkini dan tim yang berpengalaman di industri properti, kami berkomitmen untuk menjadi mitra properti terpercaya bagi jutaan keluarga Indonesia.</p>
+      </div>
+      <div><img src="https://picsum.photos/seed/tentang1/600/400" alt="Tim RumahKita" class="rounded-2xl shadow-xl w-full"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Visi Misi -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+        <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mb-5"><i class="fas fa-eye text-white text-xl"></i></div>
+        <h3 class="text-2xl font-extrabold text-gray-900 mb-4">Visi</h3>
+        <p class="text-gray-600 leading-relaxed">Menjadi platform properti digital terbesar dan terpercaya di Indonesia, yang memudahkan setiap keluarga Indonesia untuk mewujudkan impian memiliki hunian idaman.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+        <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-5"><i class="fas fa-bullseye text-white text-xl"></i></div>
+        <h3 class="text-2xl font-extrabold text-gray-900 mb-4">Misi</h3>
+        <ul class="text-gray-600 space-y-2">
+          <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-sm"></i><span>Menyediakan platform properti yang mudah dan gratis</span></li>
+          <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-sm"></i><span>Memastikan setiap listing terverifikasi dan terpercaya</span></li>
+          <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-sm"></i><span>Menghubungkan langsung pembeli dengan pemilik</span></li>
+          <li class="flex items-start gap-2"><i class="fas fa-check text-green-500 mt-0.5 text-sm"></i><span>Memberikan edukasi properti yang komprehensif</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="py-16 bg-blue-600 text-white">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      ${[['2.450+','Listing Properti'],['830+','Agen & Pemilik'],['34','Kota Tersedia'],['1.200+','Transaksi Sukses']].map(([n,l]) =>
+        `<div><div class="text-4xl font-extrabold mb-2">${n}</div><div class="text-blue-200">${l}</div></div>`
+      ).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- Values -->
+<section class="py-16 bg-white">
+  <div class="max-w-4xl mx-auto px-4">
+    <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-12">Nilai-Nilai Kami</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      ${[['🤝','Kepercayaan','Kami membangun kepercayaan melalui transparansi dan verifikasi ketat setiap listing properti'],['💡','Inovasi','Terus berinovasi untuk memberikan pengalaman pencarian properti yang terbaik dan termudah'],['❤️','Kepedulian','Peduli terhadap kebutuhan setiap pengguna dan berkomitmen memberikan layanan terbaik']].map(([icon,title,desc]) =>
+        `<div class="text-center p-6 bg-gray-50 rounded-2xl"><div class="text-4xl mb-4">${icon}</div><h3 class="font-bold text-gray-900 text-lg mb-2">${title}</h3><p class="text-gray-500 text-sm">${desc}</p></div>`
+      ).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- Team -->
+<section class="py-16 bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4">
+    <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-12">Tim Kami</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      ${[['Budi S.','CEO & Co-Founder','https://picsum.photos/seed/team1/200/200'],['Sari D.','CTO','https://picsum.photos/seed/team2/200/200'],['Ahmad F.','Head of Marketing','https://picsum.photos/seed/team3/200/200'],['Dewi R.','Head of Ops','https://picsum.photos/seed/team4/200/200']].map(([n,r,img]) =>
+        `<div class="text-center"><img src="${img}" alt="${n}" class="w-20 h-20 rounded-full object-cover mx-auto mb-3"><div class="font-bold text-gray-900">${n}</div><div class="text-xs text-gray-500">${r}</div></div>`
+      ).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-14 bg-blue-600 text-center">
+  <h2 class="text-3xl font-extrabold text-white mb-4">Bergabung Bersama Kami</h2>
+  <p class="text-blue-200 mb-6">Pasang iklan properti Anda gratis dan jangkau jutaan calon pembeli</p>
+  <a href="register.html" class="bg-white text-blue-600 px-8 py-3 rounded-xl font-bold hover:shadow-xl transition">Daftar Sekarang →</a>
+</section>
+
+<footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm">
+  <p>© 2026 RumahKita. All rights reserved. | <a href="syarat.html" class="hover:text-white">Syarat</a> | <a href="privasi.html" class="hover:text-white">Privasi</a></p>
+</footer>
+</body>
+</html>

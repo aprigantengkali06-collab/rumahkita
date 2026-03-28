@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - RumahKita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+</head>
+<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="index.html" class="flex items-center gap-2"><div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div><span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span></a>
+    <a href="index.html" class="text-sm text-gray-600 hover:text-blue-600"><i class="fas fa-arrow-left mr-1"></i>Beranda</a>
+  </div>
+</nav>
+
+<div class="bg-blue-600 text-white py-14 text-center">
+  <h1 class="text-4xl font-extrabold mb-2">Pertanyaan Umum (FAQ)</h1>
+  <p class="text-blue-200 text-lg">Temukan jawaban atas pertanyaan yang paling sering ditanyakan</p>
+</div>
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+  <div class="space-y-3" id="faqList"></div>
+  <div class="mt-12 bg-blue-50 rounded-2xl p-8 text-center border border-blue-100">
+    <h3 class="font-bold text-gray-900 text-xl mb-2">Masih punya pertanyaan?</h3>
+    <p class="text-gray-500 mb-4">Tim kami siap membantu Anda 24/7</p>
+    <a href="kontak.html" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition"><i class="fas fa-envelope"></i>Hubungi Kami</a>
+  </div>
+</div>
+
+<script>
+const FAQS = [
+  { q: 'Apakah RumahKita gratis digunakan?', a: 'Ya! RumahKita sepenuhnya gratis untuk mencari properti maupun memasang iklan properti. Kami tidak memungut biaya apapun untuk listing dasar.' },
+  { q: 'Bagaimana cara memasang iklan properti?', a: 'Cukup daftar akun gratis, lalu klik "Pasang Iklan" dan isi form 5 langkah: informasi dasar, harga & spesifikasi, lokasi, foto, dan fasilitas. Iklan Anda akan langsung tampil dalam hitungan menit.' },
+  { q: 'Apakah semua properti di RumahKita sudah terverifikasi?', a: 'Tim kami secara aktif melakukan verifikasi listing yang dilaporkan atau terlihat mencurigakan. Namun kami menyarankan Anda tetap melakukan survei langsung dan verifikasi dokumen sebelum transaksi.' },
+  { q: 'Bagaimana cara menghubungi pemilik atau agen properti?', a: 'Di setiap halaman detail properti, tersedia tombol "Hubungi via WhatsApp", "Telepon", dan "Kirim Pesan". Anda bisa langsung berkomunikasi dengan pemilik tanpa perantara.' },
+  { q: 'Apakah bisa melihat lokasi properti di peta?', a: 'Ya! Setiap properti yang dipasang dengan koordinat GPS akan menampilkan peta interaktif OpenStreetMap di halaman detailnya. Anda juga bisa klik "Buka di Google Maps" untuk navigasi.' },
+  { q: 'Bagaimana cara menyimpan properti favorit?', a: 'Klik ikon hati (❤️) di setiap properti card atau di halaman detail properti. Properti tersimpan di Favorit Saya di dashboard Anda. Login diperlukan untuk menyimpan favorit secara permanen.' },
+  { q: 'Apa perbedaan akun Pemilik, Agen, dan Developer?', a: 'Pemilik: individu yang memiliki properti untuk dijual/disewakan. Agen: profesional real estate yang membantu pemilik menjual/menyewakan. Developer: perusahaan pengembang properti. Semua tipe akun mendapat fitur yang sama.' },
+  { q: 'Bisakah saya mengedit atau menghapus iklan properti saya?', a: 'Ya, Anda bisa mengedit, menonaktifkan, atau menghapus iklan kapan saja melalui Dashboard > Properti Saya. Iklan yang dihapus tidak dapat dipulihkan.' },
+  { q: 'Bagaimana cara menggunakan simulasi KPR?', a: 'Kunjungi halaman /kpr atau gunakan kalkulator KPR mini di homepage. Masukkan harga properti, uang muka, tenor, dan suku bunga untuk mendapatkan estimasi cicilan per bulan.' },
+  { q: 'Bagaimana jika menemukan iklan yang mencurigakan?', a: 'Klik tombol "Laporkan" di halaman detail properti dan pilih alasan yang sesuai. Tim kami akan meninjau laporan dalam 1x24 jam. Jangan pernah transfer uang sebelum survei langsung dan verifikasi dokumen.' },
+];
+
+document.getElementById('faqList').innerHTML = FAQS.map((f,i) => `
+  <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <button onclick="toggleFaq(${i})" class="w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-gray-900 hover:bg-gray-50 transition" id="faq-btn-${i}">
+      <span class="flex items-start gap-3"><span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">${i+1}</span>${f.q}</span>
+      <i class="fas fa-chevron-down text-gray-400 text-sm flex-shrink-0 ml-3 transition-transform" id="faq-icon-${i}"></i>
+    </button>
+    <div class="hidden px-6 pb-5" id="faq-content-${i}">
+      <p class="text-gray-600 leading-relaxed text-sm pl-9">${f.a}</p>
+    </div>
+  </div>
+`).join('');
+
+function toggleFaq(i) {
+  const content = document.getElementById('faq-content-' + i);
+  const icon = document.getElementById('faq-icon-' + i);
+  const isOpen = !content.classList.contains('hidden');
+  content.classList.toggle('hidden', isOpen);
+  icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+</script>
+</body>
+</html>

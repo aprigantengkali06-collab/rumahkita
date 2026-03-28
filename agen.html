@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Agen - RumahKita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } } }</script>
+</head>
+<body class="bg-gray-50" style="font-family:'Inter',sans-serif;">
+<nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <a href="index.html" class="flex items-center gap-2"><div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fas fa-home text-white text-sm"></i></div><span class="text-xl font-extrabold text-blue-600">Rumah<span class="text-gray-900">Kita</span></span></a>
+    <a href="properti.html" class="text-sm text-gray-600 hover:text-blue-600"><i class="fas fa-arrow-left mr-1"></i>Cari Properti</a>
+  </div>
+</nav>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="agenContent">
+  <div class="text-center py-12 text-gray-500">Memuat profil agen...</div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+const AGENTS = {
+  'user-001': { id:'user-001', name:'Budi Santoso', type:'agen', whatsapp:'6281234567890', phone:'+6281234567890', avatar:'https://picsum.photos/seed/user001/200/200', bio:'Agen properti profesional dengan pengalaman lebih dari 10 tahun di bidang properti premium Jakarta. Spesialisasi rumah mewah dan apartemen eksklusif di wilayah Jakarta Selatan, Jakarta Barat, dan BSD City.', city:'Jakarta Selatan', member_since:'2023-01-15', active_listings:12, total_sold:45, rating:4.9 },
+  'user-002': { id:'user-002', name:'Sari Dewi', type:'agen', whatsapp:'6287654321098', phone:'+6287654321098', avatar:'https://picsum.photos/seed/user002/200/200', bio:'Spesialis properti di Surabaya dan Bali. Memiliki jaringan luas dengan developer terpercaya. Berpengalaman membantu ratusan keluarga menemukan rumah impian mereka.', city:'Surabaya', member_since:'2022-06-10', active_listings:8, total_sold:62, rating:4.8 },
+  'user-003': { id:'user-003', name:'Ahmad Fauzi', type:'pemilik', whatsapp:'6282345678901', phone:'+6282345678901', avatar:'https://picsum.photos/seed/user003/200/200', bio:'Pemilik beberapa properti di Yogyakarta, Depok, dan Bogor. Menjual dan menyewakan langsung tanpa perantara dengan harga terbaik.', city:'Yogyakarta', member_since:'2024-02-20', active_listings:3, total_sold:8, rating:4.7 },
+};
+
+function loadAgent() {
+  const id = new URLSearchParams(window.location.search).get('id') || 'user-001';
+  const agent = AGENTS[id];
+  if (!agent) { document.getElementById('agenContent').innerHTML = '<p class="text-center text-gray-500 py-12">Agen tidak ditemukan</p>'; return; }
+  
+  const agentProps = RUMAHKITA_PROPERTIES.filter(p => p.user.id === id).slice(0, 6);
+  document.title = agent.name + ' - RumahKita';
+  
+  document.getElementById('agenContent').innerHTML = `
+    <!-- Profile Header -->
+    <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mb-8">
+      <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+        <img src="${agent.avatar}" alt="${agent.name}" class="w-24 h-24 rounded-full object-cover border-4 border-blue-100">
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <h1 class="text-2xl font-extrabold text-gray-900">${agent.name}</h1>
+            <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${agent.type==='agen'?'bg-blue-100 text-blue-700':'bg-green-100 text-green-700'}">${agent.type==='agen'?'Agen':'Pemilik'}</span>
+          </div>
+          <p class="text-gray-500 text-sm mb-3"><i class="fas fa-map-marker-alt mr-1 text-blue-500"></i>${agent.city}</p>
+          <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+            <span>⭐ ${agent.rating} Rating</span>
+            <span>🏠 ${agent.active_listings} Listing Aktif</span>
+            <span>✅ ${agent.total_sold} Transaksi</span>
+            <span>📅 Member sejak ${new Date(agent.member_since).toLocaleDateString('id-ID',{month:'long',year:'numeric'})}</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 w-full sm:w-auto">
+          <a href="https://wa.me/${agent.whatsapp}" target="_blank" class="flex items-center justify-center gap-2 bg-green-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-600 transition">
+            <i class="fab fa-whatsapp"></i>Hubungi WhatsApp
+          </a>
+          <a href="tel:${agent.phone}" class="flex items-center justify-center gap-2 border-2 border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition">
+            <i class="fas fa-phone"></i>Telepon
+          </a>
+        </div>
+      </div>
+      ${agent.bio ? `<div class="mt-5 pt-5 border-t border-gray-100"><h3 class="font-semibold text-gray-900 mb-2">Tentang ${agent.name}</h3><p class="text-gray-600 text-sm leading-relaxed">${agent.bio}</p></div>` : ''}
+    </div>
+
+    <!-- Properties -->
+    <div>
+      <h2 class="text-xl font-bold text-gray-900 mb-5">Properti dari ${agent.name} (${agentProps.length})</h2>
+      ${agentProps.length ? 
+        `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${agentProps.map(p => createPropertyCard(p)).join('')}</div>` :
+        '<p class="text-gray-500 text-center py-8">Belum ada properti aktif</p>'
+      }
+    </div>
+  `;
+}
+
+function createPropertyCard(p) {
+  const priceLabel = formatRupiah(p.price) + (p.price_type==='per_bulan'?'/bulan':'');
+  const fav = localStorage.getItem('fav_'+p.id)==='1';
+  return `<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition" onclick="location.href='detail-properti.html?id=${p.id}'">
+    <div class="relative" style="padding-top:66.67%;">
+      <img src="${p.images[0]}" alt="${p.title}" class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute top-3 left-3"><span class="${p.listing==='dijual'?'bg-blue-600':'bg-green-600'} text-white text-xs px-2 py-1 rounded-full font-semibold">${p.listing==='dijual'?'Dijual':'Disewa'}</span></div>
+      <button onclick="event.stopPropagation();const k='fav_${p.id}';localStorage[localStorage.getItem(k)==='1'?'removeItem':'setItem'](k,'1');this.querySelector('i').className=localStorage.getItem(k)==='1'?'fas fa-heart text-red-500 text-sm':'far fa-heart text-gray-400 text-sm'" class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full shadow flex items-center justify-center">
+        <i class="${fav?'fas text-red-500':'far text-gray-400'} fa-heart text-sm"></i>
+      </button>
+    </div>
+    <div class="p-4">
+      <div class="text-blue-600 font-extrabold text-base">${priceLabel}</div>
+      <div class="text-gray-900 font-semibold text-sm line-clamp-2 mt-1">${p.title}</div>
+      <div class="text-gray-400 text-xs mt-1">📍 ${p.city}</div>
+    </div>
+  </div>`;
+}
+function formatRupiah(n) { return 'Rp ' + parseInt(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+
+loadAgent();
+</script>
+</body>
+</html>
